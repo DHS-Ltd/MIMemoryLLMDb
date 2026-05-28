@@ -23,7 +23,9 @@
                                                           "machineA":  "E:\\MIMemoryLLMDb",
                                                           "machineB":  "D:\\MIMemoryLLMDb"
                                                       },
-                                      "claude_memory_path":  "C:\\Users\\maidu\\.claude\\projects\\e--MIMemoryLLMDb\\memory"
+                                      "claude_memory_path":  {
+                                        "machineA": "C:\\Users\\maidu\\.claude\\projects\\e--MIMemoryLLMDb\\memory",
+                                        "machineB":"C:\\Users\\Administrator\\.claude\\projects\\d--MIMemoryLLMDb\\memory"}
                                   }
                  }
 }
