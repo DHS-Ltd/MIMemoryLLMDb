@@ -50,9 +50,12 @@ Edit it to match your machine:
 }
 ```
 
-**Rules:**
-- `machine_id` must be unique across all machines (check `machines.json` in the repo for existing IDs)
-- `repo_path` must be the full absolute path to where you cloned the repo
+**About `machine_id`:**
+- You invent this label yourself — there is no auto-generation or auto-detection
+- It can be anything meaningful: `"machineB"`, `"office-server"`, `"maidul-laptop"`, `"home-desktop"`
+- The only rule: it must be unique across all machines in the system
+- Check `machines.json` in the repo to see IDs already in use before choosing
+- Once set, this ID becomes the key used in `local_paths` and `claude_memory_paths` in `registry.json` — changing it later requires updating those fields too
 - This file is listed in `.gitignore` — it will never be committed to GitHub
 
 ---
@@ -79,7 +82,15 @@ function mimp {
 }
 ```
 
-Save, then reload the profile:
+> **If notepad does not save or the profile stays empty**, use this PowerShell command instead — it writes the function directly without opening an editor:
+>
+> ```powershell
+> Add-Content $PROFILE "`nfunction mimp {`n    & `"D:\MIMemoryLLMDb\tools\mimp.ps1`" @args`n}"
+> ```
+>
+> Verify it was written: `cat $PROFILE`
+
+Save, then reload the profile (without reloading list data will not come):
 
 ```powershell
 . $PROFILE
@@ -148,31 +159,95 @@ Commit and push:
 
 ```powershell
 git add registry.json
-git commit -m "registry: add machineB paths for existing projects"
+git commit -m "registry: add machineB local_paths for existing projects"
 git push
 ```
 
 ---
 
-## Step 6 — Pull a Project Memory to the New Machine
+## Step 6 — Find and Add the Claude Memory Path for This Machine
 
-Once paths are configured, pull any project's memory to the new machine:
+This is a required step for `mimp push` and `mimp pull` to work correctly with Claude Code.
+**The path is different on every machine** — you must look it up, you cannot copy it from another machine.
+
+**6a — Open Claude Code in the project at least once**
+
+Claude Code only creates its memory folder after the first session in a project.
+If you have not done this yet, run `claude` in the project directory now, then exit.
+
+**6b — List the Claude memory folders on this machine**
+
+```powershell
+ls $env:USERPROFILE\.claude\projects\
+```
+
+Find the folder that matches your project. The encoding rule:
+- Drive letter lowercased, colon removed: `D:` → `d`
+- `\` after drive → `--`
+- Each remaining `\` → `-`
+- Underscores `_` → `-`
+
+Example: `D:\Projects\ImageConverter` → `d--Projects-ImageConverter`
+
+Get your username:
+```powershell
+echo $env:USERPROFILE
+# Output example: C:\Users\mediadmin
+```
+
+Your full Claude memory path for this project on this machine:
+```
+C:\Users\mediadmin\.claude\projects\d--Projects-ImageConverter\memory
+```
+
+**6c — Add the path to `registry.json` under `claude_memory_paths`**
+
+```powershell
+notepad D:\MIMemoryLLMDb\registry.json
+```
+
+Add your machine's entry inside `claude_memory_paths` — do NOT overwrite machineA's entry:
+
+```json
+"claude_memory_paths": {
+    "machineA": "C:\\Users\\maidu\\.claude\\projects\\e--Self-project-ImageConverter\\memory",
+    "machineB": "C:\\Users\\mediadmin\\.claude\\projects\\d--Projects-ImageConverter\\memory"
+}
+```
+
+**6d — Commit and push the registry update**
+
+```powershell
+cd D:\MIMemoryLLMDb
+git add registry.json
+git commit -m "registry: add machineB claude_memory_paths for existing projects"
+git push
+```
+
+---
+
+## Step 7 — Pull a Project Memory to the New Machine
+
+Now that both `local_paths` and `claude_memory_paths` are configured, pull:
 
 ```powershell
 mimp pull image-converter
 ```
 
-This copies all memory files from the GitHub repo into the project's local directory. Claude Code (or any other AI tool) can then read them.
+`mimp pull` will copy the memory files directly into:
+```
+C:\Users\mediadmin\.claude\projects\d--Projects-ImageConverter\memory\
+```
+Claude Code reads from that location automatically — no extra steps needed.
 
 ---
 
-## Step 7 — Verify
-
-Run a quick check:
+## Step 8 — Verify
 
 ```powershell
-mimp list          # all projects visible
-mimp status image-converter    # local vs repo file counts match
+mimp list                       # all projects visible
+mimp status image-converter     # local vs repo file counts match
+mimp push image-converter       # test push from new machine
 ```
 
 The new machine is fully operational.
@@ -199,5 +274,9 @@ If you add a Linux machine in the future:
 [ ] mimp list runs without errors
 [ ] machines.json updated and pushed
 [ ] registry.json local_paths updated for relevant projects
-[ ] mimp pull tested for at least one project
+[ ] Claude Code opened in each project at least once (creates memory folder)
+[ ] Claude memory path found with: ls $env:USERPROFILE\.claude\projects\
+[ ] registry.json claude_memory_paths updated for each project on this machine
+[ ] mimp pull tested — files appear in ~/.claude/projects/<encoded-path>/memory/
+[ ] mimp push tested — files appear on GitHub
 ```

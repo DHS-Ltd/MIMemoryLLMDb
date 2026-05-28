@@ -143,18 +143,36 @@ Or add a `.gitattributes` file to the repo:
 mimp : The term 'mimp' is not recognized as the name of a cmdlet, function, script file...
 ```
 
-**Root cause:**
-The PowerShell profile was not reloaded after adding the function.
-
-**Fix:**
+**Diagnosis — run these three checks:**
 ```powershell
-. $PROFILE
+Test-Path $PROFILE      # does the file exist?
+cat $PROFILE            # is the function actually in it?
+Get-ExecutionPolicy     # is script execution allowed?
 ```
 
-If still not working, check that the profile path exists:
+**Root cause A — Profile exists but is empty (`cat $PROFILE` returns nothing):**
+The file was created but the function was never saved into it. This happens when notepad
+is opened but closed without saving, or on Windows Server where the editor behaves differently.
+
+**Fix:** Write the function directly from PowerShell — no editor needed:
 ```powershell
-Test-Path $PROFILE
-cat $PROFILE
+Add-Content $PROFILE "`nfunction mimp {`n    & `"D:\MIMemoryLLMDb\tools\mimp.ps1`" @args`n}"
+cat $PROFILE     # verify it was written
+. $PROFILE
+mimp list
+```
+
+**Root cause B — Profile not reloaded after editing:**
+```powershell
+. $PROFILE
+mimp list
+```
+
+**Root cause C — Execution policy is `Restricted` (common on Windows Server):**
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+. $PROFILE
+mimp list
 ```
 
 ---
@@ -203,6 +221,52 @@ git add -A
 git commit -m "fix: recover missing MIMP-001 project folder"
 git push
 ```
+
+---
+
+## Issue 9 — `claude_memory_path` Was a Single Field (Design Fix: Now Per-Machine)
+
+**Symptom:**
+`mimp push` reads from the correct Claude memory location on machineA but fails silently or reads the wrong location on machineB. `mimp pull` copies files to the project's `.claude\` folder but Claude Code on the other machine does not pick them up automatically.
+
+**Root cause:**
+The original design stored `claude_memory_path` as a single string in `registry.json`. This was wrong because the path has two machine-specific parts that differ on every machine:
+
+```
+C:\Users\  <username>  \.claude\projects\  <encoded-project-path>  \memory\
+           ↑                               ↑
+     Windows username                Encoded from the project's
+     on THAT machine                 location on THAT machine
+```
+
+The encoded project path is derived from where the project lives on each machine:
+- machineA project at `E:\Self_project\ImageConverter` → `e--Self-project-ImageConverter`
+- machineB project at `D:\Projects\ImageConverter` → `d--Projects-ImageConverter`
+
+A single `claude_memory_path` value cannot work for both machines.
+
+**Fix applied (2026-05-28):**
+Changed `claude_memory_path` (single string) to `claude_memory_paths` (per-machine object, same structure as `local_paths`).
+
+Before:
+```json
+"claude_memory_path": "C:\\Users\\maidu\\.claude\\projects\\e--Self-project-ImageConverter\\memory"
+```
+
+After:
+```json
+"claude_memory_paths": {
+    "machineA": "C:\\Users\\maidu\\.claude\\projects\\e--Self-project-ImageConverter\\memory",
+    "machineB": "C:\\Users\\mediadmin\\.claude\\projects\\d--Projects-ImageConverter\\memory"
+}
+```
+
+`mimp.ps1` now reads `$project.claude_memory_paths.$MachineId` — it only uses the path for the machine currently running the command.
+
+**Also fixed:** `mimp pull` now copies files directly into the machine's `claude_memory_paths` location so Claude Code picks them up automatically on the next session. Previously it only copied to `{project_dir}\.claude\` which Claude Code does not read.
+
+**How to find the correct path on any machine:**
+See the step-by-step instructions in [workflow.md — Finding the Claude Memory Path](./workflow.md#finding-the-claude-memory-path-on-any-machine).
 
 ---
 
