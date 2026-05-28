@@ -56,7 +56,7 @@ function Resolve-ProjectId($inputId) {
 function Get-ProjectFolder($projectId) {
     $reg = Load-Registry
     $project = $reg.projects.$projectId
-    return Join-Path $RepoPath 'projects' "$projectId-$($project.short_name)"
+    return Join-Path (Join-Path $RepoPath 'projects') "$projectId-$($project.short_name)"
 }
 
 function Get-LocalPath($projectId) {
@@ -123,7 +123,7 @@ function Cmd-Init {
     Save-Registry $reg
 
     $folderName = "$projectId-$ShortName"
-    $projectDir = Join-Path $RepoPath 'projects' $folderName
+    $projectDir = Join-Path (Join-Path $RepoPath 'projects') $folderName
     New-Item -ItemType Directory -Path $projectDir -Force | Out-Null
 
     $today = Get-Date -Format 'yyyy-MM-dd'
