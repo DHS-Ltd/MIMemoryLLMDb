@@ -11,7 +11,9 @@
                                       "local_paths":  {
                                                           "machineA":  "E:\\Self_project\\ImageConverter"
                                                       },
-                                      "claude_memory_path":  "C:\\Users\\maidu\\.claude\\projects\\e--Self-project-ImageConverter\\memory"
+                                      "claude_memory_paths":  {
+                                                                   "machineA":  "C:\\Users\\maidu\\.claude\\projects\\e--Self-project-ImageConverter\\memory"
+                                                               }
                                   },
                      "MIMP-002":  {
                                       "short_name":  "mimp",
@@ -23,9 +25,10 @@
                                                           "machineA":  "E:\\MIMemoryLLMDb",
                                                           "machineB":  "D:\\MIMemoryLLMDb"
                                                       },
-                                      "claude_memory_path":  {
-                                        "machineA": "C:\\Users\\maidu\\.claude\\projects\\e--MIMemoryLLMDb\\memory",
-                                        "machineB":"C:\\Users\\Administrator\\.claude\\projects\\d--MIMemoryLLMDb\\memory"}
+                                      "claude_memory_paths":  {
+                                                                   "machineA":  "C:\\Users\\maidu\\.claude\\projects\\e--MIMemoryLLMDb\\memory",
+                                                                   "machineB":  "C:\\Users\\Administrator\\.claude\\projects\\d--MIMemoryLLMDb\\memory"
+                                                               }
                                   }
                  }
 }

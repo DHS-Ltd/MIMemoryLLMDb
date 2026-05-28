@@ -30,7 +30,48 @@ Note the full path where you cloned it. You will need it in Step 3.
 
 ---
 
-## Step 2 — Create the Local Config File
+## Step 2 — Authenticate Git with GitHub
+
+Git must be authenticated before any `git pull` or `git push` (and therefore any `mimp` command) can work.
+
+**Set up Windows Credential Manager as the credential helper:**
+
+```powershell
+git config --global credential.helper wincred
+```
+
+**Trigger authentication by running a pull:**
+
+```powershell
+cd D:\MIMemoryLLMDb
+git pull
+```
+
+When prompted, enter:
+- **Username:** your GitHub username (e.g. `maidul-iut`)
+- **Password:** a Personal Access Token — NOT your GitHub account password
+
+**Generating a Personal Access Token (PAT):**
+1. Go to `github.com` → your Profile → Settings
+2. Developer settings → Personal access tokens → Tokens (classic)
+3. Generate new token — set Note to `machineB MedIServer`, check **`repo`** scope
+4. Copy the token immediately — it is only shown once
+5. Use it as the password when git prompts
+
+Once entered, Windows Credential Manager caches it. Future `git pull` and `git push` commands will not prompt again.
+
+**Verify auth is working:**
+
+```powershell
+git pull
+git push
+```
+
+No credential prompt = authentication is set up correctly.
+
+---
+
+## Step 3 — Create the Local Config File
 
 Copy the template and fill in your machine-specific values:
 
@@ -269,6 +310,7 @@ If you add a Linux machine in the future:
 
 ```
 [ ] Repo cloned to new machine
+[ ] Git authenticated with GitHub (credential.helper wincred + PAT)
 [ ] ~/.mimp-config.json created with correct machine_id and repo_path
 [ ] PowerShell alias added to $PROFILE
 [ ] mimp list runs without errors

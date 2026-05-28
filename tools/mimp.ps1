@@ -207,8 +207,11 @@ function Cmd-Push {
         $sourcePaths += $memoryDir
     }
 
-    # 2. Claude Code agent memory location (stored in registry as claude_memory_path)
-    $claudeAgentPath = $project.claude_memory_path
+    # 2. Claude Code agent memory — per-machine path from registry
+    $claudeAgentPath = $null
+    if ($project.claude_memory_paths) {
+        $claudeAgentPath = $project.claude_memory_paths.$MachineId
+    }
     if ($claudeAgentPath -and (Test-Path $claudeAgentPath)) {
         Get-ChildItem -Path $claudeAgentPath -Filter '*.md' -Recurse |
             ForEach-Object { $memoryFiles += $_.FullName }
@@ -221,8 +224,7 @@ function Cmd-Push {
         if ($claudeAgentPath) {
             Write-Host "  Also looked in: $claudeAgentPath"
         } else {
-            Write-Host '  Tip: Add claude_memory_path to registry.json for this project'
-            Write-Host '       to include Claude Code agent memory files.'
+            Write-Host "  Tip: Add claude_memory_paths.$MachineId to registry.json for this project"
         }
         exit 1
     }
@@ -236,7 +238,6 @@ function Cmd-Push {
     New-Item -ItemType Directory -Path $repoDir -Force | Out-Null
 
     foreach ($file in $memoryFiles) {
-        # Determine relative path — strip whichever source root matches
         $relativePath = $null
         foreach ($src in @($localPath, $claudeAgentPath)) {
             if ($src -and $file.StartsWith($src)) {
@@ -285,23 +286,43 @@ function Cmd-Pull {
         exit 1
     }
 
+    $reg = Load-Registry
+    $project = $reg.projects.$projectId
+
+    # Resolve Claude Code agent memory path for this machine
+    $claudeAgentPath = $null
+    if ($project.claude_memory_paths) {
+        $claudeAgentPath = $project.claude_memory_paths.$MachineId
+    }
+
     Write-Host "Pulling memory for $projectId..." -ForegroundColor Cyan
     Write-Host "  Source: $repoDir"
-    Write-Host "  Target: $localPath"
+    Write-Host "  Project dir: $localPath"
+    if ($claudeAgentPath) { Write-Host "  Claude memory: $claudeAgentPath" }
     Write-Host ''
 
+    # Always create project-level .claude\ for reference copies
     $claudeDir = Join-Path $localPath '.claude'
     New-Item -ItemType Directory -Path $claudeDir -Force | Out-Null
+
+    # Create Claude Code memory dir so files are picked up automatically
+    if ($claudeAgentPath) {
+        New-Item -ItemType Directory -Path $claudeAgentPath -Force | Out-Null
+    }
 
     $files = Get-ChildItem -Path $repoDir -Filter '*.md' -Recurse
     foreach ($file in $files) {
         $relativePath = $file.FullName.Replace($repoDir, '').TrimStart('\', '/')
 
-        if ($file.Name -eq 'MEMORY.md') {
-            $destPath = Join-Path $claudeDir 'MEMORY.md'
-        } elseif ($file.Name -eq 'CLAUDE.md') {
+        if ($file.Name -eq 'CLAUDE.md') {
+            # CLAUDE.md goes to project root — Claude Code reads it from there
             $destPath = Join-Path $localPath 'CLAUDE.md'
+        } elseif ($claudeAgentPath) {
+            # All other files go directly into Claude Code's memory location
+            # so Claude Code picks them up automatically on next session
+            $destPath = Join-Path $claudeAgentPath $relativePath
         } else {
+            # Fallback: copy to project-level .claude\ if no agent path configured
             $destPath = Join-Path $claudeDir $relativePath
         }
 

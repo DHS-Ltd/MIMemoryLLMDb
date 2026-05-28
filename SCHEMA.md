@@ -61,6 +61,19 @@ current task is related to their described topic.
 
 ---end template---
 
+## Machine ID
+
+The `machine_id` used in `local_paths`, `claude_memory_paths`, and the `Updated by`
+field in MEMORY.md is a user-defined label — not auto-generated or auto-detected.
+
+Rules:
+- You choose it yourself when setting up each machine in `~/.mimp-config.json`
+- It can be any string: `"machineA"`, `"office-server"`, `"maidul-laptop"`
+- It must be unique across all machines — check `machines.json` before choosing
+- Once set, it becomes the key for that machine in every project's `local_paths`
+  and `claude_memory_paths` — changing it later requires updating all those entries
+- All registered machine IDs are listed in `machines.json` at the repo root
+
 ## Rules for memory content
 
 1. Be concise — each fact should be 1-2 lines max
