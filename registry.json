@@ -1,5 +1,16 @@
-{
-  "schema_version": "1.0",
-  "next_id": 1,
-  "projects": {}
+﻿{
+    "schema_version":  "1.0",
+    "next_id":  2,
+    "projects":  {
+                     "MIMP-001":  {
+                                      "short_name":  "image-converter",
+                                      "full_name":  "ImageConverter",
+                                      "created":  "2026-05-28",
+                                      "created_by":  "machineA",
+                                      "status":  "active",
+                                      "local_paths":  {
+                                                          "machineA":  "E:\\Self_project\\ImageConverter"
+                                                      }
+                                  }
+                 }
 }
