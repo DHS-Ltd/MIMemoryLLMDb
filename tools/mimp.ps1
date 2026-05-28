@@ -184,8 +184,13 @@ function Cmd-Push {
     $repoDir = Get-ProjectFolder $projectId
     $localPath = Get-LocalPath $projectId
 
-    $memoryFiles = @()
+    $reg = Load-Registry
+    $project = $reg.projects.$projectId
 
+    $memoryFiles = @()
+    $sourcePaths = @()
+
+    # 1. Project directory locations (CLAUDE.md, .claude\, memory\)
     $claudeMd = Join-Path $localPath 'CLAUDE.md'
     if (Test-Path $claudeMd) { $memoryFiles += $claudeMd }
 
@@ -199,23 +204,48 @@ function Cmd-Push {
     if (Test-Path $memoryDir) {
         Get-ChildItem -Path $memoryDir -Filter '*.md' -Recurse |
             ForEach-Object { $memoryFiles += $_.FullName }
+        $sourcePaths += $memoryDir
+    }
+
+    # 2. Claude Code agent memory location (stored in registry as claude_memory_path)
+    $claudeAgentPath = $project.claude_memory_path
+    if ($claudeAgentPath -and (Test-Path $claudeAgentPath)) {
+        Get-ChildItem -Path $claudeAgentPath -Filter '*.md' -Recurse |
+            ForEach-Object { $memoryFiles += $_.FullName }
+        $sourcePaths += $claudeAgentPath
     }
 
     if ($memoryFiles.Count -eq 0) {
-        Write-Host "WARNING: No memory files found in $localPath" -ForegroundColor Yellow
-        Write-Host 'Looked for: CLAUDE.md, .claude\*.md, memory\*.md'
+        Write-Host "WARNING: No memory files found for $projectId" -ForegroundColor Yellow
+        Write-Host "  Looked in: $localPath (CLAUDE.md, .claude\, memory\)"
+        if ($claudeAgentPath) {
+            Write-Host "  Also looked in: $claudeAgentPath"
+        } else {
+            Write-Host '  Tip: Add claude_memory_path to registry.json for this project'
+            Write-Host '       to include Claude Code agent memory files.'
+        }
         exit 1
     }
 
     Write-Host "Pushing memory for $projectId..." -ForegroundColor Cyan
-    Write-Host "  Source: $localPath"
-    Write-Host "  Target: $repoDir"
+    Write-Host "  Local project: $localPath"
+    if ($claudeAgentPath) { Write-Host "  Claude memory: $claudeAgentPath" }
+    Write-Host "  Target repo:   $repoDir"
     Write-Host ''
 
     New-Item -ItemType Directory -Path $repoDir -Force | Out-Null
 
     foreach ($file in $memoryFiles) {
-        $relativePath = $file.Replace($localPath, '').TrimStart('\', '/')
+        # Determine relative path — strip whichever source root matches
+        $relativePath = $null
+        foreach ($src in @($localPath, $claudeAgentPath)) {
+            if ($src -and $file.StartsWith($src)) {
+                $relativePath = $file.Substring($src.Length).TrimStart('\', '/')
+                break
+            }
+        }
+        if (-not $relativePath) { $relativePath = Split-Path $file -Leaf }
+
         $destPath = Join-Path $repoDir $relativePath
         $destDir = Split-Path $destPath -Parent
         New-Item -ItemType Directory -Path $destDir -Force | Out-Null
