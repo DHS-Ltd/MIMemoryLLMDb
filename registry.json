@@ -38,7 +38,10 @@
                                       "status":  "active",
                                       "local_paths":  {
                                                           "machineA":  "E:\\v1-BdcHmsApp"
-                                                      }
+                                                      },
+                                    "claude_memory_paths":  {
+                                                                  "machineA":  "C:\\Users\\maidu\\.claude\\projects\\e--v1-BdcHmsApp\\memory"
+                                                              }
                                   }
                  }
 }

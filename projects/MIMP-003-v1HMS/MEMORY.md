@@ -1,27 +1,5 @@
-﻿<!-- MEMORY FORMAT v1.0 | Project memory index | Read this first -->
+﻿# BDC HMS â€” Memory Index
 
-# [MIMP-003] V1GasBDCHMS
-
-| Field        | Value                              |
-|--------------|------------------------------------|
-| Project ID   | MIMP-003                         |
-| Short name   | v1HMS                         |
-| Last updated | 2026-05-28                             |
-| Updated by   | machineA                         |
-| Status       | active                             |
-| Machines     | machineA                         |
-
-## Summary
-[TODO: Write 2-4 sentences describing this project]
-
-## Key Facts
-- [TODO: Add key facts]
-
-## Memory Files
-| File | Description |
-|------|-------------|
-| | |
-
-## Recent Changes
-- 2026-05-28: Project registered
+- [APK Deployment â€” Android Studio WebView Wrapper](project_apk_deployment.md) â€” WebView config, session localStorage fix, rotation fix, JavascriptInterface banner dismissal bridge
+- [Analytics Reports Phase 1](project_analytics_phase1.md) â€” Phase 1 built: A-1 P&L, A-2 Dues, L-2 Overdue Samples, D-1 Doctor Today, R-1/R-2 Reception stats
 
