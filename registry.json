@@ -1,6 +1,6 @@
-{
+﻿{
     "schema_version":  "1.0",
-    "next_id":  3,
+    "next_id":  4,
     "projects":  {
                      "MIMP-001":  {
                                       "short_name":  "image-converter",
@@ -12,8 +12,8 @@
                                                           "machineA":  "E:\\Self_project\\ImageConverter"
                                                       },
                                       "claude_memory_paths":  {
-                                                                   "machineA":  "C:\\Users\\maidu\\.claude\\projects\\e--Self-project-ImageConverter\\memory"
-                                                               }
+                                                                  "machineA":  "C:\\Users\\maidu\\.claude\\projects\\e--Self-project-ImageConverter\\memory"
+                                                              }
                                   },
                      "MIMP-002":  {
                                       "short_name":  "mimp",
@@ -26,9 +26,19 @@
                                                           "machineB":  "D:\\MIMemoryLLMDb"
                                                       },
                                       "claude_memory_paths":  {
-                                                                   "machineA":  "C:\\Users\\maidu\\.claude\\projects\\e--MIMemoryLLMDb\\memory",
-                                                                   "machineB":  "C:\\Users\\Administrator\\.claude\\projects\\d--MIMemoryLLMDb\\memory"
-                                                               }
+                                                                  "machineA":  "C:\\Users\\maidu\\.claude\\projects\\e--MIMemoryLLMDb\\memory",
+                                                                  "machineB":  "C:\\Users\\Administrator\\.claude\\projects\\d--MIMemoryLLMDb\\memory"
+                                                              }
+                                  },
+                     "MIMP-003":  {
+                                      "short_name":  "v1HMS",
+                                      "full_name":  "V1GasBDCHMS",
+                                      "created":  "2026-05-28",
+                                      "created_by":  "machineA",
+                                      "status":  "active",
+                                      "local_paths":  {
+                                                          "machineA":  "E:\\v1-BdcHmsApp"
+                                                      }
                                   }
                  }
 }
