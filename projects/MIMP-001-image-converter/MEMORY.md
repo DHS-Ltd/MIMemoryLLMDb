@@ -1,26 +1,8 @@
-<!-- MEMORY FORMAT v1.0 | Project memory index | Read this first -->
+﻿# ImageConverter Project Memory
 
-# [MIMP-001] ImageConverter
+- [Project Overview](project-overview.md) â€” what the tool does, repo URL, local path, tech stack
+- [Environment Setup](environment-setup.md) â€” Python 3.14, venv, Pillow 12.x, GTK3 Runtime install path and PATH fix
+- [Architecture](architecture.md) â€” module relationships, SVG flows, ICO multi-res logic, output directory structure
+- [Bugs Fixed](bugs-fixed.md) â€” all 5 bugs encountered and resolved during initial session with root causes
+- [Current State](current-state.md) â€” git commits, tested scenarios, known limitations, next enhancement candidates
 
-| Field        | Value                              |
-|--------------|------------------------------------|
-| Project ID   | MIMP-001                           |
-| Short name   | image-converter                    |
-| Last updated | 2026-05-28                         |
-| Updated by   | machineA                           |
-| Status       | active                             |
-| Machines     | machineA                           |
-
-## Summary
-[TODO: Write 2-4 sentences describing this project]
-
-## Key Facts
-- [TODO: Add key facts]
-
-## Memory Files
-| File | Description |
-|------|-------------|
-| | |
-
-## Recent Changes
-- 2026-05-28: Project registered
