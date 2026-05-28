@@ -1,0 +1,18 @@
+{
+  "machines": {
+    "machineA": {
+      "name": "MaidulDesktop",
+      "os": "windows",
+      "description": "Main development desktop",
+      "repo_path": "E:\\MIMemoryLLMDb",
+      "registered": "2026-05-28"
+    },
+    "machineB": {
+      "name": "MedIServer",
+      "os": "windows-server-2022",
+      "description": "Always-on office server",
+      "repo_path": "D:\\MIMemoryLLMDb",
+      "registered": "2026-05-28"
+    }
+  }
+}

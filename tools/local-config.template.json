@@ -1,0 +1,6 @@
+{
+  "machine_id": "CHANGE_ME",
+  "repo_path": "CHANGE_ME",
+  "default_memory_dir": ".claude",
+  "auto_pull_on_start": false
+}

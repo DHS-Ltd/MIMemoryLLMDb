@@ -1,0 +1,7 @@
+# Never commit local machine config
+.mimp-config.json
+
+# OS files
+Thumbs.db
+.DS_Store
+desktop.ini
