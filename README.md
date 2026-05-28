@@ -16,7 +16,7 @@ used by AI coding assistants (Claude Code, etc.) across multiple machines.
 
 ## Machines
 
-| ID | Name | OS | Location |
+| ID | Name | OS | Repo Path |
 |---|---|---|---|
 | machineA | MaidulDesktop | Windows | E:\MIMemoryLLMDb |
 | machineB | MedIServer | Windows Server 2022 | D:\MIMemoryLLMDb |
@@ -31,6 +31,14 @@ mimp list                                                      List all register
 mimp status MIMP-001                                           Check if local and remote are in sync
 ```
 
-## Format
+## Documentation
 
-See [SCHEMA.md](./SCHEMA.md) for the memory file format specification.
+| Document | Description |
+|----------|-------------|
+| [SCHEMA.md](./SCHEMA.md) | Memory file format specification |
+| [docs/workflow.md](./docs/workflow.md) | Daily workflow: push, pull, create, update |
+| [docs/add-new-machine.md](./docs/add-new-machine.md) | Step-by-step guide to add a new machine |
+| [docs/llm-guide.md](./docs/llm-guide.md) | How any LLM can use this memory system |
+| [docs/troubleshooting.md](./docs/troubleshooting.md) | Known issues and fixes |
+| [docs/roadmap.md](./docs/roadmap.md) | Future enhancement ideas |
+| [docs/MaidulMemoryProject-Implementation-Guide.md](./docs/MaidulMemoryProject-Implementation-Guide.md) | Original build guide |

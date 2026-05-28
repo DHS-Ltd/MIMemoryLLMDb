@@ -1,6 +1,6 @@
 {
     "schema_version":  "1.0",
-    "next_id":  2,
+    "next_id":  3,
     "projects":  {
                      "MIMP-001":  {
                                       "short_name":  "image-converter",
@@ -12,6 +12,18 @@
                                                           "machineA":  "E:\\Self_project\\ImageConverter"
                                                       },
                                       "claude_memory_path":  "C:\\Users\\maidu\\.claude\\projects\\e--Self-project-ImageConverter\\memory"
+                                  },
+                     "MIMP-002":  {
+                                      "short_name":  "mimp",
+                                      "full_name":  "MIMemoryLLMDb",
+                                      "created":  "2026-05-28",
+                                      "created_by":  "machineA",
+                                      "status":  "active",
+                                      "local_paths":  {
+                                                          "machineA":  "E:\\MIMemoryLLMDb",
+                                                          "machineB":  "D:\\MIMemoryLLMDb"
+                                                      },
+                                      "claude_memory_path":  "C:\\Users\\maidu\\.claude\\projects\\e--MIMemoryLLMDb\\memory"
                                   }
                  }
 }
