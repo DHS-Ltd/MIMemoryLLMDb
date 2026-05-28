@@ -1,13 +1,13 @@
-# MIMemoryLLMDb CLI — PowerShell version
+# MIMemoryLLMDb CLI -- PowerShell version
 # Usage: mimp <command> [args]
 #
 # Commands:
-#   init <full_name> <short_name> <local_path>  — Register new project
-#   push <project_id_or_short_name>             — Push local memory to repo
-#   pull <project_id_or_short_name>             — Pull repo memory to local
-#   list                                        — List all projects
-#   status <project_id_or_short_name>           — Compare local vs repo
-#   sync <project_id_or_short_name>             — Pull then push (full sync)
+#   init <full_name> <short_name> <local_path>  -- Register new project
+#   push <project_id_or_short_name>             -- Push local memory to repo
+#   pull <project_id_or_short_name>             -- Pull repo memory to local
+#   list                                        -- List all projects
+#   status <project_id_or_short_name>           -- Compare local vs repo
+#   sync <project_id_or_short_name>             -- Pull then push
 
 param(
     [Parameter(Position=0)][string]$Command,
@@ -17,17 +17,17 @@ param(
 )
 
 # ── Config Loading ──────────────────────────────────────────────────
-$ConfigPath = Join-Path $env:USERPROFILE ".mimp-config.json"
+$ConfigPath = Join-Path $env:USERPROFILE '.mimp-config.json'
 if (-not (Test-Path $ConfigPath)) {
-    Write-Host "ERROR: No config found at $ConfigPath" -ForegroundColor Red
-    Write-Host "Run: Copy-Item tools\local-config.template.json $ConfigPath"
-    Write-Host "Then edit it with your machine_id and repo_path."
+    Write-Host 'ERROR: No config found at' $ConfigPath -ForegroundColor Red
+    Write-Host 'Run: Copy-Item tools\local-config.template.json' $ConfigPath
+    Write-Host 'Then edit it with your machine_id and repo_path.'
     exit 1
 }
 $Config = Get-Content $ConfigPath -Raw | ConvertFrom-Json
 $RepoPath = $Config.repo_path
 $MachineId = $Config.machine_id
-$RegistryPath = Join-Path $RepoPath "registry.json"
+$RegistryPath = Join-Path $RepoPath 'registry.json'
 
 # ── Helper Functions ────────────────────────────────────────────────
 
@@ -39,24 +39,24 @@ function Save-Registry($reg) {
     $reg | ConvertTo-Json -Depth 10 | Set-Content $RegistryPath -Encoding UTF8
 }
 
-function Resolve-ProjectId($input) {
+function Resolve-ProjectId($inputId) {
     $reg = Load-Registry
-    if ($reg.projects.PSObject.Properties.Name -contains $input) {
-        return $input
+    if ($reg.projects.PSObject.Properties.Name -contains $inputId) {
+        return $inputId
     }
     foreach ($prop in $reg.projects.PSObject.Properties) {
-        if ($prop.Value.short_name -eq $input) {
+        if ($prop.Value.short_name -eq $inputId) {
             return $prop.Name
         }
     }
-    Write-Host "ERROR: Project '$input' not found in registry" -ForegroundColor Red
+    Write-Host "ERROR: Project '$inputId' not found in registry" -ForegroundColor Red
     exit 1
 }
 
 function Get-ProjectFolder($projectId) {
     $reg = Load-Registry
     $project = $reg.projects.$projectId
-    return Join-Path $RepoPath "projects" "$projectId-$($project.short_name)"
+    return Join-Path $RepoPath 'projects' "$projectId-$($project.short_name)"
 }
 
 function Get-LocalPath($projectId) {
@@ -90,7 +90,7 @@ function Git-CommitPush($message) {
 function Cmd-Init {
     param($FullName, $ShortName, $LocalPath)
     if (-not $FullName -or -not $ShortName) {
-        Write-Host "Usage: mimp init <full_name> <short_name> <local_path>" -ForegroundColor Yellow
+        Write-Host 'Usage: mimp init [full_name] [short_name] [local_path]' -ForegroundColor Yellow
         exit 1
     }
 
@@ -105,15 +105,15 @@ function Cmd-Init {
     }
 
     $nextId = $reg.next_id
-    $projectId = "MIMP-{0:D3}" -f $nextId
+    $projectId = 'MIMP-{0:D3}' -f $nextId
     $reg.next_id = $nextId + 1
 
     $newProject = [PSCustomObject]@{
         short_name  = $ShortName
         full_name   = $FullName
-        created     = (Get-Date -Format "yyyy-MM-dd")
+        created     = (Get-Date -Format 'yyyy-MM-dd')
         created_by  = $MachineId
-        status      = "active"
+        status      = 'active'
         local_paths = [PSCustomObject]@{
             $MachineId = if ($LocalPath) { $LocalPath } else { $null }
         }
@@ -123,10 +123,10 @@ function Cmd-Init {
     Save-Registry $reg
 
     $folderName = "$projectId-$ShortName"
-    $projectDir = Join-Path $RepoPath "projects" $folderName
+    $projectDir = Join-Path $RepoPath 'projects' $folderName
     New-Item -ItemType Directory -Path $projectDir -Force | Out-Null
 
-    $today = Get-Date -Format "yyyy-MM-dd"
+    $today = Get-Date -Format 'yyyy-MM-dd'
     $template = @"
 <!-- MEMORY FORMAT v1.0 | Project memory index | Read this first -->
 
@@ -156,26 +156,26 @@ function Cmd-Init {
 - ${today}: Project registered
 "@
 
-    $template | Set-Content (Join-Path $projectDir "MEMORY.md") -Encoding UTF8
+    $template | Set-Content (Join-Path $projectDir 'MEMORY.md') -Encoding UTF8
 
     Git-CommitPush "init: $projectId ($ShortName) - $FullName"
 
-    Write-Host ""
-    Write-Host "  Project registered successfully!" -ForegroundColor Green
+    Write-Host ''
+    Write-Host '  Project registered successfully!' -ForegroundColor Green
     Write-Host "  ID:     $projectId" -ForegroundColor Cyan
     Write-Host "  Name:   $FullName"
     Write-Host "  Folder: projects/$folderName/"
-    Write-Host ""
-    Write-Host "  Next steps:" -ForegroundColor Yellow
+    Write-Host ''
+    Write-Host '  Next steps:' -ForegroundColor Yellow
     Write-Host "  1. Edit projects/$folderName/MEMORY.md with project details"
     Write-Host "  2. Run: mimp push $ShortName"
-    Write-Host ""
+    Write-Host ''
 }
 
 function Cmd-Push {
     param($ProjectRef)
     if (-not $ProjectRef) {
-        Write-Host "Usage: mimp push <project_id_or_short_name>" -ForegroundColor Yellow
+        Write-Host 'Usage: mimp push [project_id_or_short_name]' -ForegroundColor Yellow
         exit 1
     }
 
@@ -186,36 +186,36 @@ function Cmd-Push {
 
     $memoryFiles = @()
 
-    $claudeMd = Join-Path $localPath "CLAUDE.md"
+    $claudeMd = Join-Path $localPath 'CLAUDE.md'
     if (Test-Path $claudeMd) { $memoryFiles += $claudeMd }
 
-    $claudeDir = Join-Path $localPath ".claude"
+    $claudeDir = Join-Path $localPath '.claude'
     if (Test-Path $claudeDir) {
-        Get-ChildItem -Path $claudeDir -Filter "*.md" -Recurse |
+        Get-ChildItem -Path $claudeDir -Filter '*.md' -Recurse |
             ForEach-Object { $memoryFiles += $_.FullName }
     }
 
-    $memoryDir = Join-Path $localPath "memory"
+    $memoryDir = Join-Path $localPath 'memory'
     if (Test-Path $memoryDir) {
-        Get-ChildItem -Path $memoryDir -Filter "*.md" -Recurse |
+        Get-ChildItem -Path $memoryDir -Filter '*.md' -Recurse |
             ForEach-Object { $memoryFiles += $_.FullName }
     }
 
     if ($memoryFiles.Count -eq 0) {
         Write-Host "WARNING: No memory files found in $localPath" -ForegroundColor Yellow
-        Write-Host "Looked for: CLAUDE.md, .claude\*.md, memory\*.md"
+        Write-Host 'Looked for: CLAUDE.md, .claude\*.md, memory\*.md'
         exit 1
     }
 
     Write-Host "Pushing memory for $projectId..." -ForegroundColor Cyan
     Write-Host "  Source: $localPath"
     Write-Host "  Target: $repoDir"
-    Write-Host ""
+    Write-Host ''
 
     New-Item -ItemType Directory -Path $repoDir -Force | Out-Null
 
     foreach ($file in $memoryFiles) {
-        $relativePath = $file.Replace($localPath, "").TrimStart("\", "/")
+        $relativePath = $file.Replace($localPath, '').TrimStart('\', '/')
         $destPath = Join-Path $repoDir $relativePath
         $destDir = Split-Path $destPath -Parent
         New-Item -ItemType Directory -Path $destDir -Force | Out-Null
@@ -223,10 +223,10 @@ function Cmd-Push {
         Write-Host "  Copied: $relativePath" -ForegroundColor DarkGray
     }
 
-    $memoryMd = Join-Path $repoDir "MEMORY.md"
+    $memoryMd = Join-Path $repoDir 'MEMORY.md'
     if (Test-Path $memoryMd) {
         $content = Get-Content $memoryMd -Raw
-        $today = Get-Date -Format "yyyy-MM-dd"
+        $today = Get-Date -Format 'yyyy-MM-dd'
         $content = $content -replace '(?<=Last updated \| )[\d-]+', $today
         $content = $content -replace '(?<=Updated by   \| )\S+', $MachineId
         $content | Set-Content $memoryMd -Encoding UTF8
@@ -234,14 +234,14 @@ function Cmd-Push {
 
     Git-CommitPush "push: $projectId from $MachineId ($(Get-Date -Format 'yyyy-MM-dd HH:mm'))"
 
-    Write-Host ""
+    Write-Host ''
     Write-Host "  Pushed $($memoryFiles.Count) file(s) for $projectId" -ForegroundColor Green
 }
 
 function Cmd-Pull {
     param($ProjectRef)
     if (-not $ProjectRef) {
-        Write-Host "Usage: mimp pull <project_id_or_short_name>" -ForegroundColor Yellow
+        Write-Host 'Usage: mimp pull [project_id_or_short_name]' -ForegroundColor Yellow
         exit 1
     }
 
@@ -258,19 +258,19 @@ function Cmd-Pull {
     Write-Host "Pulling memory for $projectId..." -ForegroundColor Cyan
     Write-Host "  Source: $repoDir"
     Write-Host "  Target: $localPath"
-    Write-Host ""
+    Write-Host ''
 
-    $claudeDir = Join-Path $localPath ".claude"
+    $claudeDir = Join-Path $localPath '.claude'
     New-Item -ItemType Directory -Path $claudeDir -Force | Out-Null
 
-    $files = Get-ChildItem -Path $repoDir -Filter "*.md" -Recurse
+    $files = Get-ChildItem -Path $repoDir -Filter '*.md' -Recurse
     foreach ($file in $files) {
-        $relativePath = $file.FullName.Replace($repoDir, "").TrimStart("\", "/")
+        $relativePath = $file.FullName.Replace($repoDir, '').TrimStart('\', '/')
 
-        if ($file.Name -eq "MEMORY.md") {
-            $destPath = Join-Path $claudeDir "MEMORY.md"
-        } elseif ($file.Name -eq "CLAUDE.md") {
-            $destPath = Join-Path $localPath "CLAUDE.md"
+        if ($file.Name -eq 'MEMORY.md') {
+            $destPath = Join-Path $claudeDir 'MEMORY.md'
+        } elseif ($file.Name -eq 'CLAUDE.md') {
+            $destPath = Join-Path $localPath 'CLAUDE.md'
         } else {
             $destPath = Join-Path $claudeDir $relativePath
         }
@@ -281,7 +281,7 @@ function Cmd-Pull {
         Write-Host "  Pulled: $relativePath" -ForegroundColor DarkGray
     }
 
-    Write-Host ""
+    Write-Host ''
     Write-Host "  Pulled $($files.Count) file(s) for $projectId" -ForegroundColor Green
     Write-Host "  Memory available at: $localPath" -ForegroundColor Cyan
 }
@@ -290,28 +290,30 @@ function Cmd-List {
     Git-Sync
     $reg = Load-Registry
 
-    Write-Host ""
-    Write-Host "  Registered Projects" -ForegroundColor Cyan
-    Write-Host "  ═══════════════════════════════════════════════════" -ForegroundColor DarkGray
+    Write-Host ''
+    Write-Host '  Registered Projects' -ForegroundColor Cyan
+    Write-Host '  ---------------------------------------------------' -ForegroundColor DarkGray
 
     if ($reg.projects.PSObject.Properties.Name.Count -eq 0) {
-        Write-Host "  (no projects registered yet)" -ForegroundColor DarkGray
+        Write-Host '  (no projects registered yet)' -ForegroundColor DarkGray
     } else {
         foreach ($prop in $reg.projects.PSObject.Properties) {
             $p = $prop.Value
             $localPath = $p.local_paths.$MachineId
-            $hasLocal = if ($localPath -and (Test-Path $localPath)) { "LOCAL" } else { "—" }
-            $statusColor = if ($p.status -eq "active") { "Green" } else { "DarkGray" }
+            $hasLocal = '---'
+            if ($localPath -and (Test-Path $localPath)) { $hasLocal = 'LOCAL' }
+            $statusColor = 'DarkGray'
+            if ($p.status -eq 'active') { $statusColor = 'Green' }
             Write-Host ("  {0}  {1,-35} [{2}]  {3}" -f $prop.Name, $p.full_name, $p.status, $hasLocal) -ForegroundColor $statusColor
         }
     }
-    Write-Host ""
+    Write-Host ''
 }
 
 function Cmd-Status {
     param($ProjectRef)
     if (-not $ProjectRef) {
-        Write-Host "Usage: mimp status <project_id_or_short_name>" -ForegroundColor Yellow
+        Write-Host 'Usage: mimp status [project_id_or_short_name]' -ForegroundColor Yellow
         exit 1
     }
 
@@ -320,26 +322,28 @@ function Cmd-Status {
     $repoDir = Get-ProjectFolder $projectId
     $localPath = Get-LocalPath $projectId
 
-    Write-Host ""
+    Write-Host ''
     Write-Host "  Status for $projectId" -ForegroundColor Cyan
     Write-Host "  Repo:  $repoDir"
     Write-Host "  Local: $localPath"
-    Write-Host ""
+    Write-Host ''
 
-    $repoFiles = Get-ChildItem -Path $repoDir -Filter "*.md" -Recurse -ErrorAction SilentlyContinue
+    $repoFiles = Get-ChildItem -Path $repoDir -Filter '*.md' -Recurse -ErrorAction SilentlyContinue
     $localMdFiles = @()
 
-    $claudeMd = Join-Path $localPath "CLAUDE.md"
+    $claudeMd = Join-Path $localPath 'CLAUDE.md'
     if (Test-Path $claudeMd) { $localMdFiles += Get-Item $claudeMd }
 
-    $claudeDir = Join-Path $localPath ".claude"
+    $claudeDir = Join-Path $localPath '.claude'
     if (Test-Path $claudeDir) {
-        Get-ChildItem -Path $claudeDir -Filter "*.md" -Recurse |
+        Get-ChildItem -Path $claudeDir -Filter '*.md' -Recurse |
             ForEach-Object { $localMdFiles += $_ }
     }
 
-    $repoColor  = if ($repoFiles.Count  -gt 0) { "Green" } else { "Yellow" }
-    $localColor = if ($localMdFiles.Count -gt 0) { "Green" } else { "Yellow" }
+    $repoColor = 'Yellow'
+    if ($repoFiles.Count -gt 0) { $repoColor = 'Green' }
+    $localColor = 'Yellow'
+    if ($localMdFiles.Count -gt 0) { $localColor = 'Green' }
 
     Write-Host "  Repo files:  $($repoFiles.Count)" -ForegroundColor $repoColor
     Write-Host "  Local files: $($localMdFiles.Count)" -ForegroundColor $localColor
@@ -352,30 +356,30 @@ function Cmd-Status {
         $latestLocal = ($localMdFiles | Sort-Object LastWriteTime -Descending | Select-Object -First 1).LastWriteTime
         Write-Host "  Local last updated: $latestLocal"
     }
-    Write-Host ""
+    Write-Host ''
 }
 
 # ── Command Router ──────────────────────────────────────────────────
 
 switch ($Command) {
-    "init"   { Cmd-Init -FullName $Arg1 -ShortName $Arg2 -LocalPath $Arg3 }
-    "push"   { Cmd-Push -ProjectRef $Arg1 }
-    "pull"   { Cmd-Pull -ProjectRef $Arg1 }
-    "list"   { Cmd-List }
-    "status" { Cmd-Status -ProjectRef $Arg1 }
-    "sync"   { Cmd-Pull -ProjectRef $Arg1; Cmd-Push -ProjectRef $Arg1 }
+    'init'   { Cmd-Init -FullName $Arg1 -ShortName $Arg2 -LocalPath $Arg3 }
+    'push'   { Cmd-Push -ProjectRef $Arg1 }
+    'pull'   { Cmd-Pull -ProjectRef $Arg1 }
+    'list'   { Cmd-List }
+    'status' { Cmd-Status -ProjectRef $Arg1 }
+    'sync'   { Cmd-Pull -ProjectRef $Arg1; Cmd-Push -ProjectRef $Arg1 }
     default  {
-        Write-Host ""
-        Write-Host "  MIMemoryLLMDb CLI" -ForegroundColor Cyan
-        Write-Host "  Usage: mimp <command> [args]" -ForegroundColor Yellow
-        Write-Host ""
-        Write-Host "  Commands:"
-        Write-Host "    init   <full_name> <short_name> <local_path>  Register new project"
-        Write-Host "    push   <project_id_or_short_name>             Push local -> GitHub"
-        Write-Host "    pull   <project_id_or_short_name>             Pull GitHub -> local"
-        Write-Host "    list                                          List all projects"
-        Write-Host "    status <project_id_or_short_name>             Compare local vs repo"
-        Write-Host "    sync   <project_id_or_short_name>             Pull then push"
-        Write-Host ""
+        Write-Host ''
+        Write-Host '  MIMemoryLLMDb CLI' -ForegroundColor Cyan
+        Write-Host '  Usage: mimp [command] [args]' -ForegroundColor Yellow
+        Write-Host ''
+        Write-Host '  Commands:'
+        Write-Host '    init   [full_name] [short_name] [local_path]  Register new project'
+        Write-Host '    push   [project_id_or_short_name]             Push local -> GitHub'
+        Write-Host '    pull   [project_id_or_short_name]             Pull GitHub -> local'
+        Write-Host '    list                                          List all projects'
+        Write-Host '    status [project_id_or_short_name]             Compare local vs repo'
+        Write-Host '    sync   [project_id_or_short_name]             Pull then push'
+        Write-Host ''
     }
 }
