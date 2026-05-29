@@ -51,7 +51,10 @@
                                       "status":  "active",
                                       "local_paths":  {
                                                           "machineA":  "E:\\DH-PACs-Solutions"
-                                                      }
+                                                      },
+                                      "claude_memory_paths":  {
+                                                                  "machineA":  "C:\\Users\\maidu\\.claude\\projects\\e--DHS-PACS\\memory"
+                                                              }
                                   }
                  }
 }

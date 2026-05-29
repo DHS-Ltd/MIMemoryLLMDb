@@ -162,6 +162,39 @@ function Cmd-Init {
         }
     }
 
+    # ── Step 1: Collect and validate Claude memory path BEFORE assigning project ID ──
+    Write-Host ''
+    Write-Host '  Claude Code Memory Path' -ForegroundColor Cyan
+    Write-Host '  Find yours with: ls $env:USERPROFILE\.claude\projects\' -ForegroundColor DarkGray
+    Write-Host '  Format: C:\Users\<user>\.claude\projects\<encoded-name>\memory' -ForegroundColor DarkGray
+    Write-Host '  Press Enter to skip (you can add manually later).' -ForegroundColor DarkGray
+    Write-Host ''
+    $claudePathInput = (Read-Host '  Memory path').Trim().Trim('"')
+
+    $validatedClaudePath = $null
+    if ($claudePathInput) {
+        if (-not (Test-Path $claudePathInput)) {
+            Write-Host ''
+            Write-Host "  ERROR: Directory not found:" -ForegroundColor Red
+            Write-Host "         $claudePathInput" -ForegroundColor Red
+            Write-Host '  Registration blocked. Verify the path and run mimp init again.' -ForegroundColor Yellow
+            exit 1
+        } elseif (-not (Test-Path (Join-Path $claudePathInput 'MEMORY.md'))) {
+            Write-Host ''
+            Write-Host "  ERROR: No MEMORY.md found inside:" -ForegroundColor Red
+            Write-Host "         $claudePathInput" -ForegroundColor Red
+            Write-Host '  The directory exists but Claude Code has not saved any memory there yet.' -ForegroundColor Yellow
+            Write-Host '  Open Claude Code in this project first, then run mimp init again.' -ForegroundColor Yellow
+            exit 1
+        } else {
+            $validatedClaudePath = $claudePathInput
+            Write-Host "  Path validated." -ForegroundColor Green
+        }
+    } else {
+        Write-Host '  Skipped — no memory path saved. Add manually to registry.json later.' -ForegroundColor DarkGray
+    }
+
+    # ── Step 2: All checks passed — now assign project ID and register ──
     $nextId = $reg.next_id
     $projectId = 'MIMP-{0:D3}' -f $nextId
     $reg.next_id = $nextId + 1
@@ -176,27 +209,16 @@ function Cmd-Init {
             $MachineId = if ($LocalPath) { $LocalPath } else { $null }
         }
     }
-    $reg.projects | Add-Member -NotePropertyName $projectId -NotePropertyValue $newProject
 
+    if ($validatedClaudePath) {
+        $newProject | Add-Member -NotePropertyName 'claude_memory_paths' -NotePropertyValue ([PSCustomObject]@{ $MachineId = $validatedClaudePath })
+    }
+
+    $reg.projects | Add-Member -NotePropertyName $projectId -NotePropertyValue $newProject
     Save-Registry $reg
 
-    # Auto-detect Claude Code memory path for this machine
-    $detectedMemoryPath = Find-ClaudeMemoryPath $LocalPath
-    if ($detectedMemoryPath) {
-        Write-Host ''
-        Write-Host '  Scanning for Claude Code memory...' -ForegroundColor DarkGray
-        Write-Host "  Found: $detectedMemoryPath" -ForegroundColor Cyan
-        $answer = Read-Host '  Add this as claude_memory_paths for this machine? [Y/N]'
-        if ($answer -match '^[Yy]') {
-            $claudePaths = [PSCustomObject]@{ $MachineId = $detectedMemoryPath }
-            $reg.projects.$projectId | Add-Member -NotePropertyName 'claude_memory_paths' -NotePropertyValue $claudePaths
-            Save-Registry $reg
-            Write-Host "  claude_memory_paths.$MachineId saved." -ForegroundColor Green
-        }
-    } elseif ($LocalPath) {
-        Write-Host ''
-        Write-Host '  No Claude memory found yet for this project.' -ForegroundColor DarkGray
-        Write-Host '  Tip: Run claude in the project first, then add the path manually to registry.json.' -ForegroundColor DarkGray
+    if ($validatedClaudePath) {
+        Write-Host "  claude_memory_paths.$MachineId saved." -ForegroundColor Green
     }
 
     $folderName = "$projectId-$ShortName"
