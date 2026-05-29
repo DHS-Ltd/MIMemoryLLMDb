@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { getProjectGitPath, gitReadFile } from '../lib/repo.js';
+import { getProjectGitPath, gitReadFile, gitFetchIfStale, readRegistryFromGit } from '../lib/repo.js';
 
 export function registerListProjects(server, repoPath, projects) {
   server.tool(
@@ -11,9 +11,11 @@ export function registerListProjects(server, repoPath, projects) {
         .describe('Filter by project status. Default: active'),
     },
     async (args) => {
+      gitFetchIfStale(repoPath);
+      const liveProjects = readRegistryFromGit(repoPath) || projects;
       const filter = args.status_filter || 'active';
 
-      const entries = Object.entries(projects).filter(([, p]) => {
+      const entries = Object.entries(liveProjects).filter(([, p]) => {
         if (filter === 'all') return true;
         return p.status === filter;
       });

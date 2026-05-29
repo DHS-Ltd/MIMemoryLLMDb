@@ -23,6 +23,7 @@
 | machineB config (.mimp-config.json) | Configured |
 | PowerShell alias (mimp) in $PROFILE | Working on machineA and machineB |
 | Git sparse checkout | Active and verified on machineB — classic file-based, git 1.7+ compatible |
+| MCP server (mcp-server/) | Working on machineA and machineB — auto-syncs from origin/master |
 | registry.json | 4 projects registered |
 | machines.json | 2 machines registered |
 
@@ -60,6 +61,9 @@
 | mimp init: short_name path-character guard | 2026-05-30 | Prevents path being silently used as short_name |
 | Git sparse checkout v2 (classic file-based) | 2026-05-30 | Works on all git versions ≥ 1.7; verified on machineB |
 | mimp sparse-status reads file directly | 2026-05-30 | No longer depends on `git sparse-checkout list` |
+| MCP server v1 (disk reads) | 2026-05-29 | 3 tools: list_projects, get_project_memory, search_memories |
+| MCP server v2 (git objects) | 2026-05-30 | Reads via `git show HEAD:<path>` — bypasses sparse checkout |
+| MCP server v3 (remote sync) | 2026-05-30 | Reads from `origin/master`; auto-fetches with 60s TTL; re-reads registry per call |
 
 ## Verified End-to-End Tests
 
@@ -70,6 +74,10 @@
 **2026-05-29:** Sparse checkout v1 — initialised on machineA, `mimp sparse-status` showed paths
 
 **2026-05-30:** Sparse checkout v2 — verified on machineB; only `projects/MIMP-002-mimp/` downloaded; MIMP-001, MIMP-003, MIMP-004 absent from machineB working tree
+
+**2026-05-30:** MCP server cross-machine — machineB successfully read project memory pushed from machineA on a different project; git objects mode confirmed working across sparse checkout boundary
+
+**2026-05-30:** MCP server remote sync — machineB-pushed memory (MIMP-005) visible on machineA without `git pull`; `origin/master` reads + 60s fetch TTL confirmed working end-to-end
 
 **2026-05-30:** `mimp init` validation — wrong short_name (path) blocked; wrong memory path (no directory) blocked; wrong memory path (no MEMORY.md) blocked; valid path registered correctly
 

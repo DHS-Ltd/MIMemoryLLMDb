@@ -1,6 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { getConfig, readRegistry } from './lib/repo.js';
+import { getConfig, readRegistry, gitFetchIfStale, gitReadFile } from './lib/repo.js';
 import { registerListProjects } from './tools/list-projects.js';
 import { registerGetMemory } from './tools/get-memory.js';
 import { registerSearchMemory } from './tools/search-memory.js';

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { resolveProject, getProjectGitPath, parseMemoryLinks, gitReadFile } from '../lib/repo.js';
+import { resolveProject, getProjectGitPath, parseMemoryLinks, gitReadFile, gitFetchIfStale, readRegistryFromGit } from '../lib/repo.js';
 
 export function registerGetMemory(server, repoPath, projects) {
   server.tool(
@@ -11,7 +11,9 @@ export function registerGetMemory(server, repoPath, projects) {
         .describe('If true, also return content of files referenced in MEMORY.md. Default: true'),
     },
     async (args) => {
-      const result = resolveProject(projects, args.project);
+      gitFetchIfStale(repoPath);
+      const liveProjects = readRegistryFromGit(repoPath) || projects;
+      const result = resolveProject(liveProjects, args.project);
       if (!result) {
         return {
           content: [{

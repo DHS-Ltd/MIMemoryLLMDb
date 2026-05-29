@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { resolveProject, getProjectGitPath, gitReadFile, gitListProjectPaths, gitListMdPaths } from '../lib/repo.js';
+import { resolveProject, getProjectGitPath, gitReadFile, gitListProjectPaths, gitListMdPaths, gitFetchIfStale, readRegistryFromGit } from '../lib/repo.js';
 
 const MAX_MATCHES = 20;
 
@@ -13,6 +13,8 @@ export function registerSearchMemory(server, repoPath, projects) {
         .describe('Optional: limit search to a specific project ID or short name'),
     },
     async (args) => {
+      gitFetchIfStale(repoPath);
+      const liveProjects = readRegistryFromGit(repoPath) || projects;
       const { query, project_filter } = args;
       if (!query || !query.trim()) {
         return { content: [{ type: 'text', text: 'Error: query is required' }] };
@@ -22,7 +24,7 @@ export function registerSearchMemory(server, repoPath, projects) {
 
       let foldersToSearch;
       if (project_filter) {
-        const result = resolveProject(projects, project_filter);
+        const result = resolveProject(liveProjects, project_filter);
         if (!result) {
           return {
             content: [{

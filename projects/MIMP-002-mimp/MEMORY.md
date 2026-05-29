@@ -6,7 +6,7 @@
 |--------------|------------------------------------|
 | Project ID   | MIMP-002                           |
 | Short name   | mimp                               |
-| Last updated | 2026-05-29                         |
+| Last updated | 2026-05-30                         |
 | Updated by   | machineA                           |
 | Status       | active                             |
 | Machines     | machineA, machineB (pending setup) |
@@ -38,6 +38,9 @@ MIMemoryLLMDb is a Git-based project memory system that lets AI assistants (Clau
 
 ## Recent Changes
 
+- 2026-05-30: MCP server upgraded to remote auto-sync — reads from `origin/master`; `gitFetchIfStale()` with 60s TTL runs on every tool call; registry re-read from git per call; no `git pull` needed to see changes pushed from other machines
+- 2026-05-30: MCP server verified working on machineB — reads project memories pushed from machineA via git objects; sparse checkout boundary confirmed transparent
+- 2026-05-30: MCP server upgraded to git objects mode — `git show HEAD:<path>` replaces disk reads; all projects visible regardless of sparse checkout
 - 2026-05-30: Sparse checkout rewritten — cone mode replaced with classic file-based approach (`.git/info/sparse-checkout`); works on all git versions ≥ 1.7; verified working on machineB
 - 2026-05-30: `mimp init` hardened — memory path prompt moved BEFORE project ID assignment; wrong path now blocks registration entirely; validates directory existence AND MEMORY.md presence; short_name path-character guard added
 - 2026-05-30: `mimp init` changed from auto-detect to manual paste for claude_memory_path — user pastes path explicitly; more reliable than encoding-based guessing

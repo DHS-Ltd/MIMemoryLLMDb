@@ -9,6 +9,9 @@ A local Node.js MCP server that gives any MCP-compatible LLM client (Claude Code
 - **Transport:** stdio (stdin/stdout JSON-RPC 2.0) — no HTTP, no ports
 - **Access pattern:** Read-only. All writes still go through `mimp push`.
 - **Built:** 2026-05-29
+- **Git objects mode:** 2026-05-30 (reads via `git show` — all projects visible regardless of sparse checkout)
+- **Verified cross-machine:** 2026-05-30 (machineB confirmed reading machineA-pushed memories)
+- **Remote auto-sync:** 2026-05-30 (reads from `origin/master`; auto-fetches with 60s TTL — no `git pull` needed)
 
 ## File Structure
 
@@ -74,19 +77,34 @@ Status: **configured and working as of 2026-05-29**
 
 ### machineB (Windows Server 2022)
 
-Not yet configured. Steps required:
-1. `cd D:\MIMemoryLLMDb\mcp-server && npm install`
-2. Add to `%APPDATA%\Claude\claude_desktop_config.json` on machineB:
-   ```json
-   "mmp-memory": {
-     "command": "node",
-     "args": ["D:\\MIMemoryLLMDb\\mcp-server\\index.js"]
-   }
-   ```
-3. Restart Claude desktop app
-4. Verify with `/mcp` — should show `mmp-memory` with 3 tools
+Registered in `%APPDATA%\Claude\claude_desktop_config.json`:
+
+```json
+"mmp-memory": {
+  "command": "node",
+  "args": ["D:\\MIMemoryLLMDb\\mcp-server\\index.js"]
+}
+```
+
+Status: **configured and working as of 2026-05-30**
+
+Verified: machineB successfully read project memories pushed from machineA on a different project — confirmed cross-machine memory sharing via MCP works end-to-end.
 
 ## Implementation Notes
+
+### Remote auto-sync (2026-05-30)
+
+Every tool call runs `git fetch origin` first (at most once per 60 seconds — TTL-gated to avoid redundant network hits within a single tool invocation). All reads use `origin/master` instead of `HEAD`, so the server always reflects what is on GitHub regardless of local git state. The registry (`registry.json`) is also re-read from `origin/master` on each call, so new projects registered on any machine appear immediately — no server restart needed.
+
+Fetch failures are non-fatal: the server falls back to whatever objects are already in the local git store.
+
+**Effect:** pushing memory from machineB is immediately visible on machineA's MCP server at the next tool call. No `git pull` required.
+
+### Git objects mode (2026-05-30)
+
+All file reads were upgraded from disk (`fs.readFileSync`) to git object storage (`git show origin/master:<path>` and `git ls-tree origin/master <path>`). This means the MCP server sees all project memory files regardless of sparse checkout — machineB can query MIMP-001, MIMP-003, MIMP-004 even though only `projects/MIMP-002-mimp/` is checked out on disk.
+
+`git ls-tree` on this git version returns full paths (`projects/MIMP-001-...`), not bare names. The helpers use the output lines as-is rather than prepending `projects/`.
 
 ### BOM handling
 

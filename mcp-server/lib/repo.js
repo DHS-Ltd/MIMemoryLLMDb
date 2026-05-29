@@ -24,6 +24,17 @@ export function readRegistry(repoPath) {
   }
 }
 
+// Read registry.json from origin/master — picks up new projects registered on other machines
+export function readRegistryFromGit(repoPath) {
+  try {
+    const raw = (gitReadFile(repoPath, 'registry.json') || '').replace(/^﻿/, '');
+    const data = JSON.parse(raw);
+    return data.projects || {};
+  } catch {
+    return null;
+  }
+}
+
 // Returns [id, projectEntry] or null
 export function resolveProject(projects, query) {
   if (!query) return null;
@@ -104,10 +115,31 @@ export function getProjectGitPath(id, shortName) {
   return `projects/${id}-${shortName}`;
 }
 
-// Read a file from git objects — works even when sparse checkout excludes it from disk
+// Fetch from origin at most once every 60 seconds — keeps reads in sync with remote without
+// hitting the network on every individual file read within a single tool call.
+let _lastFetchMs = 0;
+const FETCH_TTL_MS = 60_000;
+
+export function gitFetchIfStale(repoPath) {
+  const now = Date.now();
+  if (now - _lastFetchMs < FETCH_TTL_MS) return;
+  try {
+    execSync('git fetch origin --quiet', {
+      cwd: repoPath,
+      encoding: 'utf8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+      timeout: 15_000,
+    });
+    _lastFetchMs = Date.now();
+  } catch {
+    // Fetch failure is non-fatal — fall back to whatever is already local
+  }
+}
+
+// Read a file from git objects via remote tracking branch — always reflects latest GitHub state
 export function gitReadFile(repoPath, gitPath) {
   try {
-    return execSync(`git show HEAD:${gitPath}`, {
+    return execSync(`git show origin/master:${gitPath}`, {
       cwd: repoPath,
       encoding: 'utf8',
       stdio: ['pipe', 'pipe', 'pipe'],
@@ -118,15 +150,14 @@ export function gitReadFile(repoPath, gitPath) {
   }
 }
 
-// List all project git paths from git objects: ['projects/MIMP-001-...', 'projects/MIMP-004-...']
+// List all project git paths from remote tracking branch
 export function gitListProjectPaths(repoPath) {
   try {
-    const out = execSync('git ls-tree --name-only HEAD projects/', {
+    const out = execSync('git ls-tree --name-only origin/master projects/', {
       cwd: repoPath,
       encoding: 'utf8',
       stdio: ['pipe', 'pipe', 'pipe'],
     });
-    // git ls-tree returns full paths like 'projects/MIMP-001-...' — use them as-is
     return out.trim().split('\n')
       .filter(n => n && !n.endsWith('.gitkeep'));
   } catch {
@@ -134,15 +165,14 @@ export function gitListProjectPaths(repoPath) {
   }
 }
 
-// List .md git paths inside a project folder: ['projects/MIMP-004-.../MEMORY.md', ...]
+// List .md git paths inside a project folder from remote tracking branch
 export function gitListMdPaths(repoPath, gitFolderPath) {
   try {
-    const out = execSync(`git ls-tree --name-only HEAD ${gitFolderPath}/`, {
+    const out = execSync(`git ls-tree --name-only origin/master ${gitFolderPath}/`, {
       cwd: repoPath,
       encoding: 'utf8',
       stdio: ['pipe', 'pipe', 'pipe'],
     });
-    // git ls-tree returns full paths like 'projects/MIMP-004-.../MEMORY.md' — use them as-is
     return out.trim().split('\n')
       .filter(n => n && n.endsWith('.md'));
   } catch {
