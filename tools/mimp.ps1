@@ -531,6 +531,7 @@ switch ($Command) {
     'status'        { Cmd-Status -ProjectRef $Arg1 }
     'sync'          { Cmd-Pull -ProjectRef $Arg1; Cmd-Push -ProjectRef $Arg1 }
     'sparse-status' {
+        Sync-SparseCheckout
         Write-Host ''
         Write-Host "  Sparse checkout paths for $MachineId" -ForegroundColor Cyan
         Write-Host '  ---------------------------------------------------' -ForegroundColor DarkGray
@@ -540,7 +541,7 @@ switch ($Command) {
         if ($list) {
             $list | ForEach-Object { Write-Host "  $_" -ForegroundColor DarkGray }
         } else {
-            Write-Host '  (sparse checkout not initialised)' -ForegroundColor Yellow
+            Write-Host '  (no paths configured)' -ForegroundColor Yellow
         }
         Write-Host ''
     }
