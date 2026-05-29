@@ -6,7 +6,7 @@
 |--------------|------------------------------------|
 | Project ID   | MIMP-002                           |
 | Short name   | mimp                               |
-| Last updated | 2026-05-28                         |
+| Last updated | 2026-05-29                         |
 | Updated by   | machineA                           |
 | Status       | active                             |
 | Machines     | machineA, machineB (pending setup) |
@@ -34,9 +34,11 @@ MIMemoryLLMDb is a Git-based project memory system that lets AI assistants (Clau
 | [architecture.md](./architecture.md) | System design, file structure, how push/pull works |
 | [current-state.md](./current-state.md) | What is built, tested, known bugs fixed, pending work |
 | [setup-history.md](./setup-history.md) | Exact steps taken to build this system — bugs hit and how fixed |
+| [mcp-server.md](./mcp-server.md) | MCP server design, tool list, config per machine, known issues |
 
 ## Recent Changes
 
+- 2026-05-29: MCP server built (`mcp-server/`) — 3 read-only tools exposed via stdio; registered in Claude desktop config on machineA; reads repo_path from existing `~/.mimp-config.json`
 - 2026-05-29: Git sparse checkout implemented — each machine now only downloads its own project folders; `mimp sparse-status` command added
 - 2026-05-29: `mimp init` auto-detects claude_memory_paths — encodes local path, scans ~/.claude/projects/, prompts Y/N; no manual registry editing needed
 - 2026-05-28: machineB (MedIServer) set up — clone, config, alias, PAT auth; registry conflict (singular vs plural field) resolved

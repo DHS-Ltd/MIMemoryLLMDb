@@ -1,4 +1,4 @@
-# MIMemoryLLMDb — Current State (2026-05-29)
+# MIMemoryLLMDb — Current State (2026-05-29, updated)
 
 ## What Is Built and Working
 
@@ -25,6 +25,7 @@
 | Git sparse checkout | Active — each machine only downloads its own projects |
 | registry.json | 3 projects registered |
 | machines.json | 2 machines registered |
+| MCP server (mcp-server/) | Built and registered — machineA |
 
 ### Registered Projects
 
@@ -45,7 +46,9 @@
 | docs/llm-guide.md | Complete |
 | docs/troubleshooting.md | Complete — 9 issues documented |
 | docs/roadmap.md | Complete — 15 enhancement ideas, 3 marked Done |
+| docs/mcp-server-guide.md | Complete — user manual for MCP server setup and usage |
 | docs/MaidulMemoryProject-Implementation-Guide.md | Original spec |
+| docs/MaidulMemoryProject-MCP-Server-BuildGuide.md | MCP server build spec |
 
 ## Key Features Built (chronological)
 
@@ -55,6 +58,7 @@
 | claude_memory_paths support in push/pull | 2026-05-28 | Per-machine, reads/writes Claude Code memory location |
 | mimp init auto-detects claude_memory_paths | 2026-05-29 | Encodes local path, scans ~/.claude/projects/, prompts Y/N |
 | Git sparse checkout (mimp sparse-status) | 2026-05-29 | Machines only download their own project folders |
+| MCP server (mcp-server/) | 2026-05-29 | Read-only; 3 tools: list_projects, get_project_memory, search_memories |
 
 ## Verified End-to-End Tests
 
@@ -71,11 +75,20 @@
 - `mimp sparse-status` shows correct path list for machineA
 - Sync-SparseCheckout runs before every git pull automatically
 
+**2026-05-29 — MCP server built (machineA):**
+- `node mcp-server/index.js` starts silently, connects via stdio
+- Reads `repo_path` from `~/.mimp-config.json` (no duplicate config needed)
+- All 3 tools tested and verified working
+- Registered in `%APPDATA%\Claude\claude_desktop_config.json` as `mmp-memory`
+- Handles UTF-8 BOM in registry.json (Windows-generated files)
+- machineB still needs: `npm install` in `mcp-server/` and Claude config entry
+
 ## Pending Work
 
 | Task | Priority | Notes |
 |------|----------|-------|
 | Test `mimp pull` end-to-end on machineB | High | claude_memory_paths.machineB now configured for MIMP-002 |
+| Set up MCP server on machineB | High | Run `npm install` in mcp-server/, add config entry to Claude settings |
 | Register remaining projects (dhv, bdc-marketing, hrh, erpnext) | Medium | Need to confirm local paths |
 | Build push-log.jsonl event log | Medium | Roadmap item — agreed to build next after sparse checkout |
 | Test sparse checkout prune on machineB | Medium | First mimp command on machineB should prune MIMP-001, MIMP-003 |
