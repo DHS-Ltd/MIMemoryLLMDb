@@ -1,6 +1,6 @@
 ﻿{
     "schema_version":  "1.0",
-    "next_id":  5,
+    "next_id":  6,
     "projects":  {
                      "MIMP-001":  {
                                       "short_name":  "image-converter",
@@ -54,6 +54,19 @@
                                                       },
                                       "claude_memory_paths":  {
                                                                   "machineA":  "C:\\Users\\maidu\\.claude\\projects\\e--DHS-PACS\\memory"
+                                                              }
+                                  },
+                     "MIMP-005":  {
+                                      "short_name":  "DHV-OHIF",
+                                      "full_name":  "DHV-Online",
+                                      "created":  "2026-05-30",
+                                      "created_by":  "machineB",
+                                      "status":  "active",
+                                      "local_paths":  {
+                                                          "machineB":  "D:\\ohif-fork"
+                                                      },
+                                      "claude_memory_paths":  {
+                                                                  "machineB":  "C:\\Users\\Administrator\\.claude\\projects\\d--ohif-fork\\memory"
                                                               }
                                   }
                  }
