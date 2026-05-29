@@ -1,6 +1,6 @@
-﻿{
+{
     "schema_version":  "1.0",
-    "next_id":  5,
+    "next_id":  4,
     "projects":  {
                      "MIMP-001":  {
                                       "short_name":  "image-converter",
@@ -42,16 +42,6 @@
                                       "claude_memory_paths":  {
                                                                   "machineA":  "C:\\Users\\maidu\\.claude\\projects\\e--v1-BdcHmsApp\\memory"
                                                               }
-                                  },
-                     "MIMP-004":  {
-                                      "short_name":  "E:\\DH-PACs-Solutions",
-                                      "full_name":  "DHPACsSolutions",
-                                      "created":  "2026-05-29",
-                                      "created_by":  "machineA",
-                                      "status":  "active",
-                                      "local_paths":  {
-                                                          "machineA":  null
-                                                      }
                                   }
                  }
 }

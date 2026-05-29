@@ -139,6 +139,16 @@ function Cmd-Init {
     param($FullName, $ShortName, $LocalPath)
     if (-not $FullName -or -not $ShortName) {
         Write-Host 'Usage: mimp init [full_name] [short_name] [local_path]' -ForegroundColor Yellow
+        Write-Host 'Example: mimp init "My Project" "my-project" "E:\path\to\project"' -ForegroundColor Yellow
+        exit 1
+    }
+
+    # Guard: short_name must not look like a file path
+    if ($ShortName -match '[:\\\/]') {
+        Write-Host "ERROR: short_name '$ShortName' looks like a file path." -ForegroundColor Red
+        Write-Host '       Did you forget the short_name argument?' -ForegroundColor Yellow
+        Write-Host 'Usage: mimp init [full_name] [short_name] [local_path]' -ForegroundColor Yellow
+        Write-Host 'Example: mimp init "My Project" "my-project" "E:\path\to\project"' -ForegroundColor Yellow
         exit 1
     }
 
@@ -191,7 +201,19 @@ function Cmd-Init {
 
     $folderName = "$projectId-$ShortName"
     $projectDir = Join-Path (Join-Path $RepoPath 'projects') $folderName
-    New-Item -ItemType Directory -Path $projectDir -Force | Out-Null
+
+    try {
+        New-Item -ItemType Directory -Path $projectDir -Force -ErrorAction Stop | Out-Null
+    } catch {
+        Write-Host "ERROR: Could not create project folder at $projectDir" -ForegroundColor Red
+        Write-Host "       $_" -ForegroundColor Red
+        Write-Host '       Rolling back registry entry — no commit will be made.' -ForegroundColor Yellow
+        # Remove the bad entry from registry before it can be committed
+        $reg.projects.PSObject.Properties.Remove($projectId)
+        $reg.next_id = $nextId
+        Save-Registry $reg
+        exit 1
+    }
 
     $today = Get-Date -Format 'yyyy-MM-dd'
     $template = @"
