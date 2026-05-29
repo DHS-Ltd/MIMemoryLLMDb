@@ -1,0 +1,10 @@
+{
+  "name": "mimp-memory-server",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "latest",
+    "zod": "^4.4.3"
+  }
+}

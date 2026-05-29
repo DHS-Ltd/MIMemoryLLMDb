@@ -57,7 +57,7 @@ mimp init "Full Project Name" "short-name" "E:\path\to\project"
 
 **After init:**
 1. Edit the generated `MEMORY.md` in `projects/MIMP-XXX-short-name/` with real content
-2. Add the `claude_memory_path` to `registry.json` if using Claude Code agent memory
+2. `mimp init` now prompts to auto-detect `claude_memory_paths` — answer Y if Claude Code has been run in the project before. If skipped or memory not yet created, add the path manually (see "Finding the Claude Memory Path on Any Machine" below)
 3. Run `mimp push short-name` to sync the populated MEMORY.md
 
 ---

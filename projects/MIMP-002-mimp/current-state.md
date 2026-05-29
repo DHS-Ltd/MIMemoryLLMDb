@@ -7,7 +7,7 @@
 | Command | Status | Notes |
 |---------|--------|-------|
 | `mimp list` | Working | Shows registered projects with status |
-| `mimp init` | Working | Registers project, creates MEMORY.md, commits+pushes |
+| `mimp init` | Working | Registers project, auto-detects claude_memory_paths, creates MEMORY.md, commits+pushes |
 | `mimp push` | Working | Copies memory files to repo, commits+pushes |
 | `mimp pull` | Working | Copies memory files from repo to local |
 | `mimp status` | Working | Shows file counts and timestamps |
@@ -58,7 +58,7 @@ On 2026-05-28:
 |------|----------|-------|
 | Set up machineB (MedIServer) | High | Clone repo, create config, add alias |
 | Register remaining projects (dhv, bdc-hms, erpnext, etc.) | Medium | Need to confirm paths |
-| Add `claude_memory_path` detection to `mimp init` | Low | See roadmap.md item #9 |
+| Add `claude_memory_path` detection to `mimp init` | Done | Implemented 2026-05-29 |
 | Test `mimp pull` end-to-end | Medium | Needs machineB to be set up first |
 
 ## Known Limitations

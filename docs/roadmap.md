@@ -208,3 +208,5 @@ A GitHub Actions workflow that runs on a schedule (e.g., daily) to verify all re
 | Claude Code agent memory path support | Done | 2026-05-28 |
 | Multi-machine registry | Done | 2026-05-28 |
 | Git-based backup | Done | 2026-05-28 |
+| `mimp init` auto-detects claude_memory_paths (Roadmap #9) | Done | 2026-05-29 |
+| Git sparse checkout — machines only download their own projects | Done | 2026-05-29 |

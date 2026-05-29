@@ -71,7 +71,55 @@ function Get-LocalPath($projectId) {
     return $path
 }
 
+function Get-EncodedClaudePath($localPath) {
+    if (-not $localPath) { return $null }
+    $drive   = $localPath[0].ToString().ToLower()
+    $rest    = $localPath.Substring(3)
+    $encoded = $rest -replace '\\', '-' -replace '_', '-'
+    return "$drive--$encoded"
+}
+
+function Find-ClaudeMemoryPath($localPath) {
+    if (-not $localPath) { return $null }
+    $encoded    = Get-EncodedClaudePath $localPath
+    $claudeBase = Join-Path $env:USERPROFILE '.claude\projects'
+    $memoryPath = Join-Path (Join-Path $claudeBase $encoded) 'memory'
+    if (Test-Path $memoryPath) { return $memoryPath }
+    return $null
+}
+
+function Sync-SparseCheckout {
+    # Requires machine config to be loaded
+    if (-not $MachineId) { return }
+
+    Push-Location $RepoPath
+
+    # Initialize cone mode (idempotent — safe to call repeatedly)
+    git sparse-checkout init --cone --quiet 2>$null
+
+    # Always include top-level dirs (root files included automatically in cone mode)
+    $paths = @('tools', 'docs')
+
+    # Add only project folders where this machine has a local_path configured
+    if (Test-Path $RegistryPath) {
+        $reg = Get-Content $RegistryPath -Raw | ConvertFrom-Json
+        foreach ($prop in $reg.projects.PSObject.Properties) {
+            $localPath = $prop.Value.local_paths.$MachineId
+            if ($localPath) {
+                $folderName = "$($prop.Name)-$($prop.Value.short_name)"
+                $paths += "projects/$folderName"
+            }
+        }
+    }
+
+    # Apply — git prunes working tree to match this list
+    & git sparse-checkout set @paths --quiet 2>$null
+
+    Pop-Location
+}
+
 function Git-Sync {
+    Sync-SparseCheckout
     Push-Location $RepoPath
     git pull --rebase --quiet 2>$null
     Pop-Location
@@ -121,6 +169,25 @@ function Cmd-Init {
     $reg.projects | Add-Member -NotePropertyName $projectId -NotePropertyValue $newProject
 
     Save-Registry $reg
+
+    # Auto-detect Claude Code memory path for this machine
+    $detectedMemoryPath = Find-ClaudeMemoryPath $LocalPath
+    if ($detectedMemoryPath) {
+        Write-Host ''
+        Write-Host '  Scanning for Claude Code memory...' -ForegroundColor DarkGray
+        Write-Host "  Found: $detectedMemoryPath" -ForegroundColor Cyan
+        $answer = Read-Host '  Add this as claude_memory_paths for this machine? [Y/N]'
+        if ($answer -match '^[Yy]') {
+            $claudePaths = [PSCustomObject]@{ $MachineId = $detectedMemoryPath }
+            $reg.projects.$projectId | Add-Member -NotePropertyName 'claude_memory_paths' -NotePropertyValue $claudePaths
+            Save-Registry $reg
+            Write-Host "  claude_memory_paths.$MachineId saved." -ForegroundColor Green
+        }
+    } elseif ($LocalPath) {
+        Write-Host ''
+        Write-Host '  No Claude memory found yet for this project.' -ForegroundColor DarkGray
+        Write-Host '  Tip: Run claude in the project first, then add the path manually to registry.json.' -ForegroundColor DarkGray
+    }
 
     $folderName = "$projectId-$ShortName"
     $projectDir = Join-Path (Join-Path $RepoPath 'projects') $folderName
@@ -413,24 +480,39 @@ function Cmd-Status {
 # ── Command Router ──────────────────────────────────────────────────
 
 switch ($Command) {
-    'init'   { Cmd-Init -FullName $Arg1 -ShortName $Arg2 -LocalPath $Arg3 }
-    'push'   { Cmd-Push -ProjectRef $Arg1 }
-    'pull'   { Cmd-Pull -ProjectRef $Arg1 }
-    'list'   { Cmd-List }
-    'status' { Cmd-Status -ProjectRef $Arg1 }
-    'sync'   { Cmd-Pull -ProjectRef $Arg1; Cmd-Push -ProjectRef $Arg1 }
+    'init'          { Cmd-Init -FullName $Arg1 -ShortName $Arg2 -LocalPath $Arg3 }
+    'push'          { Cmd-Push -ProjectRef $Arg1 }
+    'pull'          { Cmd-Pull -ProjectRef $Arg1 }
+    'list'          { Cmd-List }
+    'status'        { Cmd-Status -ProjectRef $Arg1 }
+    'sync'          { Cmd-Pull -ProjectRef $Arg1; Cmd-Push -ProjectRef $Arg1 }
+    'sparse-status' {
+        Write-Host ''
+        Write-Host "  Sparse checkout paths for $MachineId" -ForegroundColor Cyan
+        Write-Host '  ---------------------------------------------------' -ForegroundColor DarkGray
+        Push-Location $RepoPath
+        $list = git sparse-checkout list 2>$null
+        Pop-Location
+        if ($list) {
+            $list | ForEach-Object { Write-Host "  $_" -ForegroundColor DarkGray }
+        } else {
+            Write-Host '  (sparse checkout not initialised)' -ForegroundColor Yellow
+        }
+        Write-Host ''
+    }
     default  {
         Write-Host ''
         Write-Host '  MIMemoryLLMDb CLI' -ForegroundColor Cyan
         Write-Host '  Usage: mimp [command] [args]' -ForegroundColor Yellow
         Write-Host ''
         Write-Host '  Commands:'
-        Write-Host '    init   [full_name] [short_name] [local_path]  Register new project'
-        Write-Host '    push   [project_id_or_short_name]             Push local -> GitHub'
-        Write-Host '    pull   [project_id_or_short_name]             Pull GitHub -> local'
-        Write-Host '    list                                          List all projects'
-        Write-Host '    status [project_id_or_short_name]             Compare local vs repo'
-        Write-Host '    sync   [project_id_or_short_name]             Pull then push'
+        Write-Host '    init          [full_name] [short_name] [local_path]  Register new project'
+        Write-Host '    push          [project_id_or_short_name]             Push local -> GitHub'
+        Write-Host '    pull          [project_id_or_short_name]             Pull GitHub -> local'
+        Write-Host '    list                                                 List all projects'
+        Write-Host '    status        [project_id_or_short_name]             Compare local vs repo'
+        Write-Host '    sync          [project_id_or_short_name]             Pull then push'
+        Write-Host '    sparse-status                                        Show this machine''s sparse checkout paths'
         Write-Host ''
     }
 }

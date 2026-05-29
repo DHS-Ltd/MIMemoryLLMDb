@@ -26,7 +26,9 @@ cd D:\                          # or wherever you keep tools
 git clone https://github.com/DHS-Ltd/MIMemoryLLMDb.git
 ```
 
-Note the full path where you cloned it. You will need it in Step 3.
+> **Note on sparse checkout:** The initial clone downloads all project folders. That is fine — once you complete Steps 2-4 and run any `mimp` command, sparse checkout activates automatically. It will prune project folders that do not belong to this machine and keep only your projects on future pulls. No manual sparse checkout setup is needed.
+
+Note the full path where you cloned it. You will need it in Step 4.
 
 ---
 
@@ -210,6 +212,8 @@ git push
 
 This is a required step for `mimp push` and `mimp pull` to work correctly with Claude Code.
 **The path is different on every machine** — you must look it up, you cannot copy it from another machine.
+
+> **Shortcut:** If you use `mimp init` to register the project on this machine, it will automatically scan and prompt you to save the path — no manual steps needed. Only follow the manual steps below if you skipped the prompt, the memory folder did not exist yet, or you are adding `claude_memory_paths` for a project already registered on another machine.
 
 **6a — Open Claude Code in the project at least once**
 
