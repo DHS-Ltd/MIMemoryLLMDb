@@ -37,6 +37,8 @@ MIMemoryLLMDb is a Git-based project memory system that lets AI assistants (Clau
 
 ## Recent Changes
 
-- 2026-05-28: Full system built from scratch in one session
-- 2026-05-28: MIMP-001 (ImageConverter) registered and memory pushed — first successful end-to-end test
-- 2026-05-28: Documentation suite created (workflow, add-new-machine, llm-guide, troubleshooting, roadmap)
+- 2026-05-29: Git sparse checkout implemented — each machine now only downloads its own project folders; `mimp sparse-status` command added
+- 2026-05-29: `mimp init` auto-detects claude_memory_paths — encodes local path, scans ~/.claude/projects/, prompts Y/N; no manual registry editing needed
+- 2026-05-28: machineB (MedIServer) set up — clone, config, alias, PAT auth; registry conflict (singular vs plural field) resolved
+- 2026-05-28: claude_memory_paths changed to per-machine object (was single string); mimp pull now writes to claude_memory_paths location directly
+- 2026-05-28: Full system built in one session; MIMP-001 pushed successfully; documentation suite created

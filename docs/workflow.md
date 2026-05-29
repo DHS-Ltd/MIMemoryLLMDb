@@ -55,9 +55,44 @@ mimp init "Full Project Name" "short-name" "E:\path\to\project"
 - `short-name` — used in commands like `mimp push short-name` (no spaces, use hyphens)
 - `local-path` — full path to the **project directory** on this machine (where your code lives, e.g. `E:\Projects\MyApp`). This is NOT the memory path — memory location is configured separately via `claude_memory_path` in registry.json.
 
+**After init — practical example:**
+
+```
+PS E:\> mimp init "DH DICOM Viewer" "dhv" "D:\Projects\DHV"
+
+  Project registered successfully!
+  ID:     MIMP-004
+  Name:   DH DICOM Viewer
+  Folder: projects/MIMP-004-dhv/
+
+  Scanning for Claude Code memory...
+  Found: C:\Users\maidu\.claude\projects\d--Projects-DHV\memory
+  Add this as claude_memory_paths for this machine? [Y/N]: Y
+  claude_memory_paths.machineA saved.
+
+  Next steps:
+  1. Edit projects/MIMP-004-dhv/MEMORY.md with project details
+  2. Run: mimp push dhv
+```
+
+**What just happened automatically:**
+- Project assigned `MIMP-004`, committed and pushed to GitHub
+- `mimp init` encoded the local path (`D:\Projects\DHV` → `d--Projects-DHV`), found the Claude Code memory folder, and saved `claude_memory_paths.machineA` to registry.json without any manual steps
+- Sparse checkout updated — `projects/MIMP-004-dhv/` added to this machine's checkout list
+
+**If Claude Code has not been run in the project yet:**
+
+```
+  Scanning for Claude Code memory...
+  No Claude memory found yet for this project.
+  Tip: Run claude in the project first, then add the path manually to registry.json.
+```
+
+No prompt is shown. Run `claude` inside the project directory once, then re-register manually or add `claude_memory_paths` by hand (see "Finding the Claude Memory Path on Any Machine" below).
+
 **After init:**
 1. Edit the generated `MEMORY.md` in `projects/MIMP-XXX-short-name/` with real content
-2. `mimp init` now prompts to auto-detect `claude_memory_paths` — answer Y if Claude Code has been run in the project before. If skipped or memory not yet created, add the path manually (see "Finding the Claude Memory Path on Any Machine" below)
+2. Claude memory path is auto-saved if detected — only manual action needed if memory folder did not exist yet
 3. Run `mimp push short-name` to sync the populated MEMORY.md
 
 ---
@@ -75,8 +110,11 @@ C:\Users\  <username>  \.claude\projects\  <encoded-project-path>  \memory\
 
 You cannot guess this path in advance — you must look it up on each machine individually.
 
-> **Note:** This is a one-time manual step per machine per project.
-> Auto-detection is planned (Roadmap item #9) but not yet built.
+> **Note:** `mimp init` now auto-detects and saves this path when you register a project — no manual steps needed if Claude Code has been run in the project at least once. The manual steps below are only needed when:
+> - You skipped the prompt during `mimp init`
+> - The memory folder did not exist yet at init time
+> - You are adding a path for a second machine on a project already registered elsewhere
+>
 > Your project MIMP-XXX number is shown by `mimp init` output or `mimp list`.
 
 ---
@@ -374,6 +412,84 @@ Archived projects still appear in `mimp list` (in gray) and their memory is pres
 
 ---
 
+## Sparse Checkout — Each Machine Only Downloads Its Own Projects
+
+When machineA pushes a project that machineB does not work on, machineB should never have to store or see those files. Git sparse checkout enforces this automatically.
+
+### How It Works
+
+Every time a `mimp` command runs, it recalculates which project folders belong to this machine (based on `local_paths.<machineId>` in registry.json) and tells git to only check out those folders. Project folders for other machines are on GitHub but are never downloaded to the local working tree.
+
+```
+GitHub (full repo)              machineA working tree       machineB working tree
+projects/MIMP-001-image-conv/   projects/MIMP-001-.../ ✓   (not downloaded)
+projects/MIMP-002-mimp/         projects/MIMP-002-.../ ✓   projects/MIMP-002-.../ ✓
+projects/MIMP-003-v1HMS/        projects/MIMP-003-.../ ✓   (not downloaded)
+projects/MIMP-004-dhv/          (not downloaded)            projects/MIMP-004-.../ ✓
+```
+
+### Practical Scenario — Registering a New Project on machineA
+
+machineA registers MIMP-005. GitHub gets the new project folder. machineB runs `mimp list` (which triggers `Git-Sync`):
+
+```powershell
+# machineB
+mimp list
+```
+
+What happens inside:
+1. `Sync-SparseCheckout` recalculates machineB's project list from registry.json
+2. MIMP-005 has no `local_paths.machineB` entry → not added to machineB's sparse list
+3. `git pull` downloads the updated registry.json but NOT `projects/MIMP-005-*/`
+4. machineB's `mimp list` shows MIMP-005 in the list (from registry) but with `---` for LOCAL
+
+machineB's disk stays clean — only its own project folders are present.
+
+### Practical Scenario — Adding a Project to machineB
+
+When machineB needs to work on an existing project (e.g., MIMP-001):
+
+```powershell
+# Step 1 — Add machineB's local path in registry.json on either machine
+notepad D:\MIMemoryLLMDb\registry.json
+# Add: "local_paths": { "machineA": "...", "machineB": "D:\\Projects\\ImageConverter" }
+git add registry.json
+git commit -m "registry: add machineB path for MIMP-001"
+git push
+
+# Step 2 — On machineB, run any mimp command
+mimp pull image-converter
+```
+
+On step 2, `Sync-SparseCheckout` now sees MIMP-001 has a `local_paths.machineB` entry, adds `projects/MIMP-001-image-converter` to machineB's sparse list, and `git pull` downloads that project folder for the first time.
+
+### Verifying Sparse Checkout
+
+```powershell
+mimp sparse-status
+```
+
+Output shows exactly which paths this machine checks out:
+
+```
+  Sparse checkout paths for machineA
+  ---------------------------------------------------
+  /
+  /tools/
+  /docs/
+  /projects/MIMP-001-image-converter/
+  /projects/MIMP-002-mimp/
+  /projects/MIMP-003-v1HMS/
+```
+
+Root-level files (`registry.json`, `machines.json`, `CLAUDE.md`, etc.) are always included automatically in git cone mode — they do not appear in the list but are always present.
+
+### First Run on a New Machine Clone
+
+The initial `git clone` downloads everything. The first `mimp` command after clone automatically initialises sparse checkout and prunes any project folders that do not belong to this machine. No manual setup needed.
+
+---
+
 ## Quick Reference
 
 | Task | Command |
@@ -384,3 +500,4 @@ Archived projects still appear in `mimp list` (in gray) and their memory is pres
 | Check all projects | `mimp list` |
 | Check sync state | `mimp status <project>` |
 | Pull then push | `mimp sync <project>` |
+| See sparse checkout paths | `mimp sparse-status` |

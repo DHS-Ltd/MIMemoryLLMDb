@@ -1,4 +1,4 @@
-# MIMemoryLLMDb — Current State (2026-05-28)
+# MIMemoryLLMDb — Current State (2026-05-29)
 
 ## What Is Built and Working
 
@@ -6,12 +6,13 @@
 
 | Command | Status | Notes |
 |---------|--------|-------|
-| `mimp list` | Working | Shows registered projects with status |
-| `mimp init` | Working | Registers project, auto-detects claude_memory_paths, creates MEMORY.md, commits+pushes |
-| `mimp push` | Working | Copies memory files to repo, commits+pushes |
-| `mimp pull` | Working | Copies memory files from repo to local |
-| `mimp status` | Working | Shows file counts and timestamps |
+| `mimp list` | Working | Shows all registered projects with local status |
+| `mimp init` | Working | Registers project, auto-detects claude_memory_paths, updates sparse checkout, commits+pushes |
+| `mimp push` | Working | Reads from claude_memory_paths, copies to repo, commits+pushes |
+| `mimp pull` | Working | Writes directly into machine's claude_memory_paths location |
+| `mimp status` | Working | Shows file counts and timestamps for a project |
 | `mimp sync` | Working | Runs pull then push |
+| `mimp sparse-status` | Working | Shows which project folders this machine checks out |
 
 ### Infrastructure
 
@@ -19,8 +20,10 @@
 |-----------|--------|
 | GitHub repo (DHS-Ltd/MIMemoryLLMDb) | Live |
 | machineA config (.mimp-config.json) | Configured |
-| PowerShell alias (mimp) in $PROFILE | Working |
-| registry.json | 2 projects registered |
+| machineB config (.mimp-config.json) | Configured |
+| PowerShell alias (mimp) in $PROFILE | Working on machineA and machineB |
+| Git sparse checkout | Active — each machine only downloads its own projects |
+| registry.json | 3 projects registered |
 | machines.json | 2 machines registered |
 
 ### Registered Projects
@@ -29,54 +32,70 @@
 |----|-----------|-----------|----------|----------|
 | MIMP-001 | image-converter | ImageConverter | E:\Self_project\ImageConverter | — |
 | MIMP-002 | mimp | MIMemoryLLMDb | E:\MIMemoryLLMDb | D:\MIMemoryLLMDb |
+| MIMP-003 | v1HMS | V1GasBDCHMS | E:\v1-BdcHmsApp | — |
 
 ### Documentation
 
 | File | Status |
 |------|--------|
 | README.md | Complete with doc links |
-| SCHEMA.md | Complete |
-| docs/workflow.md | Complete |
-| docs/add-new-machine.md | Complete |
+| SCHEMA.md | Complete — includes machine_id explanation |
+| docs/workflow.md | Complete — includes sparse checkout and auto-detect practical examples |
+| docs/add-new-machine.md | Complete — 8-step guide with sparse checkout note |
 | docs/llm-guide.md | Complete |
-| docs/troubleshooting.md | Complete — 8 issues documented |
-| docs/roadmap.md | Complete — 15 enhancement ideas |
+| docs/troubleshooting.md | Complete — 9 issues documented |
+| docs/roadmap.md | Complete — 15 enhancement ideas, 3 marked Done |
 | docs/MaidulMemoryProject-Implementation-Guide.md | Original spec |
 
-## Verified End-to-End Test
+## Key Features Built (chronological)
 
-On 2026-05-28:
-1. Ran `mimp push image-converter`
-2. Successfully found 6 memory files at `C:\Users\maidu\.claude\projects\e--Self-project-ImageConverter\memory\`
-3. Copied all 6 to `projects/MIMP-001-image-converter/` in the repo
-4. Committed with message: `push: MIMP-001 from machineA (2026-05-28 19:21)`
-5. Pushed to GitHub — verified files visible at github.com/DHS-Ltd/MIMemoryLLMDb
+| Feature | Built | Notes |
+|---------|-------|-------|
+| Core CLI (init/push/pull/list/status/sync) | 2026-05-28 | PS5.1 compatible |
+| claude_memory_paths support in push/pull | 2026-05-28 | Per-machine, reads/writes Claude Code memory location |
+| mimp init auto-detects claude_memory_paths | 2026-05-29 | Encodes local path, scans ~/.claude/projects/, prompts Y/N |
+| Git sparse checkout (mimp sparse-status) | 2026-05-29 | Machines only download their own project folders |
+
+## Verified End-to-End Tests
+
+**2026-05-28 — First push test:**
+- `mimp push image-converter` found 6 memory files at claude_memory_paths location
+- Committed and pushed to GitHub successfully
+
+**2026-05-28 — Cross-machine setup:**
+- machineB cloned repo, configured .mimp-config.json, set up PowerShell alias
+- Git auth set up with PAT via Windows Credential Manager
+- machineB registry conflict resolved (claude_memory_path singular vs claude_memory_paths plural)
+
+**2026-05-29 — Sparse checkout:**
+- `mimp sparse-status` shows correct path list for machineA
+- Sync-SparseCheckout runs before every git pull automatically
 
 ## Pending Work
 
 | Task | Priority | Notes |
 |------|----------|-------|
-| Set up machineB (MedIServer) | High | Clone repo, create config, add alias |
-| Register remaining projects (dhv, bdc-hms, erpnext, etc.) | Medium | Need to confirm paths |
-| Add `claude_memory_path` detection to `mimp init` | Done | Implemented 2026-05-29 |
-| Test `mimp pull` end-to-end | Medium | Needs machineB to be set up first |
+| Test `mimp pull` end-to-end on machineB | High | claude_memory_paths.machineB now configured for MIMP-002 |
+| Register remaining projects (dhv, bdc-marketing, hrh, erpnext) | Medium | Need to confirm local paths |
+| Build push-log.jsonl event log | Medium | Roadmap item — agreed to build next after sparse checkout |
+| Test sparse checkout prune on machineB | Medium | First mimp command on machineB should prune MIMP-001, MIMP-003 |
 
 ## Known Limitations
 
-- `mimp push` with `--all` flag does not exist yet — must push each project individually
-- `claude_memory_path` must be added manually to registry.json for each project
-- No conflict detection if two machines push the same project without pulling first
-- No encryption for sensitive memory content
-- machineB has not been set up — pull workflow is untested across machines
+- `mimp push --all` flag does not exist — must push each project individually
+- No conflict detection when two machines push without pulling first (Roadmap #10)
+- No encryption for sensitive memory content (Roadmap #13)
+- push-log.jsonl not yet built — no cross-machine audit trail yet
 
-## Git Commit History (this project)
+## Recent Git Commits
 
 ```
-d322088  push: MIMP-001 from machineA (2026-05-28 19:21)
-6aab32c  feat: support claude_memory_path in push command
-7ce6430  fix: Join-Path PS5.1 compat + add missing MIMP-001 MEMORY.md
-3b25bf0  init: MIMP-001 (image-converter) - ImageConverter
-a3f5f22  fix: replace box-drawing character to fix terminal encoding
-c2ffc1e  feat: add mimp PowerShell CLI tool
-53e683a  init: repository structure, schema, registry, machines
+feat: git sparse checkout — machines only download their own projects
+feat: mimp init auto-detects claude_memory_paths (roadmap #9)
+docs: document claude_memory_paths fix, per-machine path instructions
+fix: per-machine claude_memory_paths + pull writes to Claude Code memory location
+docs: add cross-machine sync practical example for MIMP-001
+init: MIMP-002 self-registration + full documentation suite
+push: MIMP-001 from machineA (2026-05-28 19:21)
+feat: support claude_memory_path in push command
 ```
