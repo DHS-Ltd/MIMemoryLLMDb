@@ -1,6 +1,5 @@
-import { join, relative } from 'path';
 import { z } from 'zod';
-import { resolveProject, getProjectFolder, listProjectFolders, listMdFiles, safeReadFile } from '../lib/repo.js';
+import { resolveProject, getProjectGitPath, gitReadFile, gitListProjectPaths, gitListMdPaths } from '../lib/repo.js';
 
 const MAX_MATCHES = 20;
 
@@ -33,19 +32,18 @@ export function registerSearchMemory(server, repoPath, projects) {
           };
         }
         const [id, project] = result;
-        foldersToSearch = [getProjectFolder(repoPath, id, project.short_name)];
+        foldersToSearch = [getProjectGitPath(id, project.short_name)];
       } else {
-        foldersToSearch = listProjectFolders(repoPath);
+        foldersToSearch = gitListProjectPaths(repoPath);
       }
 
       const matches = [];
-      const projectsDir = join(repoPath, 'projects');
 
       outer:
       for (const folder of foldersToSearch) {
-        const mdFiles = listMdFiles(folder);
-        for (const filePath of mdFiles) {
-          const content = safeReadFile(filePath);
+        const mdPaths = gitListMdPaths(repoPath, folder);
+        for (const gitPath of mdPaths) {
+          const content = gitReadFile(repoPath, gitPath);
           if (!content) continue;
 
           const lines = content.split('\n');
@@ -55,7 +53,7 @@ export function registerSearchMemory(server, repoPath, projects) {
               const start = Math.max(0, i - 2);
               const end = Math.min(lines.length - 1, i + 2);
               const contextLines = lines.slice(start, end + 1);
-              const relPath = relative(projectsDir, filePath).replace(/\\/g, '/');
+              const relPath = gitPath.replace(/^projects\//, '');
               matches.push({ relPath, lineNum: i + 1, context: contextLines.join('\n') });
               if (matches.length >= MAX_MATCHES) break outer;
             }

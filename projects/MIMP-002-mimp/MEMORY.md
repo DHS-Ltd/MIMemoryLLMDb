@@ -38,9 +38,10 @@ MIMemoryLLMDb is a Git-based project memory system that lets AI assistants (Clau
 
 ## Recent Changes
 
-- 2026-05-29: MCP server built (`mcp-server/`) — 3 read-only tools exposed via stdio; registered in Claude desktop config on machineA; reads repo_path from existing `~/.mimp-config.json`
-- 2026-05-29: Git sparse checkout implemented — each machine now only downloads its own project folders; `mimp sparse-status` command added
-- 2026-05-29: `mimp init` auto-detects claude_memory_paths — encodes local path, scans ~/.claude/projects/, prompts Y/N; no manual registry editing needed
-- 2026-05-28: machineB (MedIServer) set up — clone, config, alias, PAT auth; registry conflict (singular vs plural field) resolved
-- 2026-05-28: claude_memory_paths changed to per-machine object (was single string); mimp pull now writes to claude_memory_paths location directly
-- 2026-05-28: Full system built in one session; MIMP-001 pushed successfully; documentation suite created
+- 2026-05-30: Sparse checkout rewritten — cone mode replaced with classic file-based approach (`.git/info/sparse-checkout`); works on all git versions ≥ 1.7; verified working on machineB
+- 2026-05-30: `mimp init` hardened — memory path prompt moved BEFORE project ID assignment; wrong path now blocks registration entirely; validates directory existence AND MEMORY.md presence; short_name path-character guard added
+- 2026-05-30: `mimp init` changed from auto-detect to manual paste for claude_memory_path — user pastes path explicitly; more reliable than encoding-based guessing
+- 2026-05-30: `mimp sparse-status` reads `.git/info/sparse-checkout` file directly — no longer depends on `git sparse-checkout list`
+- 2026-05-29: MCP server built (`mcp-server/`) — 3 read-only tools exposed via stdio; registered in Claude desktop config on machineA
+- 2026-05-29: Git sparse checkout first implemented; `mimp sparse-status` command added
+- 2026-05-28: Full system built; machineB set up; documentation suite created

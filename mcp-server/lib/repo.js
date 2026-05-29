@@ -1,6 +1,7 @@
 import { readFileSync, readdirSync, existsSync } from 'fs';
 import { join, basename, resolve } from 'path';
 import { homedir } from 'os';
+import { execSync } from 'child_process';
 
 export function getConfig() {
   const configPath = join(homedir(), '.mimp-config.json');
@@ -93,6 +94,57 @@ export function listMdFiles(folderPath) {
     return readdirSync(folderPath, { withFileTypes: true })
       .filter(e => e.isFile() && e.name.endsWith('.md'))
       .map(e => join(folderPath, e.name));
+  } catch {
+    return [];
+  }
+}
+
+// Returns git-relative path for a project folder: 'projects/MIMP-004-dh-pacs-marketing'
+export function getProjectGitPath(id, shortName) {
+  return `projects/${id}-${shortName}`;
+}
+
+// Read a file from git objects — works even when sparse checkout excludes it from disk
+export function gitReadFile(repoPath, gitPath) {
+  try {
+    return execSync(`git show HEAD:${gitPath}`, {
+      cwd: repoPath,
+      encoding: 'utf8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+      maxBuffer: 10 * 1024 * 1024,
+    });
+  } catch {
+    return null;
+  }
+}
+
+// List all project git paths from git objects: ['projects/MIMP-001-...', 'projects/MIMP-004-...']
+export function gitListProjectPaths(repoPath) {
+  try {
+    const out = execSync('git ls-tree --name-only HEAD projects/', {
+      cwd: repoPath,
+      encoding: 'utf8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+    });
+    // git ls-tree returns full paths like 'projects/MIMP-001-...' — use them as-is
+    return out.trim().split('\n')
+      .filter(n => n && !n.endsWith('.gitkeep'));
+  } catch {
+    return [];
+  }
+}
+
+// List .md git paths inside a project folder: ['projects/MIMP-004-.../MEMORY.md', ...]
+export function gitListMdPaths(repoPath, gitFolderPath) {
+  try {
+    const out = execSync(`git ls-tree --name-only HEAD ${gitFolderPath}/`, {
+      cwd: repoPath,
+      encoding: 'utf8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+    });
+    // git ls-tree returns full paths like 'projects/MIMP-004-.../MEMORY.md' — use them as-is
+    return out.trim().split('\n')
+      .filter(n => n && n.endsWith('.md'));
   } catch {
     return [];
   }

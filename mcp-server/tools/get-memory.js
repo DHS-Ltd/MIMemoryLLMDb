@@ -1,6 +1,5 @@
-import { join } from 'path';
 import { z } from 'zod';
-import { resolveProject, getProjectFolder, parseMemoryLinks, safeReadFile } from '../lib/repo.js';
+import { resolveProject, getProjectGitPath, parseMemoryLinks, gitReadFile } from '../lib/repo.js';
 
 export function registerGetMemory(server, repoPath, projects) {
   server.tool(
@@ -23,15 +22,15 @@ export function registerGetMemory(server, repoPath, projects) {
       }
 
       const [id, project] = result;
-      const folder = getProjectFolder(repoPath, id, project.short_name);
-      const memoryPath = join(folder, 'MEMORY.md');
-      const memoryContent = safeReadFile(memoryPath);
+      const gitFolder = getProjectGitPath(id, project.short_name);
+      const memoryGitPath = `${gitFolder}/MEMORY.md`;
+      const memoryContent = gitReadFile(repoPath, memoryGitPath);
 
       if (!memoryContent) {
         return {
           content: [{
             type: 'text',
-            text: `Error: MEMORY.md not found for project ${id} at ${memoryPath}`,
+            text: `Error: MEMORY.md not found for project ${id} at ${memoryGitPath}`,
           }],
         };
       }
@@ -43,8 +42,8 @@ export function registerGetMemory(server, repoPath, projects) {
       if (includeReferenced) {
         const referencedFiles = parseMemoryLinks(memoryContent);
         for (const filename of referencedFiles) {
-          const filePath = join(folder, filename);
-          const fileContent = safeReadFile(filePath);
+          const fileGitPath = `${gitFolder}/${filename}`;
+          const fileContent = gitReadFile(repoPath, fileGitPath);
           if (fileContent) {
             sections.push(`═══ ${filename} ═══\n${fileContent}`);
           } else {

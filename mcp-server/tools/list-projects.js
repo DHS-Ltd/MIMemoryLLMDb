@@ -1,6 +1,5 @@
-import { join } from 'path';
 import { z } from 'zod';
-import { getProjectFolder, safeReadFile } from '../lib/repo.js';
+import { getProjectGitPath, gitReadFile } from '../lib/repo.js';
 
 export function registerListProjects(server, repoPath, projects) {
   server.tool(
@@ -27,8 +26,8 @@ export function registerListProjects(server, repoPath, projects) {
       for (const [id, project] of entries) {
         lines.push(`${id} | ${project.short_name} | ${project.full_name} | ${project.status}`);
 
-        const folder = getProjectFolder(repoPath, id, project.short_name);
-        const memoryContent = safeReadFile(join(folder, 'MEMORY.md'));
+        const gitPath = getProjectGitPath(id, project.short_name);
+        const memoryContent = gitReadFile(repoPath, `${gitPath}/MEMORY.md`);
         if (memoryContent) {
           const summary = extractSummary(memoryContent);
           lines.push(`  Summary: ${summary}`);
@@ -49,13 +48,11 @@ function extractSummary(content) {
     const trimmed = line.trim();
     if (!trimmed) continue;
     if (trimmed.startsWith('#')) continue;
-    // Table row — extract first cell text
     if (trimmed.startsWith('|')) {
       const cell = trimmed.replace(/^\|\s*/, '').split('|')[0].trim();
       if (cell && cell !== '---' && !cell.startsWith('File')) return cell.slice(0, 120);
       continue;
     }
-    // Bullet — strip markdown link and return text
     if (trimmed.startsWith('- ')) {
       return trimmed.slice(2).replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').slice(0, 120);
     }
