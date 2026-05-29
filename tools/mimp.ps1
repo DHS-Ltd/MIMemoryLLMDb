@@ -89,31 +89,38 @@ function Find-ClaudeMemoryPath($localPath) {
 }
 
 function Sync-SparseCheckout {
-    # Requires machine config to be loaded
     if (-not $MachineId) { return }
 
-    Push-Location $RepoPath
-
-    # Initialize cone mode (idempotent — safe to call repeatedly)
-    git sparse-checkout init --cone --quiet 2>$null
-
-    # Always include top-level dirs (root files included automatically in cone mode)
-    $paths = @('tools', 'docs')
-
-    # Add only project folders where this machine has a local_path configured
+    # Find project folders belonging to this machine
+    $myProjectFolders = @()
     if (Test-Path $RegistryPath) {
         $reg = Get-Content $RegistryPath -Raw | ConvertFrom-Json
         foreach ($prop in $reg.projects.PSObject.Properties) {
-            $localPath = $prop.Value.local_paths.$MachineId
-            if ($localPath) {
-                $folderName = "$($prop.Name)-$($prop.Value.short_name)"
-                $paths += "projects/$folderName"
+            if ($prop.Value.local_paths.$MachineId) {
+                $myProjectFolders += "projects/$($prop.Name)-$($prop.Value.short_name)/"
             }
         }
     }
 
-    # Apply — git prunes working tree to match this list
-    & git sparse-checkout set @paths --quiet 2>$null
+    Push-Location $RepoPath
+
+    # Enable classic sparse checkout (works on all git versions >= 1.7)
+    git config core.sparseCheckout true
+
+    # Write .git/info/sparse-checkout
+    # Pattern order matters: include all root files, exclude all project subdirs,
+    # then re-include only this machine's project folders (later rules win)
+    $sparseFile = Join-Path $RepoPath '.git\info\sparse-checkout'
+    $sparseDir  = Split-Path $sparseFile -Parent
+    if (-not (Test-Path $sparseDir)) {
+        New-Item -ItemType Directory -Path $sparseDir -Force | Out-Null
+    }
+
+    $lines = @('/*', '!projects/*/') + $myProjectFolders
+    Set-Content $sparseFile $lines -Encoding UTF8
+
+    # Apply patterns to working tree
+    git read-tree -mu HEAD 2>$null
 
     Pop-Location
 }
@@ -535,13 +542,11 @@ switch ($Command) {
         Write-Host ''
         Write-Host "  Sparse checkout paths for $MachineId" -ForegroundColor Cyan
         Write-Host '  ---------------------------------------------------' -ForegroundColor DarkGray
-        Push-Location $RepoPath
-        $list = git sparse-checkout list 2>$null
-        Pop-Location
-        if ($list) {
-            $list | ForEach-Object { Write-Host "  $_" -ForegroundColor DarkGray }
+        $sparseFile = Join-Path $RepoPath '.git\info\sparse-checkout'
+        if (Test-Path $sparseFile) {
+            Get-Content $sparseFile | ForEach-Object { Write-Host "  $_" -ForegroundColor DarkGray }
         } else {
-            Write-Host '  (no paths configured)' -ForegroundColor Yellow
+            Write-Host '  (sparse checkout not active)' -ForegroundColor Yellow
         }
         Write-Host ''
     }
