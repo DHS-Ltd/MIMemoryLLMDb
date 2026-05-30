@@ -5,4 +5,5 @@
 - [Pricing Model](project-dh-pacs-pricing.md) â€” Free install, per-patient charge, patient data agreement, future B2C channel; exact numbers pending notebook session
 - [Website Content Decisions](project-dh-pacs-website-decisions.md) â€” All agreed changes to the blueprint (8 items); blueprint edits not yet applied; pending tasks for next session
 - [HIPAA Compliance Strategy](project-dh-pacs-hipaa.md) â€” Bangladesh audience targets HIPAA; open-source stack is compliant; company certification is a roadmap item; phrase as "built to HIPAA standards"
+- [Website Build Progress](project-dh-pacs-website-build.md) â€” Stack, repo, Supabase setup, folder structure, all remaining Phase 1 work; first thing next session: GitHub Actions Supabase ping job
 

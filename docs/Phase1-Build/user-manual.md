@@ -54,6 +54,28 @@ git pull
 
 ---
 
+## Sparse Checkout — Activating on a Machine
+
+Sparse checkout limits which `projects/` folders are downloaded to disk — each machine only gets the projects it owns. Core files (`tools/`, `docs/`, `mcp-server/`, `registry.json`) are always on disk regardless.
+
+**To activate**, just run any `mimp` command that does a pull:
+
+```powershell
+mimp sync mimp
+```
+
+Sparse checkout is applied automatically before every `git pull`. Once active, project folders belonging to other machines are removed from your working tree — but remain in git objects, so the MCP server can still read them.
+
+**To check the current rules:**
+
+```powershell
+mimp sparse-status
+```
+
+No data is lost — the MCP server reads from `origin/master` via git objects, not from disk.
+
+---
+
 ## Key Commands
 
 ```powershell
