@@ -9,4 +9,6 @@
 - [Color-palette tutorial reference](reference_color_palette_tutorial.md) โ€” in-repo Docs/Tutorial/COLOR_PALETTE.md is the canonical how-to for any color change
 - [Commit & deploy tutorial reference](reference_commit_and_deploy_tutorial.md) โ€” in-repo Docs/Tutorial/COMMIT_AND_DEPLOY.md is the full local โ’ GitHub โ’ VM โ’ Cloudflare workflow + cache-bust sequence
 - [Toolbar & hanging protocol how-to](reference_toolbar_and_hanging_protocol.md) โ€” 4-step recipe: create protocol โ’ register โ’ define button โ’ add to toolbarSections; isPreset trap; icon table; file checklist
+- [Demo portal: marketing site viewer](project_demo_portal.md) โ€” LIVE: /demo gateway + /demo-viewer/ OHIF; self-hosted orthanc-demo (11 studies); mobile card UI; DH Dicom Viewer mode; no filter bar
+- [Build & deploy ops rules](feedback_build_deploy_ops.md) โ€” never run 2 builds in parallel; always nginx -s reload after ohif container restart (stale DNS โ’ 502)
 
