@@ -250,7 +250,7 @@
                                       "created":  "2026-06-02",
                                       "created_by":  "machineB",
                                       "status":  "active",
-                                      "niche":  "Cetral Pacs System Building with Own serverVM",
+                                      "niche":  "software-saas",
                                       "business_unit":  "pacs",
                                       "entity":  "DHS",
                                       "role":  "Projects for the patient facing viewable link. Created PACS central with the inbound connections from the multiple sites",
