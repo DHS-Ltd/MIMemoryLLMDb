@@ -2,11 +2,7 @@
 
 ## Design Approach
 
-Option A — Pure Git + CLI Scripts, Copy method. No database engine, no embeddings. Git is the database. GitHub is the backup. Plain markdown is the format. (A read-only MCP server was later added for retrieval — it assembles context but stores nothing.)
-
-## Brain Layer (Phase 2 — 2026-06-02)
-
-The system was extended from a flat per-project store into a **whole-business brain** for DHS using an **entity → program → project** model: an `org/` layer above `projects/`, `registry.json` v2.0 with top-level `entities` + `programs` and typed per-project edges, and a schema-aware `mimp init` that classifies new projects at creation. See **`brain-layer.md`** for the full as-built reference and **`brain-architecture-decision.md`** for the decision rationale + DHS business context. The sections below describe the Phase-1 foundation the brain builds on.
+Option A — Pure Git + CLI Scripts, Copy method. No database engine, no embeddings, no server. Git is the database. GitHub is the backup. Plain markdown is the format.
 
 ## Repository Structure
 
@@ -33,17 +29,8 @@ MIMemoryLLMDb/
 │       ├── current-state.md
 │       └── setup-history.md
 │
-├── org/                               -- BRAIN LAYER (Phase 2): the business above projects
-│   ├── business.md                    -- DHS identity + flywheel thesis + full map
-│   ├── north-star.md                  -- current priority (first PACS sale → Ibn Sina → Jul 2026)
-│   ├── entities/{dhs,bdc}.md          -- DHS (parent) + BDC (100%-owned subsidiary)
-│   ├── programs/                      -- non-code operational memory (BDC marketing, equipment pipeline)
-│   └── relationships.md               -- typed edges (owns / runs-on / markets / sold-to / ...)
-│
-├── mcp-server/                        -- Node MCP server (read-only retrieval; git-objects mode)
-│
 ├── tools/
-│   ├── mimp.ps1                       -- PowerShell CLI (all commands; init now brain-aware)
+│   ├── mimp.ps1                       -- PowerShell CLI (all commands)
 │   └── local-config.template.json    -- Template for machine-local config
 │
 └── docs/
@@ -74,17 +61,7 @@ MIMemoryLLMDb/
 }
 ```
 
-The `claude_memory_path` field was added because Claude Code stores agent memory centrally at `~/.claude/projects/<encoded-path>/memory/` rather than inside the project directory. (Current registry uses the per-machine plural form `claude_memory_paths` keyed by `machine_id`.)
-
-### Schema v2.0 (Brain Layer, 2026-06-02)
-
-`registry.json` was upgraded to `schema_version: "2.0"`, adding two top-level sections and typed edges on every project. It stays backward-compatible — old code reads `data.projects` and ignores the new keys; PowerShell JSON round-trips preserve everything (verified).
-
-- **`entities`** — `DHS` (parent), `BDC` (100%-owned subsidiary). Fields: `full_name`, `role`, `owned_by`/`ownership`, `activities`, `relationships`, `memory`, `tags`.
-- **`programs`** — non-code operational nodes: `PROG-001-bdc-patient-gen` (entity BDC), `PROG-002-equipment-pipeline` (entity DHS). Fields: `name`, `entity`, `stage`, `memory`, `tags`.
-- **per-project edges** — `niche` (software-saas | diagnostic-centre | equipment-supply | internal | personal), `business_unit`, `entity` (null for personal), `role`, `serves[]`, `relationships[]` (typed: owns/runs-on/dogfooded-by/markets/sold-to/...), `depends_on[]` (real build deps only), `tags[]`.
-
-See `brain-layer.md` for the full schema and the classification of all 5 current projects.
+The `claude_memory_path` field was added because Claude Code stores agent memory centrally at `~/.claude/projects/<encoded-path>/memory/` rather than inside the project directory.
 
 ## Machine Config Schema
 

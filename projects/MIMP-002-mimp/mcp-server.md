@@ -11,7 +11,18 @@ A local Node.js MCP server that gives any MCP-compatible LLM client (Claude Code
 - **Built:** 2026-05-29
 - **Git objects mode:** 2026-05-30 (reads via `git show` — all projects visible regardless of sparse checkout)
 - **Verified cross-machine:** 2026-05-30 (machineB confirmed reading machineA-pushed memories)
-- **Remote auto-sync:** 2026-05-30 (reads from `origin/master`; auto-fetches with 60s TTL — no `git pull` needed)
+- **Brain layer gap (2026-06-02):** the current 3 tools scan only `projects/` and read `data.projects` — they do **NOT** read the new `org/` layer or the v2.0 entity/program/edge fields. So the desktop MCP server cannot yet surface the business overview. Planned step **1e** closes this (below).
+
+## Planned: Brain Tools (Phase 2, step 1e)
+
+Additive, same read-only / git-objects design. The server stays a **context-assembler — it never calls a model** (reasoning stays with the calling LLM).
+
+- `get_business_overview` — `org/business.md` + entity files + registry edges → portfolio snapshot
+- `get_entity` — one entity file + its programs + linked projects (e.g. "tell me about BDC")
+- `get_decisions` — ADRs from `org/decisions/` filtered by scope / tag / date
+- `whats_next` — north-star + recent ADRs + program state + project `current-state.md`, surfacing **overdue / live-now** items
+
+See `brain-layer.md` for the full plan and `brain-architecture-decision.md` for rationale.
 
 ## File Structure
 
@@ -92,17 +103,9 @@ Verified: machineB successfully read project memories pushed from machineA on a 
 
 ## Implementation Notes
 
-### Remote auto-sync (2026-05-30)
-
-Every tool call runs `git fetch origin` first (at most once per 60 seconds — TTL-gated to avoid redundant network hits within a single tool invocation). All reads use `origin/master` instead of `HEAD`, so the server always reflects what is on GitHub regardless of local git state. The registry (`registry.json`) is also re-read from `origin/master` on each call, so new projects registered on any machine appear immediately — no server restart needed.
-
-Fetch failures are non-fatal: the server falls back to whatever objects are already in the local git store.
-
-**Effect:** pushing memory from machineB is immediately visible on machineA's MCP server at the next tool call. No `git pull` required.
-
 ### Git objects mode (2026-05-30)
 
-All file reads were upgraded from disk (`fs.readFileSync`) to git object storage (`git show origin/master:<path>` and `git ls-tree origin/master <path>`). This means the MCP server sees all project memory files regardless of sparse checkout — machineB can query MIMP-001, MIMP-003, MIMP-004 even though only `projects/MIMP-002-mimp/` is checked out on disk.
+All file reads were upgraded from disk (`fs.readFileSync`) to git object storage (`git show HEAD:<path>` and `git ls-tree HEAD <path>`). This means the MCP server sees all project memory files regardless of sparse checkout — machineB can query MIMP-001, MIMP-003, MIMP-004 even though only `projects/MIMP-002-mimp/` is checked out on disk.
 
 `git ls-tree` on this git version returns full paths (`projects/MIMP-001-...`), not bare names. The helpers use the output lines as-is rather than prepending `projects/`.
 
