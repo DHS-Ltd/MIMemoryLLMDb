@@ -52,3 +52,4 @@ MIMemoryLLMDb is a Git-based project memory system that lets AI assistants (Clau
 - 2026-05-29: Git sparse checkout first implemented; `mimp sparse-status` command added
 - 2026-05-28: Full system built; machineB set up; documentation suite created
 
+
