@@ -236,10 +236,24 @@ function Cmd-Init {
                 exit 1
             }
 
+            $niches = @('software-saas', 'diagnostic-centre', 'equipment-supply', 'internal')
             Write-Host ''
-            Write-Host '  Niche / activity line (e.g. software-saas, diagnostic-centre, equipment-supply, internal)' -ForegroundColor DarkGray
-            $pNiche = (Read-Host '  Niche').Trim()
-            if (-not $pNiche) { $pNiche = 'unsorted' }
+            Write-Host '  Niche / activity line for this project:' -ForegroundColor DarkGray
+            for ($n = 0; $n -lt $niches.Count; $n++) {
+                Write-Host ('    [{0}] {1}' -f ($n + 1), $niches[$n])
+            }
+            Write-Host ('    [{0}] other (type a custom value)' -f ($niches.Count + 1))
+            $nicheChoice = (Read-Host '  Choose niche number').Trim()
+            $nicheIdx = 0
+            if ([int]::TryParse($nicheChoice, [ref]$nicheIdx) -and $nicheIdx -ge 1 -and $nicheIdx -le $niches.Count) {
+                $pNiche = $niches[$nicheIdx - 1]
+            } elseif ($nicheIdx -eq ($niches.Count + 1)) {
+                $custom = (Read-Host '  Custom niche (one short token, e.g. research)').Trim()
+                if ($custom) { $pNiche = $custom } else { $pNiche = 'unsorted' }
+            } else {
+                Write-Host '  Invalid niche choice. Registration blocked - run mimp init again.' -ForegroundColor Red
+                exit 1
+            }
 
             Write-Host '  Business unit / product line (e.g. pacs, hms, tooling) - optional, Enter to skip' -ForegroundColor DarkGray
             $buInput = (Read-Host '  Business unit').Trim()
@@ -354,6 +368,11 @@ function Cmd-Init {
 
     $template | Set-Content (Join-Path $projectDir 'MEMORY.md') -Encoding UTF8
 
+    # Re-sync sparse checkout now that the project is registered, so its folder is inside the
+    # sparse definition before commit. Otherwise `git add -A` silently skips the new MEMORY.md
+    # on sparse-checkout machines (the sparse set was computed before this project existed).
+    Sync-SparseCheckout
+
     Git-CommitPush "init: $projectId ($ShortName) - $FullName"
 
     Write-Host ''
@@ -452,7 +471,7 @@ function Cmd-Push {
 
     $memoryMd = Join-Path $repoDir 'MEMORY.md'
     if (Test-Path $memoryMd) {
-        $content = Get-Content $memoryMd -Raw
+        $content = Get-Content $memoryMd -Raw -Encoding UTF8
         $today = Get-Date -Format 'yyyy-MM-dd'
         $content = $content -replace '(?<=Last updated \| )[\d-]+', $today
         $content = $content -replace '(?<=Updated by   \| )\S+', $MachineId
