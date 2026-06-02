@@ -1,73 +1,158 @@
-﻿{
-    "schema_version":  "1.0",
-    "next_id":  6,
-    "projects":  {
-                     "MIMP-001":  {
-                                      "short_name":  "image-converter",
-                                      "full_name":  "ImageConverter",
-                                      "created":  "2026-05-28",
-                                      "created_by":  "machineA",
-                                      "status":  "active",
-                                      "local_paths":  {
-                                                          "machineA":  "E:\\Self_project\\ImageConverter"
-                                                      },
-                                      "claude_memory_paths":  {
-                                                                  "machineA":  "C:\\Users\\maidu\\.claude\\projects\\e--Self-project-ImageConverter\\memory"
-                                                              }
-                                  },
-                     "MIMP-002":  {
-                                      "short_name":  "mimp",
-                                      "full_name":  "MIMemoryLLMDb",
-                                      "created":  "2026-05-28",
-                                      "created_by":  "machineA",
-                                      "status":  "active",
-                                      "local_paths":  {
-                                                          "machineA":  "E:\\MIMemoryLLMDb",
-                                                          "machineB":  "D:\\MIMemoryLLMDb"
-                                                      },
-                                      "claude_memory_paths":  {
-                                                                  "machineA":  "C:\\Users\\maidu\\.claude\\projects\\e--MIMemoryLLMDb\\memory",
-                                                                  "machineB":  "C:\\Users\\Administrator\\.claude\\projects\\d--MIMemoryLLMDb\\memory"
-                                                              }
-                                  },
-                     "MIMP-003":  {
-                                      "short_name":  "v1HMS",
-                                      "full_name":  "V1GasBDCHMS",
-                                      "created":  "2026-05-28",
-                                      "created_by":  "machineA",
-                                      "status":  "active",
-                                      "local_paths":  {
-                                                          "machineA":  "E:\\v1-BdcHmsApp"
-                                                      },
-                                      "claude_memory_paths":  {
-                                                                  "machineA":  "C:\\Users\\maidu\\.claude\\projects\\e--v1-BdcHmsApp\\memory"
-                                                              }
-                                  },
-                     "MIMP-004":  {
-                                      "short_name":  "dh-pacs-marketing",
-                                      "full_name":  "DHPACS",
-                                      "created":  "2026-05-30",
-                                      "created_by":  "machineA",
-                                      "status":  "active",
-                                      "local_paths":  {
-                                                          "machineA":  "E:\\DH-PACs-Solutions"
-                                                      },
-                                      "claude_memory_paths":  {
-                                                                  "machineA":  "C:\\Users\\maidu\\.claude\\projects\\e--DHS-PACS\\memory"
-                                                              }
-                                  },
-                     "MIMP-005":  {
-                                      "short_name":  "DHV-OHIF",
-                                      "full_name":  "DHV-Online",
-                                      "created":  "2026-05-30",
-                                      "created_by":  "machineB",
-                                      "status":  "active",
-                                      "local_paths":  {
-                                                          "machineB":  "D:\\ohif-fork"
-                                                      },
-                                      "claude_memory_paths":  {
-                                                                  "machineB":  "C:\\Users\\Administrator\\.claude\\projects\\d--ohif-fork\\memory"
-                                                              }
-                                  }
-                 }
+{
+  "schema_version": "2.0",
+  "next_id": 6,
+  "next_program_id": 3,
+  "entities": {
+    "DHS": {
+      "full_name": "Direct Hospital Solution Ltd",
+      "role": "Parent healthcare company; thesis: build trust via SaaS + diagnostic-centre -> convert to equipment deals",
+      "market": "Bangladesh healthcare",
+      "activities": ["software-saas", "diagnostic-centre", "equipment-supply"],
+      "memory": "org/entities/dhs.md",
+      "tags": ["parent", "healthcare", "bangladesh"]
+    },
+    "BDC": {
+      "full_name": "Baroicha Diagnostic Center Ltd",
+      "owned_by": "DHS",
+      "ownership": "100%",
+      "role": "Rural diagnostic centre (different business model); DHS proving ground + patient-gen engine",
+      "location": "Baroicha / Belabo / Raipura, Bangladesh",
+      "relationships": [
+        { "rel": "runs-on", "target": "MIMP-003" }
+      ],
+      "memory": "org/entities/bdc.md",
+      "tags": ["subsidiary", "diagnostic-centre", "belabo"]
+    }
+  },
+  "programs": {
+    "PROG-001-bdc-patient-gen": {
+      "name": "BDC patient-generation & marketing",
+      "entity": "BDC",
+      "stage": "active",
+      "memory": "org/programs/bdc-patient-generation.md",
+      "tags": ["marketing", "funnel", "facebook", "video-consult", "lead-capture"]
+    },
+    "PROG-002-equipment-pipeline": {
+      "name": "Equipment-deal pipeline",
+      "entity": "DHS",
+      "stage": "groundwork",
+      "memory": "org/programs/equipment-deal-pipeline.md",
+      "tags": ["equipment", "long-cycle", "revenue-anchor"]
+    }
+  },
+  "projects": {
+    "MIMP-001": {
+      "short_name": "image-converter",
+      "full_name": "ImageConverter",
+      "created": "2026-05-28",
+      "created_by": "machineA",
+      "status": "active",
+      "niche": "internal",
+      "business_unit": "tooling",
+      "entity": "DHS",
+      "role": "Desktop image converter (SVG->PNG, multi-res ICO); Python + Pillow + GTK",
+      "serves": [],
+      "relationships": [],
+      "depends_on": [],
+      "tags": ["python", "image-conversion", "desktop", "utility"],
+      "local_paths": {
+        "machineA": "E:\\Self_project\\ImageConverter"
+      },
+      "claude_memory_paths": {
+        "machineA": "C:\\Users\\maidu\\.claude\\projects\\e--Self-project-ImageConverter\\memory"
+      }
+    },
+    "MIMP-002": {
+      "short_name": "mimp",
+      "full_name": "MIMemoryLLMDb",
+      "created": "2026-05-28",
+      "created_by": "machineA",
+      "status": "active",
+      "niche": "internal",
+      "business_unit": "tooling",
+      "entity": "DHS",
+      "role": "Git-based cross-machine AI memory system + MCP server (the brain itself)",
+      "serves": ["DHS", "BDC"],
+      "relationships": [],
+      "depends_on": [],
+      "tags": ["memory", "mcp", "powershell", "infrastructure"],
+      "local_paths": {
+        "machineA": "E:\\MIMemoryLLMDb",
+        "machineB": "D:\\MIMemoryLLMDb"
+      },
+      "claude_memory_paths": {
+        "machineA": "C:\\Users\\maidu\\.claude\\projects\\e--MIMemoryLLMDb\\memory",
+        "machineB": "C:\\Users\\Administrator\\.claude\\projects\\d--MIMemoryLLMDb\\memory"
+      }
+    },
+    "MIMP-003": {
+      "short_name": "v1HMS",
+      "full_name": "V1GasBDCHMS",
+      "created": "2026-05-28",
+      "created_by": "machineA",
+      "status": "active",
+      "niche": "software-saas",
+      "business_unit": "hms",
+      "entity": "DHS",
+      "role": "Hospital/diagnostic management system; runs BDC; productization candidate for external centres",
+      "serves": ["BDC"],
+      "relationships": [
+        { "rel": "dogfooded-by", "target": "BDC" }
+      ],
+      "depends_on": [],
+      "tags": ["hms", "diagnostics", "analytics", "android", "web"],
+      "local_paths": {
+        "machineA": "E:\\v1-BdcHmsApp"
+      },
+      "claude_memory_paths": {
+        "machineA": "C:\\Users\\maidu\\.claude\\projects\\e--v1-BdcHmsApp\\memory"
+      }
+    },
+    "MIMP-004": {
+      "short_name": "dh-pacs-marketing",
+      "full_name": "DHPACS",
+      "created": "2026-05-30",
+      "created_by": "machineA",
+      "status": "active",
+      "niche": "software-saas",
+      "business_unit": "pacs",
+      "entity": "DHS",
+      "role": "DH PACS marketing site + product positioning (Supabase, HIPAA)",
+      "serves": ["DHS"],
+      "relationships": [
+        { "rel": "markets", "target": "pacs-product" }
+      ],
+      "depends_on": [],
+      "tags": ["pacs", "marketing", "website", "supabase", "hipaa", "gtm"],
+      "local_paths": {
+        "machineA": "E:\\DH-PACs-Solutions"
+      },
+      "claude_memory_paths": {
+        "machineA": "C:\\Users\\maidu\\.claude\\projects\\e--DHS-PACS\\memory"
+      }
+    },
+    "MIMP-005": {
+      "short_name": "DHV-OHIF",
+      "full_name": "DHV-Online",
+      "created": "2026-05-30",
+      "created_by": "machineB",
+      "status": "active",
+      "niche": "software-saas",
+      "business_unit": "pacs",
+      "entity": "DHS",
+      "role": "DHS PACS patient-facing DICOM viewer (OHIF fork) at pacs.dhsolutions.com.bd",
+      "serves": ["DHS"],
+      "relationships": [
+        { "rel": "sold-to", "target": "external-hospitals", "first_target": "Ibn Sina", "deadline": "2026-07" }
+      ],
+      "depends_on": [],
+      "tags": ["pacs", "dicom", "ohif", "viewer", "frontend"],
+      "local_paths": {
+        "machineB": "D:\\ohif-fork"
+      },
+      "claude_memory_paths": {
+        "machineB": "C:\\Users\\Administrator\\.claude\\projects\\d--ohif-fork\\memory"
+      }
+    }
+  }
 }

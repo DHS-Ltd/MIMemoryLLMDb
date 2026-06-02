@@ -201,18 +201,96 @@ function Cmd-Init {
         Write-Host '  Skipped — no memory path saved. Add manually to registry.json later.' -ForegroundColor DarkGray
     }
 
+    # ── Step 1.5: Brain classification (entity -> program -> project model) ──
+    Write-Host ''
+    Write-Host '  Project Classification (for the business brain)' -ForegroundColor Cyan
+    Write-Host '  Is this a DHS business project, or personal / self-learning?' -ForegroundColor DarkGray
+    Write-Host '    [1] Business  - belongs to a DHS entity'
+    Write-Host '    [2] Personal  - self-learning, not business related'
+    $scopeChoice = (Read-Host '  Choose [1/2]').Trim()
+
+    $isBusiness    = ($scopeChoice -eq '1')
+    $pEntity       = $null
+    $pNiche        = 'personal'
+    $pBusinessUnit = $null
+
+    if ($isBusiness) {
+        # Entity selection from the registry's defined entities
+        $entityNames = @($reg.entities.PSObject.Properties.Name)
+        if ($entityNames.Count -eq 0) {
+            Write-Host '  WARNING: no entities defined in registry; leaving entity blank.' -ForegroundColor Yellow
+            $pNiche = 'unsorted'
+        } else {
+            Write-Host ''
+            Write-Host '  Which entity does this project belong to?' -ForegroundColor DarkGray
+            for ($i = 0; $i -lt $entityNames.Count; $i++) {
+                $en = $entityNames[$i]
+                Write-Host ('    [{0}] {1} - {2}' -f ($i + 1), $en, $reg.entities.$en.full_name)
+            }
+            $entChoice = (Read-Host '  Choose entity number').Trim()
+            $entIdx = 0
+            if ([int]::TryParse($entChoice, [ref]$entIdx) -and $entIdx -ge 1 -and $entIdx -le $entityNames.Count) {
+                $pEntity = $entityNames[$entIdx - 1]
+            } else {
+                Write-Host '  Invalid entity choice. Registration blocked — run mimp init again.' -ForegroundColor Red
+                exit 1
+            }
+
+            Write-Host ''
+            Write-Host '  Niche / activity line (e.g. software-saas, diagnostic-centre, equipment-supply, internal)' -ForegroundColor DarkGray
+            $pNiche = (Read-Host '  Niche').Trim()
+            if (-not $pNiche) { $pNiche = 'unsorted' }
+
+            Write-Host '  Business unit / product line (e.g. pacs, hms, tooling) - optional, Enter to skip' -ForegroundColor DarkGray
+            $buInput = (Read-Host '  Business unit').Trim()
+            if ($buInput) { $pBusinessUnit = $buInput }
+        }
+    } else {
+        Write-Host '  Marked as personal / self-learning (no business entity).' -ForegroundColor DarkGray
+    }
+
+    # Role (one-line) and tags — asked for every project
+    Write-Host ''
+    Write-Host '  One-line role / description of this project - optional, Enter to skip' -ForegroundColor DarkGray
+    $pRole = (Read-Host '  Role').Trim()
+
+    Write-Host '  Tags (comma separated) - optional, Enter to skip' -ForegroundColor DarkGray
+    $tagsInput = (Read-Host '  Tags').Trim()
+    $pTags = @()
+    if ($tagsInput) {
+        $pTags = @($tagsInput -split ',' | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+    }
+
+    # Serves (business only) — which entities/programs this project serves
+    $pServes = @()
+    if ($isBusiness) {
+        Write-Host '  Serves (entity/program IDs this project serves, comma separated) - optional, Enter to skip' -ForegroundColor DarkGray
+        $servesInput = (Read-Host '  Serves').Trim()
+        if ($servesInput) {
+            $pServes = @($servesInput -split ',' | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+        }
+    }
+
     # ── Step 2: All checks passed — now assign project ID and register ──
     $nextId = $reg.next_id
     $projectId = 'MIMP-{0:D3}' -f $nextId
     $reg.next_id = $nextId + 1
 
     $newProject = [PSCustomObject]@{
-        short_name  = $ShortName
-        full_name   = $FullName
-        created     = (Get-Date -Format 'yyyy-MM-dd')
-        created_by  = $MachineId
-        status      = 'active'
-        local_paths = [PSCustomObject]@{
+        short_name    = $ShortName
+        full_name     = $FullName
+        created       = (Get-Date -Format 'yyyy-MM-dd')
+        created_by    = $MachineId
+        status        = 'active'
+        niche         = $pNiche
+        business_unit = $pBusinessUnit
+        entity        = $pEntity
+        role          = $pRole
+        serves        = $pServes
+        relationships = @()
+        depends_on    = @()
+        tags          = $pTags
+        local_paths   = [PSCustomObject]@{
             $MachineId = if ($LocalPath) { $LocalPath } else { $null }
         }
     }
