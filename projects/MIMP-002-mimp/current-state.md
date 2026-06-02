@@ -15,6 +15,34 @@ Major infrastructure change: flat per-project store → **whole-business brain**
 
 Committed + pushed as `e11110d` (clean rebase over machineB's MIMP-005 push). **Cross-machine `mimp init` test PASSED on machineB** — MIMP-006 (PACS-CENTRAL-DHS) registered with full brain fields; `entities`/`programs` survived machineB's round-trip. See `docs/test-init-machineB.md`.
 
+## Next Session — Start Here (remaining brain roadmap)
+
+The brain's data + capture layers are done and verified across both machines (remote @ `227b566`). Remaining build steps below; full specs in `docs/BrainBuild/brain-build-plan.md`. Recommended order: **1d -> 1e -> 1.5**.
+
+### 1d — Decision log (`org/decisions/` ADRs)  [quick; markdown only]
+- Create `org/decisions/` + an ADR template: frontmatter `id, date, scope:[entities/programs/projects], status, tags`; body `Context / Decision / Alternatives / Path-impact`.
+- Backfill decisions already made: OHIF fork (Tier 3+4), classic file-based sparse checkout, MCP git-objects + remote-sync, the whole-business entity->program->project brain (see `brain-architecture-decision.md`), the `MEMORY.md` push-encoding fix.
+- Do this first so `get_decisions` (1e) has real data to serve.
+
+### 1e — MCP brain tools  [the big one; lights up `org/` for the desktop assistant]
+- Add 4 read-only tools to `mcp-server/`. Reuse the existing git-objects / `origin/master` pattern; the server stays a **context-assembler — never calls a model**; stderr-only logging; Zod v4 schemas.
+  - `get_business_overview` -> `org/business.md` + entity files + registry edges
+  - `get_entity` -> one entity file + its programs + linked projects
+  - `get_decisions` -> ADRs from `org/decisions/` filtered by scope/tag/date
+  - `whats_next` -> north-star + recent ADRs + program state + project `current-state.md`, surfacing **OVERDUE / LIVE-NOW** items (compare dates vs today)
+- Files: `mcp-server/lib/repo.js` (add helpers to list/read `org/` + read `entities`/`programs` from registry; `gitReadFile` / `gitListProjectPaths` already exist), `mcp-server/tools/*.js` (4 new handlers), `mcp-server/index.js` (register them).
+- After building: restart Claude Desktop to load the new tools; test with "give me the business overview" / "what's next".
+- Until 1e ships, `org/` is invisible to the desktop MCP server (only repo-reading agents like Claude Code see it).
+
+### 1.5 — Weekly `DIGEST.md` strategist  [proactive brain]
+- machineB Task Scheduler job: `claude -p "<strategist prompt: read org/ + all project current-state.md; output portfolio state, OVERDUE/LIVE-NOW items, and the 3 highest-leverage next moves through the trust->equipment lens>"` -> writes `org/DIGEST.md` -> `mimp push mimp`.
+- First automated writer; writes still go through `mimp push`. Decide cadence + run time.
+
+### Also pending (verify with the user)
+- `org/entities/bdc.md` people/roles are marked TO VERIFY.
+- BDC overdue/live-now marketing items (lead magnet, health camp, ACS launch, KPI) — status unknown.
+- North-star: Ibn Sina deal "close" definition (signed / paid / pilot); whether a BDC reference is needed before close.
+
 ## What Is Built and Working
 
 ### CLI Commands (all tested on machineA and machineB)
