@@ -7,13 +7,13 @@ Major infrastructure change: flat per-project store → **whole-business brain**
 | Step | State |
 |------|-------|
 | 1a `org/business.md` + `north-star.md` | ✅ Done |
-| 1b `registry.json` v2.0 + schema-aware `mimp init` | ✅ Done (verified: parse + round-trip + both branches) |
+| 1b `registry.json` v2.0 + schema-aware `mimp init` (niche = validated numbered choice; sparse re-sync before commit) | ✅ Done + verified cross-machine (MIMP-006 from machineB) |
 | 1c `org/entities/*` + `programs/*` + `relationships.md` | ✅ Done |
 | 1d decision log (`org/decisions/` ADRs) | ⬜ Pending |
 | 1e MCP brain tools | ⬜ Pending — until then `org/` is invisible to the desktop MCP server |
 | 1.5 weekly `DIGEST.md` strategist (machineB) | ⬜ Pending |
 
-Committed + pushed as `e11110d` (clean rebase over machineB's MIMP-005 push). Cross-machine `mimp init` test still pending on machineB — see `docs/test-init-machineB.md`.
+Committed + pushed as `e11110d` (clean rebase over machineB's MIMP-005 push). **Cross-machine `mimp init` test PASSED on machineB** — MIMP-006 (PACS-CENTRAL-DHS) registered with full brain fields; `entities`/`programs` survived machineB's round-trip. See `docs/test-init-machineB.md`.
 
 ## What Is Built and Working
 
@@ -84,6 +84,7 @@ All projects now carry brain fields (`entity`, `niche`, `business_unit`, `role`,
 | MCP server v3 (remote sync) | 2026-05-30 | Reads from `origin/master`; auto-fetch 60s TTL; re-reads registry per call |
 | Brain layer: `org/` + registry v2.0 (entity→program→project) | 2026-06-02 | business/north-star/entities/programs/relationships; 2 entities (DHS, BDC), 2 programs |
 | Schema-aware `mimp init` | 2026-06-02 | Business/Personal branch; classifies entity/niche/business_unit/role/tags/serves at creation; personal → entity null |
+| `mimp init` hardening | 2026-06-02 | `niche` now a validated numbered choice (controlled set + "other"); re-syncs sparse checkout after registering so the new folder's MEMORY.md is committed on sparse machines |
 
 ## Verified End-to-End Tests
 
@@ -105,11 +106,14 @@ All projects now carry brain fields (`entity`, `niche`, `business_unit`, `role`,
 
 **2026-06-02:** brain commit pushed to `origin/master` (`e11110d`) via clean rebase over machineB's disjoint MIMP-005 push — no conflict
 
+**2026-06-02:** **cross-machine schema-aware `mimp init` PASSED** — MIMP-006 (pacsvm) registered from machineB; remote registry shows all brain fields (entity=DHS, business_unit=pacs, serves=[DHS], tags) and `entities`/`programs` intact (machineB round-trip safe). Surfaced two issues, both fixed: free-form `niche` (now a numbered choice) and a sparse-checkout `git add` skip of the new folder (now re-syncs sparse before commit)
+
+**2026-06-02:** `mimp init` hardening verified — parses clean; niche choice resolves correctly (1→software-saas, 5→custom prompt, invalid→blocked)
+
 ## Pending Work
 
 | Task | Priority | Notes |
 |------|----------|-------|
-| Cross-machine `mimp init` test on machineB (new PACS project) | High | `docs/test-init-machineB.md` — proves schema-aware init end-to-end across machines |
 | 1e: MCP brain tools (read `org/` + new fields) | High | `get_business_overview` / `get_entity` / `get_decisions` / `whats_next`; lights up the brain for the desktop assistant |
 | 1d: decision log (`org/decisions/` ADRs) | Medium | trajectory layer — backfill OHIF fork, sparse checkout, git-objects MCP, this brain decision |
 | 1.5: weekly `DIGEST.md` strategist on machineB | Medium | proactive insight; first automated writer (still via `mimp push`) |

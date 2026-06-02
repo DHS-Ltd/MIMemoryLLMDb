@@ -93,12 +93,17 @@ MIMP-004 (software-saas/pacs/DHS, markets PACS), MIMP-005 (software-saas/pacs/DH
 `mimp init` now classifies new projects at creation so none are born orphans:
 
 1. First asks **Business vs Personal/self-learning**.
-2. Business → pick `entity` (numbered list read **live** from the registry), `niche`,
-   `business_unit`, `role`, `tags`, `serves`.
+2. Business → pick `entity` (numbered list read **live** from the registry), then `niche`
+   (**numbered choice** from a controlled set: software-saas / diagnostic-centre / equipment-supply /
+   internal, or "other" for a custom token), then `business_unit`, `role`, `tags`, `serves`.
 3. Personal → `entity: null`, `niche: "personal"` (skips entity/unit/serves) so the brain
    excludes it from business synthesis.
 4. `relationships` and `depends_on` default to `[]` (added by hand when a real edge exists).
-5. Invalid entity choice **blocks** registration (consistent with the existing path-validation hardening).
+5. Invalid entity/niche choice **blocks** registration (consistent with the existing path-validation hardening).
+6. After registering, init **re-syncs the sparse checkout** so the new project folder is inside the
+   sparse definition before commit — otherwise `git add -A` silently skips the new folder's `MEMORY.md`
+   on sparse-checkout machines (the sparse set is computed before the project exists). Found + fixed
+   during the MIMP-006 cross-machine test.
 
 ## What consumes the brain (current gap)
 
@@ -118,13 +123,15 @@ MIMP-004 (software-saas/pacs/DHS, markets PACS), MIMP-005 (software-saas/pacs/DH
 | Step | State |
 |------|-------|
 | 1a `org/business.md` + `north-star.md` | ✅ Done 2026-06-02 |
-| 1b registry v2.0 + schema-aware `mimp init` | ✅ Done 2026-06-02 (verified) |
+| 1b registry v2.0 + schema-aware `mimp init` (niche numbered choice; sparse re-sync) | ✅ Done 2026-06-02; verified cross-machine via MIMP-006 from machineB |
 | 1c `org/entities/*` + `programs/*` + `relationships.md` | ✅ Done 2026-06-02 |
 | 1d ADR/decision log (`org/decisions/`) | ⬜ Pending |
 | 1e MCP brain tools | ⬜ Pending (until then `org/` invisible to desktop MCP) |
 | 1.5 scheduled `DIGEST.md` strategist | ⬜ Pending |
 
 Committed + pushed to origin/master as `e11110d` (rebased over machineB's MIMP-005 push).
+Cross-machine `mimp init` validated 2026-06-02: MIMP-006 (PACS-CENTRAL-DHS) registered from machineB
+with all brain fields; remote registry kept `entities`/`programs` intact (machineB round-trip safe).
 
 ## Design principles
 
