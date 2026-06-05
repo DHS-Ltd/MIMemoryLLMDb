@@ -1,4 +1,4 @@
-# MIMemoryLLMDb — Current State (2026-06-02)
+# MIMemoryLLMDb — Current State (2026-06-05)
 
 ## Brain Layer (Phase 2) — Status (2026-06-02)
 
@@ -9,22 +9,22 @@ Major infrastructure change: flat per-project store → **whole-business brain**
 | 1a `org/business.md` + `north-star.md` | ✅ Done |
 | 1b `registry.json` v2.0 + schema-aware `mimp init` (niche = validated numbered choice; sparse re-sync before commit) | ✅ Done + verified cross-machine (MIMP-006 from machineB) |
 | 1c `org/entities/*` + `programs/*` + `relationships.md` | ✅ Done |
-| 1d decision log (`org/decisions/` ADRs) | ⬜ Pending |
-| 1e MCP brain tools | ⬜ Pending — until then `org/` is invisible to the desktop MCP server |
+| 1d decision log (`org/decisions/` ADRs) | ✅ Done 2026-06-05 — template + 5 ADRs (ADR-0001 OHIF flagged TO VERIFY) |
+| 1e MCP brain tools | ⬜ Pending — until then `org/` + ADRs are invisible to the desktop MCP server |
 | 1.5 weekly `DIGEST.md` strategist (machineB) | ⬜ Pending |
 
 Committed + pushed as `e11110d` (clean rebase over machineB's MIMP-005 push). **Cross-machine `mimp init` test PASSED on machineB** — MIMP-006 (PACS-CENTRAL-DHS) registered with full brain fields; `entities`/`programs` survived machineB's round-trip. See `docs/test-init-machineB.md`.
 
 ## Next Session — Start Here (remaining brain roadmap)
 
-The brain's data + capture layers are done and verified across both machines (remote @ `227b566`). Remaining build steps below; full specs in `docs/BrainBuild/brain-build-plan.md`. Recommended order: **1d -> 1e -> 1.5**.
+The brain's data + capture layers are done and verified across both machines. **1d (decision log) is now also done** — remaining: **1e -> 1.5**. Full specs in `docs/BrainBuild/brain-build-plan.md`. **Start the next session on 1e.**
 
-### 1d — Decision log (`org/decisions/` ADRs)  [quick; markdown only]
-- Create `org/decisions/` + an ADR template: frontmatter `id, date, scope:[entities/programs/projects], status, tags`; body `Context / Decision / Alternatives / Path-impact`.
-- Backfill decisions already made: OHIF fork (Tier 3+4), classic file-based sparse checkout, MCP git-objects + remote-sync, the whole-business entity->program->project brain (see `brain-architecture-decision.md`), the `MEMORY.md` push-encoding fix.
-- Do this first so `get_decisions` (1e) has real data to serve.
+### 1d — Decision log (`org/decisions/` ADRs)  ✅ DONE 2026-06-05
+- Built `org/decisions/` + `_TEMPLATE.md` (YAML frontmatter `id, date, status, scope[], tags[], supersedes, superseded_by`; body `Context / Decision / Alternatives / Path-impact`).
+- 5 ADRs backfilled: ADR-0001 OHIF fork (Tier 3+4 — **flagged TO VERIFY**; MIMP-005 record lives on machineB, sparse-excluded from machineA, so date/"Tier 3+4"/alternatives are reconstructed — correct from machineB), ADR-0002 classic file-based sparse checkout, ADR-0003 MCP git-objects + remote-sync, ADR-0004 whole-business brain, ADR-0005 MEMORY.md push-encoding fix.
+- These are the real data `get_decisions` (1e) will serve. **When building 1e, parse the YAML frontmatter for scope/tag/date filtering.**
 
-### 1e — MCP brain tools  [the big one; lights up `org/` for the desktop assistant]
+### 1e — MCP brain tools  [the big one; lights up `org/` + the ADRs for the desktop assistant]
 - Add 4 read-only tools to `mcp-server/`. Reuse the existing git-objects / `origin/master` pattern; the server stays a **context-assembler — never calls a model**; stderr-only logging; Zod v4 schemas.
   - `get_business_overview` -> `org/business.md` + entity files + registry edges
   - `get_entity` -> one entity file + its programs + linked projects
@@ -142,9 +142,9 @@ All projects now carry brain fields (`entity`, `niche`, `business_unit`, `role`,
 
 | Task | Priority | Notes |
 |------|----------|-------|
-| 1e: MCP brain tools (read `org/` + new fields) | High | `get_business_overview` / `get_entity` / `get_decisions` / `whats_next`; lights up the brain for the desktop assistant |
-| 1d: decision log (`org/decisions/` ADRs) | Medium | trajectory layer — backfill OHIF fork, sparse checkout, git-objects MCP, this brain decision |
+| 1e: MCP brain tools (read `org/` + new fields) | High | `get_business_overview` / `get_entity` / `get_decisions` / `whats_next`; lights up the brain for the desktop assistant. `get_decisions` parses `org/decisions/` ADR frontmatter (scope/tag/date) |
 | 1.5: weekly `DIGEST.md` strategist on machineB | Medium | proactive insight; first automated writer (still via `mimp push`) |
+| Verify ADR-0001 (OHIF fork) from machineB | Medium | date / "Tier 3+4" meaning / alternatives are reconstructed + flagged TO VERIFY — confirm against the DHV-OHIF (MIMP-005) record on machineB |
 | Test `mimp pull` end-to-end on machineB | High | claude_memory_paths.machineB configured for MIMP-002 |
 | Register remaining projects (bdc-hms, erpnext, bdc-marketing, hrh) | Medium | Need to confirm local paths |
 | Build push-log.jsonl event log | Medium | Roadmap item — next planned feature |

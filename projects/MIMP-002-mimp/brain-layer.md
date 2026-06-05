@@ -55,6 +55,7 @@ org/
 ├── programs/
 │   ├── bdc-patient-generation.md   -- marketing/funnel + 23-May audit + overdue/live-now view
 │   └── equipment-deal-pipeline.md  -- the long-term anchor (groundwork stage)
+├── decisions/           -- ADR trajectory layer (step 1d, done): _TEMPLATE.md + ADR-0001..0005
 ├── relationships.md     -- typed edges, human-readable
 └── DIGEST.md            -- (planned) weekly strategist output; never hand-edited
 ```
@@ -108,9 +109,10 @@ MIMP-004 (software-saas/pacs/DHS, markets PACS), MIMP-005 (software-saas/pacs/DH
 ## What consumes the brain (current gap)
 
 - **Today:** only an agent reading the repo directly (Claude Code in this repo, or the future
-  digest job) can see `org/`. The **3 existing MCP tools** (`list_projects`, `get_project_memory`,
-  `search_memories`) only scan `projects/` and ignore `org/` + the new registry fields — so the
-  Claude **Desktop** MCP server cannot yet surface the business overview.
+  digest job) can see `org/` — including the new `org/decisions/` ADRs (step 1d). The **3 existing
+  MCP tools** (`list_projects`, `get_project_memory`, `search_memories`) only scan `projects/` and
+  ignore `org/` + the new registry fields — so the Claude **Desktop** MCP server cannot yet surface
+  the business overview or the decision log.
 - **Planned (step 1e):** add 4 brain tools — `get_business_overview`, `get_entity`,
   `get_decisions`, `whats_next` (surfaces overdue/live-now). The server stays a **context-assembler;
   it never calls a model** — reasoning stays with the calling LLM, consistent with Phase 1.
@@ -125,8 +127,8 @@ MIMP-004 (software-saas/pacs/DHS, markets PACS), MIMP-005 (software-saas/pacs/DH
 | 1a `org/business.md` + `north-star.md` | ✅ Done 2026-06-02 |
 | 1b registry v2.0 + schema-aware `mimp init` (niche numbered choice; sparse re-sync) | ✅ Done 2026-06-02; verified cross-machine via MIMP-006 from machineB |
 | 1c `org/entities/*` + `programs/*` + `relationships.md` | ✅ Done 2026-06-02 |
-| 1d ADR/decision log (`org/decisions/`) | ⬜ Pending |
-| 1e MCP brain tools | ⬜ Pending (until then `org/` invisible to desktop MCP) |
+| 1d ADR/decision log (`org/decisions/`) | ✅ Done 2026-06-05 — `_TEMPLATE.md` + 5 ADRs (ADR-0001 OHIF flagged TO VERIFY) |
+| 1e MCP brain tools | ⬜ Pending (until then `org/` + ADRs invisible to desktop MCP) |
 | 1.5 scheduled `DIGEST.md` strategist | ⬜ Pending |
 
 Committed + pushed to origin/master as `e11110d` (rebased over machineB's MIMP-005 push).
