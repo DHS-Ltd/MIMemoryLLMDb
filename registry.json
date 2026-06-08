@@ -1,6 +1,6 @@
 ﻿{
     "schema_version":  "2.0",
-    "next_id":  7,
+    "next_id":  8,
     "next_program_id":  3,
     "entities":  {
                      "DHS":  {
@@ -273,6 +273,40 @@
                                                       },
                                       "claude_memory_paths":  {
                                                                   "machineB":  "C:\\Users\\Administrator\\.claude\\projects\\D--Pacs-Viewer-Storage-Project\\memory"
+                                                              }
+                                  },
+                     "MIMP-007":  {
+                                      "short_name":  "mt-portal-pacs-server",
+                                      "full_name":  "DH_PACS_MT_Portal",
+                                      "created":  "2026-06-08",
+                                      "created_by":  "machineB",
+                                      "status":  "active",
+                                      "niche":  "software-saas",
+                                      "business_unit":  "pacs",
+                                      "entity":  "DHS",
+                                      "role":  "MT Portal DH PACS server",
+                                      "serves":  [
+                                                     "DH"
+                                                 ],
+                                      "relationships":  [
+
+                                                        ],
+                                      "depends_on":  [
+
+                                                     ],
+                                      "tags":  [
+                                                   "pacs",
+                                                   "dhpacs",
+                                                   "saas",
+                                                   "mt",
+                                                   "portal",
+                                                   "dhv"
+                                               ],
+                                      "local_paths":  {
+                                                          "machineB":  "D:\\dh-pacs-workstation"
+                                                      },
+                                      "claude_memory_paths":  {
+                                                                  "machineB":  "C:\\Users\\Administrator\\.claude\\projects\\d--dh-pacs-workstation\\memory"
                                                               }
                                   }
                  }
