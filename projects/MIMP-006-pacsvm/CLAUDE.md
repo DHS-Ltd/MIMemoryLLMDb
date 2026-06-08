@@ -4,7 +4,7 @@ Multi-site teleradiology platform: DICOM images received centrally, served to pa
 
 ---
 
-## Status — 2026-05-29
+## Status — 2026-06-03
 
 | Phase | Description | Status |
 |---|---|---|
@@ -15,9 +15,25 @@ Multi-site teleradiology platform: DICOM images received centrally, served to pa
 | GitHub Repo | Source at DHS-Ltd/dh-pacs-central | ✅ 2026-05-26 |
 | Issue Tracker | Google Form → GitHub Issues via Apps Script | ✅ 2026-05-26 |
 | Website Docs | Content blueprint + demo portal build guide | ✅ 2026-05-29 |
+| SaaS Phase 0 | DB schema: patients identity, `mt_users`, `link_mode`, claim tracking | ✅ 2026-06-03 |
 
 **Admin panel:** `https://pacs.dhsolutions.com.bd/admin` — creds from VM `.env`.
 **Gold-path link:** `https://pacs.dhsolutions.com.bd/open?token=7729128b-13f7-4db4-ab4c-c041ce045f81` (AYESHA AKTER, MR lumbar spine, 29 series)
+
+---
+
+## Companion project — DH PACS Workstation (on-site)
+
+The on-prem **Windows workstation** that pairs each hospital site with this central is a **separate repo** at **`d:\dh-pacs-workstation`** (its own `CLAUDE.md` + per-user memory). Two installers: **Component A** (branded Orthanc receiver — modalities C-STORE to it; it forwards to this central) and **Component B** (MT operator portal — a local SPA that calls this central's `/api/mt/*`).
+
+**Before changing anything on the central↔workstation contract, read `d:\dh-pacs-workstation\CLAUDE.md` first**, plus its live status/decisions in `~/.claude/projects/d--dh-pacs-workstation/memory/MEMORY.md`. Memory is keyed per-directory, so that context does **not** auto-load here — pull it manually when work touches these coupled surfaces:
+
+- **Claim/MT API** — `/api/mt/*`: safety-check response shape, claim body `{ patientId, typed_mobile, acknowledged_mismatches[] }`, undo windows, error codes, MT auth (`mt_jwt`, password = `dh_mt_id`).
+- **Site AET** — central allocator issues `SITE${nnn}_DHPACS` (3-digit, e.g. `SITE004_DHPACS`); legacy `SITE<NN>_ORTHANC` remain. The workstation installers were reconciled (2026-06-04) to accept both (`^SITE\d+_(ORTHANC|DHPACS)$`). ⚠️ The already-built **v0.1.0** installers from before that date still hardcode the old 2-digit `_ORTHANC` check — rebuild them before onboarding a `_DHPACS` site.
+- **`link_mode`** (`auto` vs `mt_gated`) + the P0.5 safety schema (`claim_safety_log`, `safety_alerts`, `dicom_patient_*` snapshot) the workstation's MT-gated claim flow depends on.
+- **Reachability/CORS** — Component B reaches `pacs.dhsolutions.com.bd` (and Tailscale `100.118.47.99`); central CORS/cookie policy affects its login (it currently works around `cors()` + `SameSite=Lax` with a same-origin reverse proxy in the portal server).
+
+If you change any of the above here, note the impact for the workstation side (and vice-versa). Deferred workstation design that will eventually touch this central: **MT-gated push** (image stays local until the MT pushes) — see the workstation memory.
 
 ---
 
@@ -30,6 +46,7 @@ Multi-site teleradiology platform: DICOM images received centrally, served to pa
 | `pacs-backend` | 3000 | Express API (`src/routes/`) |
 | `pacs-ohif` | static | OHIF viewer `pacs-ohif-dhs:v1.1` |
 | `pacs-admin-ui` | static | React SPA at `/admin/` |
+| `pacs-patient-ui` | static | React SPA at `/patient/` (patient portal) |
 | `pacs-nginx` | 80 | Reverse proxy |
 | `pacs-cloudflared` | tunnel | `pacs.dhsolutions.com.bd` HTTPS |
 
@@ -115,7 +132,7 @@ All `/api/admin/*` require `requireAdmin` (JWT httpOnly cookie `admin_jwt`, 8h, 
 | POST/DELETE | `/api/admin/links` | Generate / revoke share links |
 | GET | `/api/admin/links/:token/audit` | Audit log for token |
 
-**AET allocator:** `SITE01_ORTHANC`, `SITE02_ORTHANC`, … monotonic, never reuse. `SELECT … FOR UPDATE` prevents races.
+**AET allocator:** new sites get `SITE${nnn}_DHPACS` (3-digit, e.g. `SITE004_DHPACS`); legacy `SITE01_ORTHANC` / `SITE03_ORTHANC` remain as-is. Allocator spans both patterns so numbering never collides. `SELECT … FOR UPDATE` prevents races. Never reuse slots.
 
 ---
 
@@ -129,7 +146,7 @@ app.patients(id, site_id, site_pk→sites.id, external_patient_id,
 app.studies(id, study_uid, patient_id, modality, study_date)
 app.links(id, uuid_token, study_id, created_by, expires_at, revoked)
 app.audit_log(id, link_token nullable, user_email, action, accessed_at)
--- action: view | admin_view | link_generate | link_revoke
+-- action: view | admin_view | link_generate | link_revoke | purge | reclaim
 ```
 
 ---
@@ -138,6 +155,7 @@ app.audit_log(id, link_token nullable, user_email, action, accessed_at)
 
 ```
 /admin/           → pacs-admin-ui   (variable proxy_pass — needs explicit rewrite, see below)
+/patient/         → pacs-patient-ui (variable proxy_pass — same rewrite pattern as /admin/)
 /api/*            → pacs-backend:3000
 /dicom-web/*      → pacs-orthanc:8042
 /open             → viewer.html

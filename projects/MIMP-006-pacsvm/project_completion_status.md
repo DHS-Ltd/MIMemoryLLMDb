@@ -28,6 +28,9 @@ metadata:
 - Philips MRI studies forwarding correctly — patient visible in admin dashboard and mobile OHIF
 - See [[site03-cumilla-status]] for full detail
 
+### Live site link_mode (verified 2026-06-06) — supersedes phase-0 "all auto" snapshot
+`app.sites` now: SITE01_ORTHANC = **auto**, SITE02_ORTHANC (Block Test) = **auto**, SITE03_ORTHANC (Cumilla) = **mt_gated**, SITE04_ORTHANC (OfficeLab-DHS) = **mt_gated**, `unknown` placeholder = auto. So the MT-gated claim/telemetry path has real production data (SITE03/04); auto sites get size/counts only. See [[saas-patient-list-telemetry]].
+
 ### Admin Frontend — COMPLETE ✅ (all 4 phases, 2026-05-25/26)
 - Phase 1 (Registry plumbing): COMPLETE ✅
 - Phase 2 (Shell + auth + React): COMPLETE ✅

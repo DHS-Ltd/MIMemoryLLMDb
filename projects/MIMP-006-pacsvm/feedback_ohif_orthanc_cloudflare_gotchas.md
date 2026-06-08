@@ -45,3 +45,18 @@ When deploying OHIF v3 (image `ohif/app:latest`) behind nginx + Cloudflare Tunne
 
    **Why:** Using a variable in `proxy_pass` is necessary so nginx re-resolves the upstream IP on each request via Docker DNS (127.0.0.11), avoiding 502s after a container rebuild changes the container's IP. The rewrite is the correct way to combine dynamic resolution with prefix stripping.
    **How to apply:** Any time `proxy_pass` uses a `set $var` pattern AND the location has a prefix that should be stripped, always add a `rewrite ^/prefix/(.*)$ /$1 break;` line above `proxy_pass`.
+
+---
+
+7. **`docker compose up -d nginx` does NOT recreate the container when only `depends_on` changes — so new mounted `nginx.conf` content is not picked up.**
+
+   **Symptom (2026-06-04 P4 deploy):** After adding `patient-ui` to nginx's `depends_on` list and pushing the new `nginx.conf` (with a fresh `location /patient/` block) to `/srv/pacs/config/nginx/`, ran `docker compose up -d nginx`. Output said `Container pacs-nginx Running` — meaning compose decided the service spec hadn't changed enough to warrant recreate. The volume-mounted file was up to date inside the container (`nginx -t` validated it), but the nginx **process** was still serving the previous config. Smoke-test asset returned the OHIF catch-all instead of the patient-ui JS bundle.
+
+   **Fix:** After any nginx.conf change, explicitly send SIGHUP regardless of what compose says:
+   ```bash
+   docker exec pacs-nginx nginx -t        # validate first
+   docker exec pacs-nginx nginx -s reload # then reload
+   ```
+   `depends_on` is startup-ordering metadata, not runtime config — compose does not consider it a reason to recreate.
+
+   **Bonus — Host header matters when curling localhost for smoke tests.** `curl http://localhost/patient/` without a Host header does not match `server_name pacs.dhsolutions.com.bd;` and falls through to a different default server, which can return a confusing 200 + text/html that looks like a routing bug but isn't. Always include `-H "Host: pacs.dhsolutions.com.bd"` (or hit the public HTTPS URL directly) when smoke-testing the production routing.
