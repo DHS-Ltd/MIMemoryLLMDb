@@ -35,6 +35,63 @@ export function readRegistryFromGit(repoPath) {
   }
 }
 
+// Full registry from origin/master — schema v2.0: { entities, programs, projects, ... }.
+// Brain tools need entities/programs, not just the projects map.
+export function readFullRegistryFromGit(repoPath) {
+  try {
+    const raw = (gitReadFile(repoPath, 'registry.json') || '').replace(/^﻿/, '');
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+// Local-disk fallback for the full registry (used only if git objects are unreadable)
+export function readFullRegistry(repoPath) {
+  const registryPath = join(repoPath, 'registry.json');
+  try {
+    const raw = readFileSync(registryPath, 'utf8').replace(/^﻿/, '');
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+// Parse the YAML frontmatter block of an ADR (org/decisions/*.md).
+// Handles only the subset the ADR template uses: scalar values and inline arrays [a, b].
+// Returns { meta, body }; meta is {} when no frontmatter block exists.
+export function parseFrontmatter(content) {
+  const lines = content.split('\n');
+  if (lines[0]?.trim() !== '---') return { meta: {}, body: content };
+
+  const meta = {};
+  let end = -1;
+  for (let i = 1; i < lines.length; i++) {
+    if (lines[i].trim() === '---') { end = i; break; }
+    const line = lines[i].replace(/#.*$/, ''); // strip trailing comments
+    const sep = line.indexOf(':');
+    if (sep === -1) continue;
+    const key = line.slice(0, sep).trim();
+    const rawValue = line.slice(sep + 1).trim();
+    if (!key) continue;
+    if (!rawValue) { meta[key] = null; continue; }
+    if (rawValue.startsWith('[') && rawValue.endsWith(']')) {
+      meta[key] = rawValue.slice(1, -1).split(',').map(s => s.trim()).filter(Boolean);
+    } else {
+      meta[key] = rawValue;
+    }
+  }
+
+  if (end === -1) return { meta: {}, body: content };
+  return { meta, body: lines.slice(end + 1).join('\n') };
+}
+
+// First "# " heading of a markdown body, or null
+export function extractTitle(content) {
+  const match = content.match(/^#\s+(.+)$/m);
+  return match ? match[1].trim() : null;
+}
+
 // Returns [id, projectEntry] or null
 export function resolveProject(projects, query) {
   if (!query) return null;

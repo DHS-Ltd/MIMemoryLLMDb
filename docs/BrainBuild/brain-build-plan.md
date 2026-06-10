@@ -1,6 +1,6 @@
 # MIMemoryLLMDb — Central Brain Build Plan (Phase 2)
 
-> **Status:** IN PROGRESS — steps 1a, 1b, 1c built (2026-06-02); `mimp init` now schema-aware. Remaining: 1d ADRs, 1e MCP brain tools, 1.5 digest.
+> **Status:** IN PROGRESS — steps 1a, 1b, 1c built (2026-06-02); 1d ADRs built (2026-06-05); 1e MCP brain tools built (2026-06-10). Remaining: 1.5 digest.
 > **Decided:** 2026-06-01 · **Revised:** 2026-06-02 (entity→program→project model)
 > **Scope:** Evolve MIMemoryLLMDb from a per-project code-memory store into a **whole-business
 > brain** for DHS that answers *"where am I / what's next"* across entities, operational
@@ -221,9 +221,9 @@ machineB cron is chosen over a GitHub Action so it uses the existing Claude subs
 | **1a** | ✅ `org/business.md` + `org/north-star.md` | Built 2026-06-02. |
 | **1b** | ✅ `registry.json` v2.0 (`entities` + `programs` + project edges) **and** `mimp init` made schema-aware | Built 2026-06-02; init verified (parse + round-trip + both branches). |
 | **1c** | ✅ `org/entities/{dhs,bdc}.md` + `org/programs/*` + `relationships.md` | Built 2026-06-02. BDC people marked TO VERIFY; overdue/live-now flagged. |
-| **1d** | ⬜ ADR template + backfill key decisions | Establishes the trajectory layer. |
-| **1e** | ⬜ Brain tools added to MCP server | Additive; mirrors existing tool design. **Until this, `org/` is invisible to the desktop MCP server.** |
-| **1.5** | ⬜ machineB scheduled `DIGEST.md` strategist job | Depends on `org/` content (done) + ideally brain tools (1e). |
+| **1d** | ✅ ADR template + backfill key decisions | Built 2026-06-05: `_TEMPLATE.md` + ADR-0001..0005 (ADR-0001 flagged TO VERIFY). |
+| **1e** | ✅ Brain tools added to MCP server | Built 2026-06-10: 4 tools (`get_business_overview`, `get_entity`, `get_decisions`, `whats_next`), all verified over stdio (`mcp-server/test-brain-tools.mjs`). Restart Claude Desktop to load. |
+| **1.5** | ⬜ machineB scheduled `DIGEST.md` strategist job | Depends on `org/` content (done) + brain tools (done). **Next.** |
 
 **Recommended start:** 1b (registry v2.0) — purely structural; every later step reads those edges.
 
