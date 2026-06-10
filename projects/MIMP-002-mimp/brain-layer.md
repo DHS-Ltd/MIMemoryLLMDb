@@ -106,16 +106,16 @@ MIMP-004 (software-saas/pacs/DHS, markets PACS), MIMP-005 (software-saas/pacs/DH
    on sparse-checkout machines (the sparse set is computed before the project exists). Found + fixed
    during the MIMP-006 cross-machine test.
 
-## What consumes the brain (current gap)
+## What consumes the brain
 
-- **Today:** only an agent reading the repo directly (Claude Code in this repo, or the future
-  digest job) can see `org/` — including the new `org/decisions/` ADRs (step 1d). The **3 existing
-  MCP tools** (`list_projects`, `get_project_memory`, `search_memories`) only scan `projects/` and
-  ignore `org/` + the new registry fields — so the Claude **Desktop** MCP server cannot yet surface
-  the business overview or the decision log.
-- **Planned (step 1e):** add 4 brain tools — `get_business_overview`, `get_entity`,
-  `get_decisions`, `whats_next` (surfaces overdue/live-now). The server stays a **context-assembler;
-  it never calls a model** — reasoning stays with the calling LLM, consistent with Phase 1.
+- **MCP server (step 1e, built 2026-06-10):** the server exposes **7 tools** — the 3 project tools
+  plus 4 brain tools: `get_business_overview`, `get_entity`, `get_decisions` (ADR frontmatter
+  filters: scope/tag/since/status/summaries_only), `whats_next` (today's date + registry-deadline
+  scan classifying OVERDUE/DUE NOW/upcoming + north-star + programs + recent ADRs + project
+  current-state heads). Same git-objects/`origin/master` pattern; the server stays a
+  **context-assembler; it never calls a model**. Test harness: `mcp-server/test-brain-tools.mjs`.
+  Restart Claude Desktop after pulling to load. Full detail: `mcp-server.md`.
+- **Repo-reading agents** (Claude Code in this repo) read `org/` directly as before.
 - **Planned (step 1.5):** a machineB Task Scheduler job runs `claude -p "<strategist prompt>"`
   weekly → writes `org/DIGEST.md` → `mimp push`. This is the first *automated writer*; writes
   still flow through `mimp push`.
@@ -128,8 +128,8 @@ MIMP-004 (software-saas/pacs/DHS, markets PACS), MIMP-005 (software-saas/pacs/DH
 | 1b registry v2.0 + schema-aware `mimp init` (niche numbered choice; sparse re-sync) | ✅ Done 2026-06-02; verified cross-machine via MIMP-006 from machineB |
 | 1c `org/entities/*` + `programs/*` + `relationships.md` | ✅ Done 2026-06-02 |
 | 1d ADR/decision log (`org/decisions/`) | ✅ Done 2026-06-05 — `_TEMPLATE.md` + 5 ADRs (ADR-0001 OHIF flagged TO VERIFY) |
-| 1e MCP brain tools | ⬜ Pending (until then `org/` + ADRs invisible to desktop MCP) |
-| 1.5 scheduled `DIGEST.md` strategist | ⬜ Pending |
+| 1e MCP brain tools | ✅ Done 2026-06-10 — 4 tools, stdio-verified; restart Desktop to load |
+| 1.5 scheduled `DIGEST.md` strategist | ⬜ Pending — next |
 
 Committed + pushed to origin/master as `e11110d` (rebased over machineB's MIMP-005 push).
 Cross-machine `mimp init` validated 2026-06-02: MIMP-006 (PACS-CENTRAL-DHS) registered from machineB

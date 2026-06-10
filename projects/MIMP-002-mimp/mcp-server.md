@@ -11,18 +11,20 @@ A local Node.js MCP server that gives any MCP-compatible LLM client (Claude Code
 - **Built:** 2026-05-29
 - **Git objects mode:** 2026-05-30 (reads via `git show` — all projects visible regardless of sparse checkout)
 - **Verified cross-machine:** 2026-05-30 (machineB confirmed reading machineA-pushed memories)
-- **Brain layer gap (2026-06-02):** the current 3 tools scan only `projects/` and read `data.projects` — they do **NOT** read the new `org/` layer or the v2.0 entity/program/edge fields. So the desktop MCP server cannot yet surface the business overview. Planned step **1e** closes this (below).
+- **Brain tools (step 1e) built 2026-06-10:** 4 additional tools surface `org/` + registry v2.0 entities/programs/edges. The server now exposes **7 tools** total.
 
-## Planned: Brain Tools (Phase 2, step 1e)
+## Brain Tools (Phase 2, step 1e — built 2026-06-10)
 
-Additive, same read-only / git-objects design. The server stays a **context-assembler — it never calls a model** (reasoning stays with the calling LLM).
+Additive, same read-only / git-objects design (reads `origin/master`). The server stays a **context-assembler — it never calls a model** (reasoning stays with the calling LLM).
 
-- `get_business_overview` — `org/business.md` + entity files + registry edges → portfolio snapshot
-- `get_entity` — one entity file + its programs + linked projects (e.g. "tell me about BDC")
-- `get_decisions` — ADRs from `org/decisions/` filtered by scope / tag / date
-- `whats_next` — north-star + recent ADRs + program state + project `current-state.md`, surfacing **overdue / live-now** items
+- `get_business_overview` (no args) — `org/business.md` + `north-star.md` + entities/programs from registry + `relationships.md` + one-line project map with typed edges
+- `get_entity` (`entity`) — registry record + full `org/entities/*.md` + its programs (full memory) + projects it owns/serves; case-insensitive by ID or full name
+- `get_decisions` (`scope`, `tag`, `since`, `status`, `summaries_only`) — ADRs from `org/decisions/` (skips `_TEMPLATE.md`), parsed via hand-rolled frontmatter parser in `lib/repo.js` (`parseFrontmatter` — scalars + inline `[a, b]` arrays, strips `#` comments); filters are case-insensitive; sorted by id
+- `whats_next` (`include_projects` default true) — emits TODAY's ISO date + an instruction line, scans all registry `relationships[].deadline` fields and classifies **OVERDUE / DUE NOW / upcoming** (handles `YYYY-MM` and `YYYY-MM-DD`), then north-star + all program memories (full) + 5 most recent ADR summaries + first 50 lines of each active project's `current-state.md` (falls back to MEMORY.md). Output ~25k chars with 6 projects.
 
-See `brain-layer.md` for the full plan and `brain-architecture-decision.md` for rationale.
+New helpers in `lib/repo.js`: `readFullRegistryFromGit` / `readFullRegistry` (full v2.0 object incl. entities+programs), `parseFrontmatter`, `extractTitle`. Existing `gitListMdPaths` works for any folder (used for `org/decisions`).
+
+**Test harness:** `mcp-server/test-brain-tools.mjs` — spawns the real server via SDK `StdioClientTransport`, lists tools, calls all 4 brain tools incl. error/filter paths. All passed 2026-06-10. **Restart Claude Desktop after pulling to load the new tools.**
 
 ## File Structure
 
@@ -30,12 +32,17 @@ See `brain-layer.md` for the full plan and `brain-architecture-decision.md` for 
 mcp-server/
 ├── package.json             ← ESM, @modelcontextprotocol/sdk + zod
 ├── index.js                 ← Server entry point; reads config; registers tools
+├── test-brain-tools.mjs     ← stdio test harness for the brain tools
 ├── lib/
-│   └── repo.js              ← Shared helpers (config, registry, file reading, link parsing)
+│   └── repo.js              ← Shared helpers (config, registry, git reads, frontmatter parsing)
 └── tools/
-    ├── list-projects.js     ← list_projects handler
-    ├── get-memory.js        ← get_project_memory handler
-    └── search-memory.js     ← search_memories handler
+    ├── list-projects.js          ← list_projects handler
+    ├── get-memory.js             ← get_project_memory handler
+    ├── search-memory.js          ← search_memories handler
+    ├── get-business-overview.js  ← get_business_overview (brain)
+    ├── get-entity.js             ← get_entity (brain)
+    ├── get-decisions.js          ← get_decisions (brain, ADR frontmatter filters)
+    └── whats-next.js             ← whats_next (brain, time-aware deadline scan)
 ```
 
 ## Config Source
@@ -46,7 +53,7 @@ The server reads `repo_path` from `~/.mimp-config.json` at startup — the same 
 { "machine_id": "machineA", "repo_path": "E:\\MIMemoryLLMDb", ... }
 ```
 
-## Tools Exposed (3)
+## Tools Exposed (7 — 3 project + 4 brain, see Brain Tools section above)
 
 ### `list_projects`
 

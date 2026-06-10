@@ -1,6 +1,6 @@
-# MIMemoryLLMDb — Current State (2026-06-05)
+# MIMemoryLLMDb — Current State (2026-06-10)
 
-## Brain Layer (Phase 2) — Status (2026-06-02)
+## Brain Layer (Phase 2) — Status (2026-06-10)
 
 Major infrastructure change: flat per-project store → **whole-business brain** for DHS using an **entity → program → project** model. Full reference: `brain-layer.md`; rationale: `brain-architecture-decision.md`; plan: `docs/BrainBuild/brain-build-plan.md`.
 
@@ -10,29 +10,25 @@ Major infrastructure change: flat per-project store → **whole-business brain**
 | 1b `registry.json` v2.0 + schema-aware `mimp init` (niche = validated numbered choice; sparse re-sync before commit) | ✅ Done + verified cross-machine (MIMP-006 from machineB) |
 | 1c `org/entities/*` + `programs/*` + `relationships.md` | ✅ Done |
 | 1d decision log (`org/decisions/` ADRs) | ✅ Done 2026-06-05 — template + 5 ADRs (ADR-0001 OHIF flagged TO VERIFY) |
-| 1e MCP brain tools | ⬜ Pending — until then `org/` + ADRs are invisible to the desktop MCP server |
-| 1.5 weekly `DIGEST.md` strategist (machineB) | ⬜ Pending |
+| 1e MCP brain tools | ✅ Done 2026-06-10 — 4 tools built + tested over stdio; server now exposes 7 tools |
+| 1.5 weekly `DIGEST.md` strategist (machineB) | ⬜ Pending — **next** |
 
 Committed + pushed as `e11110d` (clean rebase over machineB's MIMP-005 push). **Cross-machine `mimp init` test PASSED on machineB** — MIMP-006 (PACS-CENTRAL-DHS) registered with full brain fields; `entities`/`programs` survived machineB's round-trip. See `docs/test-init-machineB.md`.
 
 ## Next Session — Start Here (remaining brain roadmap)
 
-The brain's data + capture layers are done and verified across both machines. **1d (decision log) is now also done** — remaining: **1e -> 1.5**. Full specs in `docs/BrainBuild/brain-build-plan.md`. **Start the next session on 1e.**
+The brain's data + capture + trajectory + **surfacing (1e)** layers are all done. Remaining: **1.5 (weekly DIGEST strategist)**. Full specs in `docs/BrainBuild/brain-build-plan.md`. **Start the next session on 1.5** — it runs on **machineB** (Task Scheduler + `claude -p`), so plan it for a machineB session or set it up remotely.
 
 ### 1d — Decision log (`org/decisions/` ADRs)  ✅ DONE 2026-06-05
 - Built `org/decisions/` + `_TEMPLATE.md` (YAML frontmatter `id, date, status, scope[], tags[], supersedes, superseded_by`; body `Context / Decision / Alternatives / Path-impact`).
 - 5 ADRs backfilled: ADR-0001 OHIF fork (Tier 3+4 — **flagged TO VERIFY**; MIMP-005 record lives on machineB, sparse-excluded from machineA, so date/"Tier 3+4"/alternatives are reconstructed — correct from machineB), ADR-0002 classic file-based sparse checkout, ADR-0003 MCP git-objects + remote-sync, ADR-0004 whole-business brain, ADR-0005 MEMORY.md push-encoding fix.
 - These are the real data `get_decisions` (1e) will serve. **When building 1e, parse the YAML frontmatter for scope/tag/date filtering.**
 
-### 1e — MCP brain tools  [the big one; lights up `org/` + the ADRs for the desktop assistant]
-- Add 4 read-only tools to `mcp-server/`. Reuse the existing git-objects / `origin/master` pattern; the server stays a **context-assembler — never calls a model**; stderr-only logging; Zod v4 schemas.
-  - `get_business_overview` -> `org/business.md` + entity files + registry edges
-  - `get_entity` -> one entity file + its programs + linked projects
-  - `get_decisions` -> ADRs from `org/decisions/` filtered by scope/tag/date
-  - `whats_next` -> north-star + recent ADRs + program state + project `current-state.md`, surfacing **OVERDUE / LIVE-NOW** items (compare dates vs today)
-- Files: `mcp-server/lib/repo.js` (add helpers to list/read `org/` + read `entities`/`programs` from registry; `gitReadFile` / `gitListProjectPaths` already exist), `mcp-server/tools/*.js` (4 new handlers), `mcp-server/index.js` (register them).
-- After building: restart Claude Desktop to load the new tools; test with "give me the business overview" / "what's next".
-- Until 1e ships, `org/` is invisible to the desktop MCP server (only repo-reading agents like Claude Code see it).
+### 1e — MCP brain tools  ✅ DONE 2026-06-10
+- 4 read-only tools added to `mcp-server/` (server now exposes **7**): `get_business_overview`, `get_entity`, `get_decisions` (frontmatter filters: scope/tag/since/status/summaries_only), `whats_next` (today's date + registry-deadline scan -> OVERDUE/DUE NOW/upcoming + north-star + programs + recent ADRs + 50-line head of each active project's current-state.md).
+- New `lib/repo.js` helpers: `readFullRegistryFromGit`/`readFullRegistry` (entities+programs), `parseFrontmatter`, `extractTitle`. Same git-objects/`origin/master` pattern; context-assembler only; stderr-only logging; Zod v4.
+- All verified over real stdio via `mcp-server/test-brain-tools.mjs` (SDK client harness — keep it; rerun after any server change).
+- **Restart Claude Desktop on each machine after pulling** to load the new tools. Details: `mcp-server.md`.
 
 ### 1.5 — Weekly `DIGEST.md` strategist  [proactive brain]
 - machineB Task Scheduler job: `claude -p "<strategist prompt: read org/ + all project current-state.md; output portfolio state, OVERDUE/LIVE-NOW items, and the 3 highest-leverage next moves through the trust->equipment lens>"` -> writes `org/DIGEST.md` -> `mimp push mimp`.
@@ -66,7 +62,7 @@ The brain's data + capture layers are done and verified across both machines. **
 | machineB config (.mimp-config.json) | Configured |
 | PowerShell alias (mimp) in $PROFILE | Working on machineA and machineB |
 | Git sparse checkout | Active and verified on machineB — classic file-based, git 1.7+ compatible |
-| MCP server (mcp-server/) | Working on machineA and machineB — reads via git objects from `origin/master` (v3 remote-sync); 3 tools; does NOT yet read `org/` |
+| MCP server (mcp-server/) | Working on machineA and machineB — reads via git objects from `origin/master` (v3 remote-sync); **7 tools** (3 project + 4 brain, 2026-06-10); machineB needs pull + Desktop restart to pick up brain tools |
 | registry.json | **v2.0** — 5 projects + 2 entities (DHS, BDC) + 2 programs |
 | machines.json | 2 machines registered |
 
@@ -113,6 +109,7 @@ All projects now carry brain fields (`entity`, `niche`, `business_unit`, `role`,
 | Brain layer: `org/` + registry v2.0 (entity→program→project) | 2026-06-02 | business/north-star/entities/programs/relationships; 2 entities (DHS, BDC), 2 programs |
 | Schema-aware `mimp init` | 2026-06-02 | Business/Personal branch; classifies entity/niche/business_unit/role/tags/serves at creation; personal → entity null |
 | `mimp init` hardening | 2026-06-02 | `niche` now a validated numbered choice (controlled set + "other"); re-syncs sparse checkout after registering so the new folder's MEMORY.md is committed on sparse machines |
+| MCP brain tools (step 1e) | 2026-06-10 | 4 tools surface `org/`: business overview, entity, decisions (ADR frontmatter filters), whats_next (registry deadline scan vs today); + `test-brain-tools.mjs` harness |
 
 ## Verified End-to-End Tests
 
@@ -138,12 +135,14 @@ All projects now carry brain fields (`entity`, `niche`, `business_unit`, `role`,
 
 **2026-06-02:** `mimp init` hardening verified — parses clean; niche choice resolves correctly (1→software-saas, 5→custom prompt, invalid→blocked)
 
+**2026-06-10:** brain tools (1e) verified over real stdio on machineA via `test-brain-tools.mjs` — all 7 tools listed; `get_business_overview` returns business+north-star+entities+programs+relationships+project map (~11k chars); `get_entity('bdc')` resolves case-insensitively with programs+projects; unknown entity returns helpful error; `get_decisions` filters by scope (`mcp-server`→ADR-0003 only) / tag+since (no-match message correct) / summaries; `whats_next` emits today's date + classifies MIMP-005 deadline 2026-07 as "upcoming" (~25k chars total)
+
 ## Pending Work
 
 | Task | Priority | Notes |
 |------|----------|-------|
-| 1e: MCP brain tools (read `org/` + new fields) | High | `get_business_overview` / `get_entity` / `get_decisions` / `whats_next`; lights up the brain for the desktop assistant. `get_decisions` parses `org/decisions/` ADR frontmatter (scope/tag/date) |
-| 1.5: weekly `DIGEST.md` strategist on machineB | Medium | proactive insight; first automated writer (still via `mimp push`) |
+| 1.5: weekly `DIGEST.md` strategist on machineB | High | proactive insight; first automated writer (still via `mimp push`); brain tools (1e) now done so all inputs exist |
+| machineB: pull + restart Claude Desktop to load the 4 brain tools | High | brain tools built on machineA 2026-06-10 |
 | Verify ADR-0001 (OHIF fork) from machineB | Medium | date / "Tier 3+4" meaning / alternatives are reconstructed + flagged TO VERIFY — confirm against the DHV-OHIF (MIMP-005) record on machineB |
 | Test `mimp pull` end-to-end on machineB | High | claude_memory_paths.machineB configured for MIMP-002 |
 | Register remaining projects (bdc-hms, erpnext, bdc-marketing, hrh) | Medium | Need to confirm local paths |

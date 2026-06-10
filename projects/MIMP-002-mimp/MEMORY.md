@@ -6,7 +6,7 @@
 |--------------|------------------------------------|
 | Project ID   | MIMP-002                           |
 | Short name   | mimp                               |
-| Last updated | 2026-06-05                         |
+| Last updated | 2026-06-10                         |
 | Updated by   | machineA                           |
 | Status       | active                             |
 | Machines     | machineA, machineB (pending setup) |
@@ -40,7 +40,8 @@ MIMemoryLLMDb is a Git-based project memory system that lets AI assistants (Clau
 
 ## Recent Changes
 
-- 2026-06-05: **NEXT SESSION START HERE** -> **1d decision log DONE** ✅. Next is **1e** MCP brain tools (the big one — lights up `org/` + the new ADRs for the desktop assistant), then **1.5** weekly `DIGEST.md`. Actionable 1e start-here steps are in [current-state.md](./current-state.md) under "Next Session - Start Here"; full specs in `docs/BrainBuild/brain-build-plan.md`.
+- 2026-06-10: **NEXT SESSION START HERE** -> **1e MCP brain tools DONE** ✅. The MCP server now exposes **7 tools** — 4 new brain tools (`get_business_overview`, `get_entity`, `get_decisions` with frontmatter filters, `whats_next` with OVERDUE/DUE NOW deadline scan vs today) surface `org/` + ADRs + registry v2.0 to Claude Desktop. Stdio-verified via `mcp-server/test-brain-tools.mjs`. **Restart Claude Desktop after pulling; machineB needs `git pull` + restart.** The only remaining Phase-2 item is **1.5** — the weekly `DIGEST.md` strategist job on machineB. Details: [mcp-server.md](./mcp-server.md) + [current-state.md](./current-state.md).
+- 2026-06-05: **1d decision log DONE** ✅ — `org/decisions/` template + 5 backfilled ADRs; see entry below.
 - 2026-06-05: **1d — Decision log (ADRs) built.** Added `org/decisions/` with an ADR template (`_TEMPLATE.md`) + 5 backfilled ADRs: ADR-0001 OHIF fork (Tier 3+4, **flagged TO VERIFY** — MIMP-005 record is on machineB, sparse-excluded here), ADR-0002 classic file-based sparse checkout, ADR-0003 MCP git-objects + remote-sync, ADR-0004 whole-business brain, ADR-0005 MEMORY.md push-encoding fix. ADRs use YAML frontmatter (`id, date, status, scope[], tags[]`) so step-1e's `get_decisions` can machine-filter them. See [brain-layer.md](./brain-layer.md).
 - 2026-06-02: **Cross-machine `mimp init` test PASSED** + step-2 hardening. MIMP-006 (pacsvm, PACS-CENTRAL-DHS) registered from machineB with full brain fields; remote registry kept entities/programs intact (round-trip safe). Hardened init: `niche` is now a validated numbered choice (controlled set + "other"), and init re-syncs sparse checkout after registering so a new project's MEMORY.md is committed on sparse machines. See [brain-layer.md](./brain-layer.md).
 - 2026-06-02: **Brain layer (Phase 2) built** — flat per-project store → whole-business brain (entity→program→project). Added `org/` layer (business, north-star, entities DHS+BDC, programs, relationships), `registry.json` v2.0 (entities + programs + typed edges), and a schema-aware `mimp init`. Committed + pushed as `e11110d` (rebased over machineB's MIMP-005 push). Full reference: [brain-layer.md](./brain-layer.md).
