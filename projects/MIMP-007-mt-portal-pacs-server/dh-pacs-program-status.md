@@ -1,6 +1,6 @@
 ---
 name: dh-pacs-program-status
-description: Build/deploy state of the DH PACS Workstation program (both components + central safety extension) as of 2026-06-06
+description: Build/deploy state of the DH PACS Workstation program (both components + central safety extension) as of 2026-06-14
 metadata:
   node_type: memory
   type: project
@@ -8,6 +8,61 @@ metadata:
 ---
 
 DH PACS Workstation = two Windows installers from `d:\dh-pacs-workstation` + a wrong-patient-match **safety extension** to central PACS at `D:\Pacs_Viewer_Storage_Project` (dh-pacs-central).
+
+**UPDATE 2026-06-14 — BOTH REPOS MERGED TO MAIN. NIGHTLY CRON ACTIVE.**
+- `feat/safety-mt-gated` → `main` in central repo (19 commits, 138 files). ✅
+- `feat/mt-gated-match-then-push` → `main` in workstation repo. ✅
+- Nightly crosscheck cron on VM: `0 2 * * * cd /srv/pacs/compose && docker compose exec -T backend node scripts/safety-crosscheck.js >> /var/log/pacs-crosscheck.log 2>&1` ✅
+- All ship-blocking work is now on `main`. Future scope only: code-signing.
+
+**UPDATE 2026-06-14 — Combined installer v1.0.0 BUILT. Remaining: code-signing only.**
+- `dist\dh-pacs-workstation-setup-v1.0.0.exe` (53.8 MB) produced by `installer\dh-pacs-workstation.iss` via `build-combined.ps1`.
+- Combined installer ships DH PACS Receiver (Component A) + DH PACS Portal (Component B) as a single `.exe` for new site deployments. Existing sites keep the legacy component installers (`build-all.ps1`).
+- **White-labeling complete (ADR-0007):** Orthanc name removed from all user-facing surfaces — service display name is "DH PACS Receiver", install dir is `C:\DHPacs\Receiver`. AGPL attribution preserved in `NOTICE.md` shipped to install dir.
+- **Branding drop-zone**: `branding/` at repo root — designer drops `logo.png`, `icon.ico`, `wizard-banner.bmp`, `wizard-small.bmp` and rebuilds. `build-combined.ps1` copies to portal/public + orthanc overlay automatically. Spec at `docs/BRANDING_ASSET_SPEC.md`.
+- **Portal header**: logo image (`/logo.png`) links to Central URL in new tab; 3 component tests added (`tests/layout.test.tsx`); `@testing-library/react` + `happy-dom` added as devDeps.
+- **Node.js 20.19.2 bundled**: self-contained — no prerequisite on hospital IT box. Extracted to `installer\payload\node\` (gitignored, fetched by `build-combined.ps1`).
+- **ADR-0008**: combined installer for new sites; legacy build-all.ps1 retained for existing sites.
+- **§10 acceptance tests**: PASSED (2026-06-14).
+- **Remaining before shipping**: merge `feat/safety-mt-gated` → `main` + schedule cron.
+- **Future scope (not mandatory)**: code-sign the `.exe` — removes SmartScreen warning, not a blocker.
+
+**UPDATE 2026-06-14 — Radiology Report display COMPLETE & LIVE (admin + patient portal). Filename template deployed.**
+- **Filename template** applied server-side at upload time: `{dicom_patient_name} {Modality} report{N}.{ext}` — `^` → space, modality uppercased, extension preserved, count = all rows ever (incl. superseded) so no collision after corrections. Forward-only (existing filenames unchanged).
+- **Pre-claim uploads**: portal sends `dicom_patient_name` + `modality` as extra FormData fields; `studyMeta()` in `mt-reports.js` uses DB for post-claim, form fields for pre-claim.
+- **Patient portal** (`patient-ui/src/components/StudyCard.tsx`): fetches `GET /api/patient/studies/:uid/reports` on mount; renders "Radiology Reports" section inline — filename as download link + upload date. Hidden for revoked/purged studies.
+- **Admin panel** (`PatientDetailPage.tsx` `StudyReports`): already shipped in catch-up commit (2026-06-13 d); confirmed visible.
+- **Portal installer** rebuilt: `dist\dh-pacs-portal-setup-v0.2.0.exe` — bakes in `dicom_patient_name`/`modality` FormData fields via `ReportPanel` props + `reportApi.upload` signature.
+- Deployed: backend + patient-ui rebuilt + restarted on VM; portal installer reinstalled on site PC. Confirmed working end-to-end.
+
+**UPDATE 2026-06-13 (d) — Admin-UI catch-up commit + redeploy (LIVE). Radiology Reports section now visible in admin panel.**
+- Commit `daa5729` on `feat/safety-mt-gated` landed all uncommitted admin-ui + backend work: `mt-reports.js`, `admin-reports.js`, `index.js` (routes for reports + doctor portal + storage + sweep scheduler), full admin-ui overhaul (PurgeControls, StoragePage, Doctor user pages, responsive layout, useBreakpoint hook, SeriesList, PatientDetailPage StudyReports, etc.).
+- Deployed: `scp backend/src + admin-ui/src → pacsvm:/srv/pacs/`; `docker compose build --no-cache backend admin-ui && up -d` on VM. Both containers up.
+- **Admin Reports now visible**: Patient Detail → study card → "Radiology Reports" section at bottom; shows active files (filename, size, date, MT+DH-MT-ID) + dimmed supersession history. "No radiology reports attached." when none.
+- **Next in this session**: (1) rename template `{dicom_patient_name} {Modality} report{N}.{ext}` applied server-side at upload time; (2) patient portal frontend wires up existing `/api/patient/studies/:uid/reports` endpoint to show reports inline on StudyCard.
+
+**UPDATE 2026-06-13 (c) — Radiology Report upload feature BUILT & DEPLOYED (central only; portal installer rebuild still needed).**
+- **Scope**: MT can attach multiple Radiology Report files (PDF/JPG/PNG/JPEG, 30 MB max each) to any study — both To-Process (pre-claim) and Processed (post-claim). Files survive claim undo/cancel. Remove (hard-delete) replaces supersession in the UI; audit-logged as `report_deleted`.
+- **DB**: Two migrations applied to VM: `2026-06_p7_study_reports.sql` (initial `app.study_reports` table — BYTEA storage) + `2026-06_p7b_study_reports_preclaim.sql` (makes `study_id` nullable, adds `study_uid TEXT` + `site_pk INT`, CHECK constraint, index). `performClaim` in `mt-claim.js` links pre-claim rows (`UPDATE study_reports SET study_id=... WHERE study_uid=... AND study_id IS NULL`).
+- **Central routes**: `mt-reports.js` (new — GET/POST `/:studyUid/reports`, GET `/:studyUid/reports/:reportId`, DELETE with `report_deleted` audit, supersede kept as dead code); `admin-reports.js` (new — admin download + full history incl. superseded); additions to `patient-portal.js` (active reports for linked patients). All registered in `index.js`. Backend rebuilt + redeployed.
+- **Portal frontend**: `ReportPanel.tsx` (new — badge chip opens inline panel; upload + Remove with confirm dialog); `central.ts` `reportApi` (list/upload/remove/downloadUrl); `StudyCard.tsx` + `StudiesPage.tsx` updated (reportsMap state, batch load, single-study refresh). `server.js` gets multer upload proxy routes BEFORE the generic /api/mt proxy (field name always `'files'`; binary download proxy extended to `image/*`).
+- **Admin UI**: `PatientDetailPage.tsx` `StudyReports` component (active files + supersession history section, download button).
+- **Key bugs fixed**: (1) multer field name must always be `'files'` (not conditional `'file'`/`'files'`); (2) never set `Content-Type: multipart/form-data` explicitly in axios — it strips the boundary; (3) pre-claim To-Process 404 fixed by Phase 7b migration + dual-mode `resolveStudy()`.
+- **Portal installer NOT yet rebuilt** — `ReportPanel.tsx`, `central.ts`, and `server.js` changes on disk but `dist\dh-pacs-portal-setup-v0.2.0.exe` predates this session. Build: `cd d:\dh-pacs-workstation\portal && npm install && npm run build && cd installer && iscc dh-pacs-portal.iss` then deploy to target PC.
+- ADR-0006: `docs/adr/0006-radiology-report-storage-and-supersession.md` (BYTEA over filesystem; remove-based model).
+
+**UPDATE 2026-06-13 (b) — Patient PDF redesign COMPLETE & LIVE (single page, two logos, table-layout steps).**
+Full redesign of `D:\Pacs_Viewer_Storage_Project\deploy\backend\src\lib\pdfGenerator.js`:
+- **Two logo placeholders** in navy header: DH PACS geometric mark (white circle + "DH") left; hospital logo right (`app.sites.logo_png BYTEA`, nullable — placeholder box drawn when null).
+- **Site logo storage**: migration `2026-06_p6_site_logo.sql` applied (`ALTER TABLE app.sites ADD COLUMN IF NOT EXISTS logo_png BYTEA`); `POST /api/admin/sites/:id/logo` route (base64 body, ≤512 KB); admin Site Detail page now has logo picker/preview/upload section.
+- **Two-column body**: steps (left, ~361 pt) + portal QR code (right, 96 pt) side-by-side; stepsStartY captured after heading and before QR draw (QR `image()` advances doc.y past QR height — must reset `doc.y = stepsStartY` before steps loop).
+- **PDFKit table approach for steps**: render text cell first at explicit `(STXT_X, sy)` + `{ width: STXT_W }` (establishes row height), then stamp number at `(ML, sy)` with `{ lineBreak: false }`. Restore `doc.y = rowEnd` after each row. This avoids the PDFKit `{ continued: true, width: N }` bug (see [[pdfkit-continued-width-bug]] feedback).
+- **Single-page fix**: changed `margin: 50` → `margins: { top: 50, bottom: 0, left: 50, right: 50 }`. Footer text lives at `H − 36` and `H − 22`; with `bottom: 50` PDFKit's auto-pagination boundary was `H − 50 = 791 pt`, causing two extra pages for the footer lines.
+- **Proxy binary fix** (portal `server.js`): added `responseType: 'arraybuffer'` to the `/api/mt` axios proxy; forwards `Content-Type: application/pdf` + `Content-Disposition`; sends `Buffer.from(upstream.data)` for PDF responses, UTF-8 string for JSON.
+- **Archive gotcha**: stale `patient_pdfs` row (study 33, DHP-26060703, issued 2026-06-12 19:42) was masking every pdfGenerator fix — the row was written with the first broken redesign and `ON CONFLICT DO NOTHING` prevents updates. Deleted via psql. See [[patient-pdf-archive-debug]] feedback.
+- Deployed: scp → `docker compose build --no-cache backend` + `up -d`; study-33 archive deleted; PDF confirmed single-page with correct layout.
+
+**UPDATE 2026-06-13 — Unified Studies Page (BUILT, DEPLOYED, INSTALLER v0.2.0 rebuilt).** Portal `/pending` + `/history` replaced by single `/studies` page (ADR-0005). Tab filter "To Process / Processed" (domain terms); modality dropdown on both tabs (raw DICOM codes, dynamic from loaded data); date filter on Processed only (Today/Yesterday/This Week Sat–Fri/This Month/Custom from→to, filtered on `claimed_at`). Uploading studies appear in Processed tab with inline progress bar. History endpoint now server-side filtered: `date_from`/`date_to`/`modality` params added to `GET /api/mt/studies/history`; `pixels_received_at` added to response. Central `mt-studies.js` deployed to VM (backend rebuilt --no-cache + up -d). Portal installer rebuilt: `dist\dh-pacs-portal-setup-v0.2.0.exe`. Tests: 9/9 pass; `npm run build` clean. Also committed/untracked: ADR-0004 cross-site DHP-ID gate (portal + docs). portal/CONTEXT.md updated with Processed Study + updated To-Process Queue terms + Cross-Site Claim / DHP-ID Gate / New-Patient Confirmation.
 
 **UPDATE 2026-06-07 (d) — Archived PDFs surfaced in admin UI (DEPLOYED).** Patient LIST now has a `pdf_count` column (per-patient # of archived sheets); patient DETAIL shows per-study `pdf_archived`/`pdf_issued_at`/`pdf_byte_size` with a "↓ Patient PDF" download button. New admin route `GET /api/admin/patients/studies/:studyId/pdf` (`requireAdmin`, defined before `/:id`) streams the archived bytes; admin_jwt cookie rides the same-origin GET so it's just `window.open`. Files: `patients.js` + admin-ui `api/patients.ts`/`PatientsListPage.tsx`/`PatientDetailPage.tsx`. Central commit `3cd9ae7` (also folded in the previously-uncommitted-but-live Tier-1 admin patient-list/telemetry work, interleaved in same files). Deployed: scp 4 files → rebuild `backend`+`admin-ui --no-cache` (admin-ui Dockerfile runs `tsc && vite build` = typecheck passed) → `up -d`; routes 401 unauth, joins execute (pdf_count=0 until a new study is archived or a backfill runs). NOTE: archive only captures studies issued AFTER the (c) deploy — pre-existing linked studies show no PDF until backfilled.
 
