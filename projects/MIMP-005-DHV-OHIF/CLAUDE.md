@@ -12,13 +12,16 @@ The viewer is the standalone OHIF v3 React SPA — **not** Orthanc's Stone Web V
 
 ## Repo role in the bigger picture
 
-Three repos work together for the DHS viewer. Know which one you're in:
+Four repos work together for the DHS viewer system, split **by audience**. Know which one you're in:
 
-| Repo | What it owns |
-|---|---|
-| **`ohif-fork`** (this repo) | The OHIF SPA source. Brand assets, layout patches, toolbar trims, mobile UX, custom extensions wired into the bundle. Produces `pacs-ohif-dhs:vN`. |
-| **PACS repo** (separate, on the VM under `/srv/pacs/`) | `docker-compose.yml`, `app-config.js` (mounted at runtime), nginx config, the token landing page (`viewer.html`), the backend, Orthanc configuration. |
-| **`ohif-extension-dhs-patient`** (not created yet — Phase C) | The custom extension package (`@dhsolutions/extension-patient`) registering patient-info, share, and report panels. Added to this fork via `yarn add` before building the image. |
+| Repo | Audience | What it owns |
+|---|---|---|
+| **`ohif-fork`** (this repo) | **Patients** | The OHIF SPA source for the patient-facing viewer. Brand assets, mobile UX, patient features (film view, share, report view). Produces `pacs-ohif-dhs:vN`. |
+| **PACS repo** (on the VM under `/srv/pacs/`) | Ops/Infra | `docker-compose.yml`, `app-config.js` (mounted at runtime), nginx config, the token landing page (`viewer.html`), the backend, Orthanc configuration. |
+| **`dh-pacs-doctor`** (`D:\dh-pacs-doctor`, planned) | **Hospital doctors** | Dedicated workstation viewer with full interactive tools — film layout builder with drag-and-drop, advanced hanging protocols, measurements, DICOM print. Built separately; not part of this repo. |
+| **`ohif-extension-dhs-patient`** (not created yet — Phase C) | Dev/packaging | The custom extension package (`@dhsolutions/extension-patient`) registering patient-info, share, and report panels. Added to this fork via `yarn add` before building the image. |
+
+**Critical rule (decided 2026-06-14):** This repo is **patient viewer only**. Before adding any feature here, ask: *"is this for a patient or a doctor?"* Doctor workflow tools belong in `dh-pacs-doctor`, not here.
 
 If a customization can live in the PACS repo's `app-config.js`, **prefer that over editing this fork.** Source edits here cost merge effort at every upstream pull.
 
@@ -41,7 +44,19 @@ If you find yourself reaching for nginx `sub_filter` CSS injection (Tier 2), sto
   - SVG favicon at [platform/app/public/assets/dhs-favicon.svg](platform/app/public/assets/dhs-favicon.svg)
   - Page title + meta in [platform/app/public/html-templates/index.html](platform/app/public/html-templates/index.html)
 - Single source commit on `dhs-main`: `48f99e181` "feat(branding): DH Solutions branding v1 placeholder".
-- Phase A is **done**. Phase B (mobile UX) and Phase C (custom extension) have not started.
+- Phase A is **done**. Phase B is **done** (see below). Phase C (custom extension) has not started.
+- **Film View** shipped `51dbb1ec8`: `FilmViewDH` toolbar button (2×2 grid, first 4 series one per cell, mobile+desktop visible). See `extensions/cornerstone/src/hps/filmViewDH.ts`.
+
+**Phase B — mobile UX — COMPLETE (2026-06-02)**
+All changes are guarded by `isMobileViewport` (`window.innerWidth < 768`) or `md:` Tailwind breakpoints. Desktop layout is untouched.
+- Left/right panels hidden entirely on mobile (`!isMobileViewport` guard in `ViewerLayout/index.tsx`)
+- Left panel auto-collapses on resize below 768px (`ResizablePanelsHook.tsx`)
+- Toolbar trimmed to 4 buttons: WindowLevel, Zoom, Pan, MoreTools (`mobileHidden: true` on others in `toolbarButtons.ts`; filter in `Toolbar.tsx`)
+- Touch targets enlarged to 44px (`touch` size added to `ToolButton.tsx`)
+- Viewport overlay row suppressed on mobile (`MOBILE_SUPPRESSED_SECTIONS` in `Toolbar.tsx`)
+- Header: UndoRedo, PatientInfo, gear, Secondary toolbar hidden (`hidden md:*` in `Header.tsx`)
+- `MobileThumbnailStrip.tsx` (new): 160px horizontal scrollable strip below the DICOM image; image-only cards (112×144px, ~3 visible); tapping loads series into viewport; async thumbnail loading via cornerstone
+- nginx fix: `/viewer` served with `Cache-Control: no-store` to prevent blank-screen after builds (`deploy/config/nginx/nginx.conf`)
 
 ## Where to look first
 
