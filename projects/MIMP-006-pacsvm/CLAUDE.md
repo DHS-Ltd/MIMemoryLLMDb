@@ -16,6 +16,7 @@ Multi-site teleradiology platform: DICOM images received centrally, served to pa
 | Issue Tracker | Google Form → GitHub Issues via Apps Script | ✅ 2026-05-26 |
 | Website Docs | Content blueprint + demo portal build guide | ✅ 2026-05-29 |
 | SaaS Phase 0 | DB schema: patients identity, `mt_users`, `link_mode`, claim tracking | ✅ 2026-06-03 |
+| Doctor Portal | Design decided 2026-06-13. Separate repo `dh-pacs-doctor`. ADR 0007 + 0008. | 📋 Planned |
 
 **Admin panel:** `https://pacs.dhsolutions.com.bd/admin` — creds from VM `.env`.
 **Gold-path link:** `https://pacs.dhsolutions.com.bd/open?token=7729128b-13f7-4db4-ab4c-c041ce045f81` (AYESHA AKTER, MR lumbar spine, 29 series)
@@ -34,6 +35,21 @@ The on-prem **Windows workstation** that pairs each hospital site with this cent
 - **Reachability/CORS** — Component B reaches `pacs.dhsolutions.com.bd` (and Tailscale `100.118.47.99`); central CORS/cookie policy affects its login (it currently works around `cors()` + `SameSite=Lax` with a same-origin reverse proxy in the portal server).
 
 If you change any of the above here, note the impact for the workstation side (and vice-versa). Deferred workstation design that will eventually touch this central: **MT-gated push** (image stays local until the MT pushes) — see the workstation memory.
+
+---
+
+## Companion project — DH PACS Doctor Portal
+
+The consulting-physician frontend is a **separate repo** `dh-pacs-doctor` (planned, not yet created). It is a React SPA served at `/doctor/` on the central server. Doctors log in with email + password (`doctor_jwt` cookie), see patients across their admin-assigned sites, and open studies in the existing DHV viewer (`pacs-ohif-dhs`).
+
+**Before changing the doctor API contract**, check the coupled surfaces:
+
+- **Doctor API** — `/api/doctor/*`: patient list (site-scoped via `doctor_sites` junction), study open → returns temp DHV URL, `doctor_view` audit.
+- **Auth** — `doctor_jwt` httpOnly cookie, email + password, `DHDR-YYMMDDNN` ID format.
+- **Site access** — many-to-many via `app.doctor_sites(doctor_id, site_pk)`, admin-assigned.
+- **Viewer** — reuses existing `pacs-ohif-dhs` instance at `/`; no separate DHV build in the doctor portal.
+
+See [docs/adr/0007-doctor-portal-as-separate-repository.md](docs/adr/0007-doctor-portal-as-separate-repository.md) and [docs/adr/0008-multi-site-doctor-access-via-junction-table.md](docs/adr/0008-multi-site-doctor-access-via-junction-table.md).
 
 ---
 

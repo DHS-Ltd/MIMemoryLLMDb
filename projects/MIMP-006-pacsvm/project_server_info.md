@@ -8,9 +8,14 @@ Server is an on-premise Windows Server 2022 Standard (not Ubuntu as CLAUDE.md as
 
 **Hardware:**
 - OS: Windows Server 2022 Standard (10.0.20348), 64-bit
-- RAM: ~16 GB
+- RAM: **31.88 GB installed** (corrected 2026-06-09 — earlier "~16 GB" was wrong)
 - CPU: 4 logical cores
 - Storage: DELL PERC H755 RAID ~4TB total — C: 816 GB free, D: 211 GB free
+
+**Hyper-V memory (live 2026-06-09, both VMs use Dynamic Memory):**
+- PacsVM: assigned ~5 GB, demand ~4.3 GB, Min 2 / Startup 4 / **Max 12 GB**. Guest (Ubuntu) sees ~5.1 GB, ~4.2 GB free — not memory-pressured. Disk: 590 GB vol, 39 GB used (7%).
+- ImmichVM: assigned ~4.2 GB, Min 2 / Startup 6 / Max 10 GB.
+- Safe budget: 32 GB − ~6 GB (Windows parent + IIS + VMware) = ~26 GB for guests. Current Max ceilings sum to 22 GB. PacsVM Max can safely rise to ~16 GB (16+10=26).
 
 **Network:**
 - Physical NIC: "Hospital" adapter (Broadcom NetXtreme), MAC B8:CB:29:FA:C4:5B

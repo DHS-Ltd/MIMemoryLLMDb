@@ -5,6 +5,7 @@
 - [SITE01 Workstation Status](site01_workstation_status.md) — SITE01 COMPLETE 2026-05-25. AET=SITE01_ORTHANC, Tailscale 100.86.132.36, autolink.lua bugs fixed.
 - [SITE03 Cumilla Status](site03_cumilla_status.md) — SITE03 COMPLETE 2026-06-02. Cumilla Medical College, AET=SITE03_ORTHANC, Tailscale 100.81.132.123, Philips MRI live.
 - [Admin Frontend Build Status](admin_frontend_build_status.md) — All 4 phases complete. Sites, patients, series, links, audit, OHIF admin-view all working.
+- [Admin UI Mobile Responsive](admin_ui_mobile_responsive.md) — 2026-06-09: useBreakpoint hook + drawer nav + card layouts (ADR 0005). 2026-06-14: clickable patient rows + Status column removed. LIVE on VM but **uncommitted**.
 - [Phase A OHIF Branding COMPLETE](phase_a_ohif_branding_complete.md) — Shipped 2026-05-19. pacs-ohif-dhs:v1.1 deployed; DHS logo, teal palette, favicon.
 - [Central Server Phase 1 COMPLETE](central_server_phase1_complete.md) — End-to-end working 2026-05-19. Pixel data renders for patient E1027809 (AYESHA AKTER) via token link.
 - [Phase 1 Execution Notes](phase1_execution_notes.md) — Phase 1 successfully completed 2026-05-10. Backend port 3000 exposed via UFW.
@@ -19,6 +20,7 @@
 
 ## Infrastructure & Access
 - [Server Hardware & Network Info](project_server_info.md) — On-premise Windows Server 2022, LAN 192.168.1.6, Hyper-V active with PacsVM (Ubuntu 22.04 at 192.168.1.10)
+- [PACS Storage Layout & Migration](infrastructure_storage_layout.md) — VHDX on C: (653 GB free). D: blocked by Immich (208 GB free only). Migration runbooks ready. Hourly disk-alert scripts in `docs/tutorial/Move_PACS_Storage_C_to_D_and_Disk_Alerts.md`.
 - [PacsVM Credentials & Access](project_vm_credentials.md) — Ubuntu 22.04 VM at 192.168.1.10, username `maidul`, SSH key installed (ED25519)
 - [PostgreSQL Credentials](reference_postgres_credentials.md) — DB user/db is `pacs`/`pacs`, password `dhmiPost` (set via ALTER USER; .env was stale). DATABASE_URL added explicitly.
 - [OHIF Fork Reference](reference_ohif_fork.md) — DHS-Ltd/ohif-viewer-dhs private fork. Branch dhs-main off v3.12.0. SSH alias `github-ohif`.
@@ -41,6 +43,10 @@
 - [SaaS P1 + P2 Implementation](saas_p1_p2_implementation.md) — COMPLETE 2026-06-03. P1: 11 new backend files (MT/patient/claim API). P2: MT management UI + link_mode toggle in admin panel.
 - [SaaS P4 Patient Portal](saas_p4_implementation.md) — **LIVE 2026-06-04** at `/patient/`. New `pacs-patient-ui` container. Zero backend changes. Only P3 (workstation, separate repo) remains.
 - [Patient List Tier-1 + Telemetry](saas_patient_list_telemetry.md) — **LIVE 2026-06-06**. Admin list/detail surface name/mobile/DHP-ID/origin/size; Tier-A upload telemetry (size/counts all sites, throughput mt_gated-only). ADR 0001 + root CONTEXT.md added.
+
+## Doctor Portal
+- [Doctor Portal Plan](project_doctor_portal_plan.md) — Multi-site view-only portal for consultant doctors. Email+password auth, many-to-many site access, admin-assigned. **Radiology report = critical future phase.**
+- [Doctor Portal P8 — LIVE](saas_p8_doctor_portal.md) — **FULLY LIVE 2026-06-13**. DB migration, 5 backend routes, 3 admin-UI pages, nginx `/doctor/` + `pacs-doctor-ui` container all deployed. SPA repo at `D:\dh-pacs-doctor`.
 
 ## Repository & Tooling
 - [GitHub Repo & Issue Tracker](reference_github_repo.md) — Repo URL, gitignore details, Google Form URL (forms.gle/v4rfsYmka8Lhs4oS8), Apps Script integration notes

@@ -1,21 +1,83 @@
 ---
 name: project_study_purge
-description: "Study purge (reclaim Orthanc disk) feature — implemented AND deployed to VM 2026-06-07"
+description: "Study purge lifecycle — v2 two-stage Schedule→Purge LIVE on VM 2026-06-12. v1 purge (ADR 0002) partially superseded by ADR 0006."
 metadata: 
   node_type: memory
   type: project
   originSessionId: 5e66b66b-5a69-4a0c-a6fd-fd063f958c8f
 ---
 
-**Study Purge** — reclaim Orthanc disk by deleting a study's DICOM pixels while keeping the `app.studies` metadata stub. Implemented on branch `feat/safety-mt-gated` and **deployed live to the VM 2026-06-07** (migration applied to live DB; backend/admin-ui/patient-ui rebuilt + restarted; nginx reloaded to re-resolve the recreated backend IP — see [[feedback_ohif_orthanc_cloudflare_gotchas]]). Files were scp'd (no git on VM); all matched HEAD before overwrite (no drift). Still uncommitted in the local repo.
+## Status: LIVE on VM — deployed 2026-06-12
 
-Design was grilled via /grill-with-docs. Decisions captured in [docs/adr/0002-purge-pixels-keep-metadata-stub.md] and the **Purge** term in [CONTEXT.md]. Key points:
-- "Save space" = Orthanc blobs, not the KB-sized `app` rows. Purge deletes pixels, keeps the record (audit/forensics/telemetry/patient_pdfs survive).
-- Manual admin-only, study-level + per-patient bulk. Orthanc-first then stamp `studies.purged_at`/`purged_by`; 404 = success; idempotent.
-- Hard-block only `claim_status='under_review'` (open complaint = evidence). Single study = plain confirm; bulk = type `PURGE`.
-- Purged Link resolves to `410 {reason:'study_purged'}`; link-gen on a purged study rejected `409`.
-- **v1 punt:** re-arrival not handled — a re-pushed purged StudyInstanceUID leaves dead disk + 410 until re-purged.
+Migration applied, backend + admin-ui rebuilt and running. All 6 new API routes confirmed (401-gated). Core logic tested end-to-end inside the container.
 
-Backend: new `src/purge.js` (`purgeStudyByUid`), `orthanc.deleteStudy`, `POST /api/admin/studies/:uid/purge`, `POST /api/admin/patients/:id/purge-studies`, guards in legacy/admin-links/patient-portal. UI: admin `PurgeControls.tsx`; patient-ui dashboard "No Longer Available" bucket.
+---
 
-**To deploy:** apply `migrations/2026-06_p4_study_purge.sql` to the live DB, then `docker compose build backend admin-ui patient-ui && up -d`. Central-only — no workstation/`dh-pacs-workstation` contract change.
+## v2 Two-Stage Lifecycle (ADR 0006)
+
+### Stage 1 — Schedule
+Admin marks a study (per-study) or all studies of a patient (per-patient). Stamps `purge_scheduled_at` + `purge_scheduled_by`. Pixels stay in Orthanc; links keep working. 15-day countdown. Admin sees a "scheduled · Nd left" badge (amber → red at ≤3 days).
+
+During the window:
+- **Cancel** (`DELETE /schedule`) — clears scheduled columns, study returns to live
+- **Finalize Now** (`POST /finalize`) — executes Stage 2 immediately (skip window)
+- Both blocked if `claim_status = 'under_review'`
+
+### Stage 2 — Purge (irreversible)
+Triggered by: nightly sweep (backend `setInterval` 24h) after 15 days, or Finalize Now, or Delete Record (v1 stubs).
+
+Execution:
+1. Orthanc pixel delete (idempotent, 404 = success). Skipped for v1 stubs.
+2. Write terminal `action='patient_deleted'` audit row with full JSONB snapshot (patient name, DHP-ID, ext ID, site AET, hospital name, study UID, modality, study date, size bytes, link tokens, PDF info).
+3. DELETE `app.studies` row (cascades to `app.links` + `app.patient_pdfs`).
+4. If last study: DELETE `app.patients` too.
+
+### Delete Record (v1 stubs)
+Button visible when `purged_at IS NOT NULL AND purge_scheduled_at IS NULL`. Pixels already gone — skips Orthanc step, writes terminal audit snapshot, cascades rows. Cleans up pre-v2 purge stubs on demand.
+
+---
+
+## Audit Log Enrichment
+All audit rows now capture denormalized context at write time: `patient_name`, `dhp_id`, `site_aet`, `study_uid_log`. Terminal `patient_deleted` rows store full JSONB in `metadata` column. `study_id` FK already `ON DELETE SET NULL`. Historical rows (pre-v2) have NULL enrichment columns — expected.
+
+## Auto-expiry
+`setInterval(sweep, 24h)` in `src/index.js`, plus a run at startup. Queries `purge_scheduled_at <= NOW() - INTERVAL '15 days'`.
+
+## v1 Stub Migration
+Existing `purged_at IS NOT NULL` stubs left as-is. `Delete Record` button in patient detail handles them on demand.
+
+---
+
+## Files (all on branch feat/safety-mt-gated, deployed to VM 2026-06-12)
+
+**New:**
+- `deploy/backend/src/schedule.js` — core module: scheduleStudy, cancelSchedule, finalizeStudy, deleteRecord, sweepExpiredSchedules
+- `deploy/config/postgres/migrations/2026-06_v2_schedule_purge.sql` — applied to live DB
+
+**Modified:**
+- `deploy/backend/src/index.js` — startup sweep + 24h setInterval
+- `deploy/backend/src/routes/studies.js` — POST /schedule, DELETE /schedule, POST /finalize, POST /delete-record
+- `deploy/backend/src/routes/patients.js` — purge_scheduled_at/by in GET detail; POST /:id/schedule-purge
+- `deploy/admin-ui/src/api/studies.ts` — scheduleStudy, cancelSchedule, finalizeStudy, deleteRecord
+- `deploy/admin-ui/src/api/patients.ts` — Study type: purge_scheduled_at/by; schedulePatientStudies
+- `deploy/admin-ui/src/components/PurgeControls.tsx` — ScheduleButton, CancelScheduleButton, FinalizeNowButton, DeleteRecordButton, ScheduledBadge, BulkScheduleButton
+- `deploy/admin-ui/src/pages/PatientDetailPage.tsx` — new controls wired; countdown footer; scheduled state UI
+
+**ADR + docs:**
+- `docs/adr/0006-two-stage-schedule-purge-with-cascade-delete.md`
+- `docs/adr/0002-purge-pixels-keep-metadata-stub.md` — annotated as partially superseded
+- `CONTEXT.md` — Schedule, Cancel, Purge (v2), Delete Record terms added
+
+---
+
+## Test Results (2026-06-12, live VM)
+- scheduleStudy → `{ok:true, status:'scheduled'}` ✓
+- double-schedule guard → `{ok:false, status:'already_scheduled', code:409}` ✓
+- cancelSchedule → `{ok:true, status:'cancelled'}` ✓
+- cancel-when-not-scheduled guard → `{ok:false, status:'not_scheduled', code:409}` ✓
+- deleteRecord on live study guard → `{ok:false, status:'not_purged', code:409}` ✓
+- Audit log enrichment: patient_name='Faksar Alam', site_aet='SITE03_ORTHANC', study_uid_log populated ✓
+- All 6 new HTTP routes return 401 (auth-gated, registered) ✓
+- v1 stub (patient 13, study 11) intact: is_purged=true, purge_scheduled_at=null → Delete Record available ✓
+
+## Known: not yet committed to local repo (same pattern as v1)
