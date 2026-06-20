@@ -7,6 +7,8 @@ metadata:
   originSessionId: 175a2653-6aad-43fe-a244-c566d81e2f17
 ---
 
+> **STALE as of 2026-06-17:** This describes the original blueprint-stage plan only. The website has since been fully implemented as a separate Next.js repo (`E:\DHS-PACS\dh-pacs-website`) with its own memory in `mmp-memory` project `MIMP-004`. See [[reference_mimp004_business_memory]] for the current state before acting on anything below.
+
 ## Website Documentation — COMPLETE (2026-05-29)
 
 Two documents created in `D:\Pacs_Viewer_Storage_Project\docs\Website\`:

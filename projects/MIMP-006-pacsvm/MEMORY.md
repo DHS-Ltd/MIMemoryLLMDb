@@ -1,5 +1,8 @@
 ﻿# Memory Index
 
+## Proposed / Design-Phase Systems
+- [Ibn Sina Cancer PACS System](ibn_sina_cancer_pacs_system.md) — **DESIGN + BUILD PLAN COMPLETE (2026-06-20), not yet built.** Federated multi-site PACS: NO central data server, replicated Patient Directory (index only), per-site distributed storage, proxy-stream Remote reads over Tailscale, two-plane exposure, one codebase behind `FEDERATED_MODE`. USP = modular per-site investment. Docs + ADRs 0001–0004 + phased BUILD_PLAN in `docs/IbnSinaCancerPacs/`. Parked: DMWL identity (Q5), DH access/telemetry terms (Q9).
+
 ## Project Status
 - [Project Completion Status](project_completion_status.md) — Platform COMPLETE. **2 sites live: SITE01 (Ibn Sina) + SITE03 (Cumilla Medical College) 2026-06-02.**
 - [SITE01 Workstation Status](site01_workstation_status.md) — SITE01 COMPLETE 2026-05-25. AET=SITE01_ORTHANC, Tailscale 100.86.132.36, autolink.lua bugs fixed.
@@ -29,10 +32,16 @@
 ## Architecture & Business Model
 - [Business Model & Architecture](project_business_model.md) — Multi-site teleradiology: local Orthanc → Tailscale → central Orthanc → patient link → OHIF viewer
 - [AET format decision](decision_aet_format.md) — 2026-06-02: new sites get `SITE${nnn}_DHPACS` (3-digit, underscore). SITE01/SITE03 keep legacy `_ORTHANC`. Allocator spans both patterns.
+- [Branding Logo Decision](decision_branding_logo.md) — 2026-06-16: DHV_logo.svg stays in OHIF fork only. DHP_Logo_Wording.png + DHP.svg serve admin/patient/doctor portals via `/assets/` nginx static. Never use `/dhs-logo.png` (falls to OHIF catch-all).
 
 ## Website & Marketing
-- [Website Work](project_website_work.md) — Content blueprint + demo portal build guide complete (2026-05-29). Product = DH PACS, Company = DH Solutions. Ibn Sina Hospital: 7 workstations, 5 centers. Film market: ৳14.6B/yr.
+- [Website Work](project_website_work.md) — **STALE, see MIMP-004 pointer below.** Original blueprint-stage plan (2026-05-29) before the site moved to its own repo.
+- [MIMP-004 Pointer](reference_mimp004_business_memory.md) — Real website now lives at `E:\DHS-PACS\dh-pacs-website` (Next.js 16 + Supabase + Cloudflare Pages); query mmp-memory project MIMP-004 for current build status.
+- [DH PACS Business Strategy](dh_pacs_business_strategy.md) — Pulled from MIMP-004 2026-06-17: not-teleradiology positioning, pricing model structure (no exact numbers), HIPAA phrasing rule, 3-layer sales chain, brand voice hard lines.
+- [Marketing Site ↔ Central Integration](project_marketing_site_central_integration.md) — **DONE 2026-06-17** (contact form/Supabase submission still untested — Supabase not yet integrated). Site mirrored at pacs.dhsolutions.com.bd via nginx proxy to Cloudflare Workers.
+- [CI/CD Pipeline — LIVE](project_cicd_pipeline_live.md) — **LIVE 2026-06-17.** Self-hosted runner + ci.yml/deploy.yml built and verified end-to-end on real production, including a real failure (compose.yml not synced) caught and fixed same session. Scope is backend/admin-ui/patient-ui/nginx ONLY — OHIF and doctor-ui still fully manual. Read before touching `ci_deploy.sh` or assuming pipeline coverage.
 - [Demo Portal — LIVE](project_demo_portal_live.md) — `/demo` gateway + `/demo-viewer/` OHIF on CloudFront CDN. LIVE 2026-05-30. Includes files, sub_filter fix, scp deploy workflow, SSH alias (pacsvm), path mapping.
+- [Demo Links — Patient Experience](project_demo_link.md) — **2 live links.** ADR 0009: `34e5f845...` → AYESHA AKTER anonymized (DH PACS DEMO). ADR 0010: `50046f87...` → Abdur Gofur SITE03 real identity (consent obtained). Do NOT revoke either.
 
 ## Retention
 - [Study Purge](project_study_purge.md) — Reclaim Orthanc disk by deleting pixels, keep metadata stub. Implemented 2026-06-07 on feat/safety-mt-gated; NOT yet deployed (migration p4 pending). ADR 0002.
