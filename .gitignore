@@ -1,6 +1,12 @@
 # Never commit local machine config
 .mimp-config.json
 
+# Sources stay local; only their Source cards are committed (ADR-0007).
+# Git history is permanent — a 40MB PDF committed once is committed forever, on every machine.
+raw/*
+!raw/_cards/
+!raw/.gitkeep
+
 # Node.js
 mcp-server/node_modules/
 
