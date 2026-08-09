@@ -120,24 +120,73 @@ function Sync-SparseCheckout {
     Set-Content $sparseFile $lines -Encoding UTF8
 
     # Apply patterns to working tree
-    git read-tree -mu HEAD 2>$null
+    # Warn rather than abort: this legitimately fails before the first commit exists. But a silent
+    # failure means the sparse patterns never applied, leaving the wrong working tree (ADR-0007).
+    Invoke-Git @('read-tree', '-mu', 'HEAD') 'sparse checkout patterns may not have applied' -AllowFail | Out-Null
 
     Pop-Location
+}
+
+# Run git and FAIL LOUDLY. Previously stderr was discarded and no exit code was ever checked,
+# so a conflicted rebase or a rejected push returned success and reported nothing. Harmless while
+# each project was pushed from one machine; silent data loss once anything is shared (ADR-0007).
+function Invoke-Git {
+    param(
+        [Parameter(Mandatory = $true)][string[]]$Arguments,
+        [string]$What = '',
+        [switch]$AllowFail
+    )
+    & git @Arguments
+    $code = $LASTEXITCODE
+    if ($code -eq 0) { return $true }
+
+    $detail = ''
+    if ($What) { $detail = ' - ' + $What }
+    $label = 'git ' + ($Arguments -join ' ')
+    if ($AllowFail) {
+        Write-Host ('  WARNING: ' + $label + ' failed (exit ' + $code + ')' + $detail) -ForegroundColor Yellow
+        return $false
+    }
+    Write-Host ('ERROR: ' + $label + ' failed (exit ' + $code + ')' + $detail) -ForegroundColor Red
+    Write-Host '  Aborting rather than continuing on a failed git operation.' -ForegroundColor Red
+    exit 1
 }
 
 function Git-Sync {
     Sync-SparseCheckout
     Push-Location $RepoPath
-    git pull --rebase --quiet 2>$null
-    Pop-Location
+    try {
+        Invoke-Git @('pull', '--rebase') 'could not sync with origin - resolve, then re-run' | Out-Null
+    } finally {
+        Pop-Location
+    }
 }
 
-function Git-CommitPush($message) {
+# $Paths scopes staging to the files this operation owns. Without it `git add -A` sweeps the whole
+# worktree, folding unrelated in-progress work into a project-scoped commit.
+function Git-CommitPush($Message, $Paths) {
     Push-Location $RepoPath
-    git add -A
-    git commit -m $message --quiet
-    git push --quiet
-    Pop-Location
+    try {
+        if ($Paths -and @($Paths).Count -gt 0) {
+            $addArgs = @('add', '--') + @($Paths)
+        } else {
+            $addArgs = @('add', '-A')
+        }
+        Invoke-Git $addArgs 'could not stage changes' | Out-Null
+
+        # Nothing staged is not a failure - it just means there was nothing to send.
+        & git diff --cached --quiet
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host '  Nothing to commit - working tree already matches the repo.' -ForegroundColor DarkGray
+            return
+        }
+
+        Invoke-Git @('commit', '-m', $Message) 'commit failed' | Out-Null
+        Invoke-Git @('push') 'push rejected - run mimp sync, resolve, then re-run' | Out-Null
+        Write-Host '  Pushed to origin.' -ForegroundColor Green
+    } finally {
+        Pop-Location
+    }
 }
 
 # ── Commands ────────────────────────────────────────────────────────
@@ -209,17 +258,19 @@ function Cmd-Init {
     Write-Host '    [2] Personal  - self-learning, not business related'
     $scopeChoice = (Read-Host '  Choose [1/2]').Trim()
 
-    $isBusiness    = ($scopeChoice -eq '1')
-    $pEntity       = $null
-    $pNiche        = 'personal'
-    $pBusinessUnit = $null
+    $isBusiness      = ($scopeChoice -eq '1')
+    $pEntity         = $null
+    $pPillar         = $null
+    $pProduct        = $null
+    $pClassification = 'personal'
 
     if ($isBusiness) {
+        $pClassification = 'business'
         # Entity selection from the registry's defined entities
         $entityNames = @($reg.entities.PSObject.Properties.Name)
         if ($entityNames.Count -eq 0) {
             Write-Host '  WARNING: no entities defined in registry; leaving entity blank.' -ForegroundColor Yellow
-            $pNiche = 'unsorted'
+            $pClassification = 'unsorted'
         } else {
             Write-Host ''
             Write-Host '  Which entity does this project belong to?' -ForegroundColor DarkGray
@@ -236,28 +287,51 @@ function Cmd-Init {
                 exit 1
             }
 
-            $niches = @('software-saas', 'diagnostic-centre', 'equipment-supply', 'internal')
+            # Business Pillars (registry v2.1) — supersedes the retired 'niche' vocabulary.
+            # Source of truth: E:\DHS-PACS\CONTEXT-MAP.md (2026-08-03).
+            $pillars = @('Build', 'Supply', 'Service', 'Facility')
             Write-Host ''
-            Write-Host '  Niche / activity line for this project:' -ForegroundColor DarkGray
-            for ($n = 0; $n -lt $niches.Count; $n++) {
-                Write-Host ('    [{0}] {1}' -f ($n + 1), $niches[$n])
-            }
-            Write-Host ('    [{0}] other (type a custom value)' -f ($niches.Count + 1))
-            $nicheChoice = (Read-Host '  Choose niche number').Trim()
-            $nicheIdx = 0
-            if ([int]::TryParse($nicheChoice, [ref]$nicheIdx) -and $nicheIdx -ge 1 -and $nicheIdx -le $niches.Count) {
-                $pNiche = $niches[$nicheIdx - 1]
-            } elseif ($nicheIdx -eq ($niches.Count + 1)) {
-                $custom = (Read-Host '  Custom niche (one short token, e.g. research)').Trim()
-                if ($custom) { $pNiche = $custom } else { $pNiche = 'unsorted' }
+            Write-Host '  Business Pillar for this project:' -ForegroundColor DarkGray
+            Write-Host '    [1] Build    - DH-produced software (prime pillar)'
+            Write-Host '    [2] Supply   - medical equipment & accessories (incl. resold software)'
+            Write-Host '    [3] Service  - installation, maintenance & training'
+            Write-Host '    [4] Facility - the BDC diagnostic centre (BANNED from Commercial Content)'
+            Write-Host '    [5] none     - internal tooling, no pillar'
+            $pillarChoice = (Read-Host '  Choose pillar number').Trim()
+            $pillarIdx = 0
+            if ([int]::TryParse($pillarChoice, [ref]$pillarIdx) -and $pillarIdx -ge 1 -and $pillarIdx -le $pillars.Count) {
+                $pPillar = $pillars[$pillarIdx - 1]
+            } elseif ($pillarIdx -eq ($pillars.Count + 1)) {
+                $pPillar = $null
             } else {
-                Write-Host '  Invalid niche choice. Registration blocked - run mimp init again.' -ForegroundColor Red
+                Write-Host '  Invalid pillar choice. Registration blocked - run mimp init again.' -ForegroundColor Red
                 exit 1
             }
 
-            Write-Host '  Business unit / product line (e.g. pacs, hms, tooling) - optional, Enter to skip' -ForegroundColor DarkGray
-            $buInput = (Read-Host '  Business unit').Trim()
-            if ($buInput) { $pBusinessUnit = $buInput }
+            # Product — read live from the registry so the list never goes stale
+            $productIds = @()
+            if ($reg.products) {
+                $productIds = @($reg.products.PSObject.Properties.Name)
+            }
+            if ($productIds.Count -gt 0) {
+                Write-Host ''
+                Write-Host '  Which product does this project serve?' -ForegroundColor DarkGray
+                for ($p = 0; $p -lt $productIds.Count; $p++) {
+                    $prid = $productIds[$p]
+                    Write-Host ('    [{0}] {1} - {2}' -f ($p + 1), $prid, $reg.products.$prid.name)
+                }
+                Write-Host ('    [{0}] none (internal tooling / not product work)' -f ($productIds.Count + 1))
+                $prodChoice = (Read-Host '  Choose product number').Trim()
+                $prodIdx = 0
+                if ([int]::TryParse($prodChoice, [ref]$prodIdx) -and $prodIdx -ge 1 -and $prodIdx -le $productIds.Count) {
+                    $pProduct = $productIds[$prodIdx - 1]
+                } elseif ($prodIdx -eq ($productIds.Count + 1)) {
+                    $pProduct = $null
+                } else {
+                    Write-Host '  Invalid product choice. Registration blocked - run mimp init again.' -ForegroundColor Red
+                    exit 1
+                }
+            }
         }
     } else {
         Write-Host '  Marked as personal / self-learning (no business entity).' -ForegroundColor DarkGray
@@ -296,8 +370,9 @@ function Cmd-Init {
         created       = (Get-Date -Format 'yyyy-MM-dd')
         created_by    = $MachineId
         status        = 'active'
-        niche         = $pNiche
-        business_unit = $pBusinessUnit
+        pillar         = $pPillar
+        product        = $pProduct
+        classification = $pClassification
         entity        = $pEntity
         role          = $pRole
         serves        = $pServes
@@ -373,7 +448,8 @@ function Cmd-Init {
     # on sparse-checkout machines (the sparse set was computed before this project existed).
     Sync-SparseCheckout
 
-    Git-CommitPush "init: $projectId ($ShortName) - $FullName"
+    # Scoped staging: only the registry and this project's new folder.
+    Git-CommitPush "init: $projectId ($ShortName) - $FullName" @('registry.json', "projects/$projectId-$ShortName")
 
     Write-Host ''
     Write-Host '  Project registered successfully!' -ForegroundColor Green
@@ -478,7 +554,8 @@ function Cmd-Push {
         $content | Set-Content $memoryMd -Encoding UTF8
     }
 
-    Git-CommitPush "push: $projectId from $MachineId ($(Get-Date -Format 'yyyy-MM-dd HH:mm'))"
+    # Scoped staging: only this project's folder plus the registry (MEMORY.md stamps may change it).
+    Git-CommitPush "push: $projectId from $MachineId ($(Get-Date -Format 'yyyy-MM-dd HH:mm'))" @("projects/$projectId-$($project.short_name)", 'registry.json')
 
     Write-Host ''
     Write-Host "  Pushed $($memoryFiles.Count) file(s) for $projectId" -ForegroundColor Green
