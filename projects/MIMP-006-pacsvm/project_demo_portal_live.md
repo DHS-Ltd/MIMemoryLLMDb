@@ -3,6 +3,7 @@ name: project-demo-portal-live
 description: Demo portal fully live 2026-05-30 — files, nginx config, sub_filter fix, deploy workflow, SSH alias, path mapping
 metadata:
   type: project
+aliases: [project-demo-portal-live]
 ---
 
 ## Demo portal LIVE as of 2026-05-30

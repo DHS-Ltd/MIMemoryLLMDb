@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: feedback
   originSessionId: 0d830bd0-02d2-424f-b27f-c10dc899e13e
+aliases: [feedback-vm-file-transfer]
 ---
 
 SSH public key auth (`pacsvm_ed25519`) is rejected from the Git Bash / Bash tool environment in some Claude Code sessions, even though the key is in the VM's authorized_keys. The exact cause is unclear (possibly Windows OpenSSH version or key file permissions changing between sessions).

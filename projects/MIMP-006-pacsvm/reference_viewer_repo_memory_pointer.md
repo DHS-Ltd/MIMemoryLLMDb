@@ -2,6 +2,7 @@
 name: Viewer Repo — Memory Pointer
 description: The patient-facing OHIF viewer/portal SPA is a SEPARATE repo (ohif-fork) with its OWN Claude project memory. When asked anything about the viewer/portal UI, read that project's memory for current state — not this central one.
 type: reference
+aliases: [Viewer Repo — Memory Pointer, reference-viewer-repo-memory-pointer]
 ---
 The DICOM **viewer / patient portal UI** at `pacs.dhsolutions.com.bd/viewer` is the OHIF v3 React SPA built from the private fork `DHS-Ltd/ohif-viewer-dhs` (Windows checkout `D:\ohif-fork`, VM build host `/srv/pacs/ohif-fork`). It is **its own Claude Code project with its own memory** — distinct from this central PACS project.
 

@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: feedback
   originSessionId: 0d830bd0-02d2-424f-b27f-c10dc899e13e
+aliases: [feedback-docker-build-gotchas]
 ---
 
 Use `npm install` not `npm ci` in Dockerfiles unless a `package-lock.json` is committed alongside `package.json`. `npm ci` hard-fails with no lockfile.

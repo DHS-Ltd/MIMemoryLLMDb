@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: ec1144fa-69a4-44d5-8332-54917f2533fe
+aliases: [project-demo-link]
 ---
 
 ## Consent Demo Link (Abdur Gofur) — LIVE as of 2026-06-16

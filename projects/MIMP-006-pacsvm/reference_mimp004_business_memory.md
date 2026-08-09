@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: reference
   originSessionId: 4a1b770e-8ea6-4b4c-a188-2bed29f37d05
+aliases: [reference-mimp004-business-memory]
 ---
 
 The DH PACS marketing website was originally planned with docs inside this repo (`docs/Website/DH_PACS_WEBSITE_CONTENT_BLUEPRINT.md`, see [[project_website_work]]), but the actual implementation has since moved to its own dedicated repo and project memory:

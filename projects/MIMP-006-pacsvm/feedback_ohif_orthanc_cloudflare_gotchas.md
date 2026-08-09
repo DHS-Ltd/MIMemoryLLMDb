@@ -4,6 +4,7 @@ description: Non-obvious nginx proxy, OHIF, Orthanc, and Cloudflare traps — wh
 metadata:
   type: feedback
   originSessionId: 38502d20-51e4-4b9e-bfa6-2d199b456c1f
+aliases: [feedback-ohif-orthanc-cloudflare-gotchas, nginx-proxy-and-deployment-gotchas, nginx_proxy_and_deployment_gotchas]
 ---
 When deploying OHIF v3 (image `ohif/app:latest`) behind nginx + Cloudflare Tunnel with Orthanc as the DICOMweb backend, the following five issues cost hours of debugging on 2026-05-10/11. Check them first when image rendering or config changes don't behave.
 

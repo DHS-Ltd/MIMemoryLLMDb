@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 4a1b770e-8ea6-4b4c-a188-2bed29f37d05
+aliases: [cicd-pipeline-live, cicd_pipeline_live, project-cicd-pipeline-live]
 ---
 
 The pipeline designed in [[project_marketing_site_central_integration]] / ADR 0011 is built and working in production as of 2026-06-17.

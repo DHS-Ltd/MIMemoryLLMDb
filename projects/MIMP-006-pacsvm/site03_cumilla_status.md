@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: d49fefb1-8b36-43cc-853e-5cf7a507795c
+aliases: [site03-cumilla-status]
 ---
 
 ## SITE03 — Cumilla Medical College Hospital

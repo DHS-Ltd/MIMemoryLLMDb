@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 0d830bd0-02d2-424f-b27f-c10dc899e13e
+aliases: [saas-p1-p2-implementation]
 ---
 
 ## SaaS P1 — Backend API Layer — COMPLETE 2026-06-03

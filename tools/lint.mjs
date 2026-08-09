@@ -8,11 +8,21 @@
  *       mimp lint
  *
  * Exit 1 if any ERROR, so it can gate a push.
+ *
+ * Scope note: link and citation checks read the working tree, so sparse-excluded project folders
+ * are invisible to them. The superseded-claim check reads origin/master via git objects and
+ * therefore covers the whole repo — that is deliberate, because a stale commercial claim in
+ * another machine's folder is still served by search_memories.
+ *
+ * Severity: defects in the brain's own layers (org/, wiki/, root files) are ERROR. The same defect
+ * in imported project memory is WARN, because it usually means a sibling memory exists on another
+ * machine and has not been pushed rather than that the link is wrong.
  */
 import { readFileSync, existsSync, readdirSync, statSync } from 'fs';
 import { join, relative, basename, extname, dirname, resolve } from 'path';
 import { createHash } from 'crypto';
 import { homedir } from 'os';
+import { execSync } from 'child_process';
 
 const REPO = resolve(import.meta.dirname, '..');
 const TODAY = new Date().toISOString().slice(0, 10);
@@ -97,23 +107,31 @@ for (const file of allMd) {
   if (!raw) continue;
   const text = stripIllustrative(raw);
 
+  // The brain's own layers must be link-clean (ERROR). Imported project memory may legitimately
+  // reference a sibling memory another machine has not pushed yet, so that is a WARN.
+  const severity = /^(org|wiki)\//.test(rel(file)) || /^[^/]+\.md$/.test(rel(file)) ? 'ERROR' : 'WARN';
+
   for (const m of text.matchAll(/\[\[([^\]|#]+)(?:[|#][^\]]*)?\]\]/g)) {
     const name = m[1].trim();
     if (!name || name.includes('^')) continue;
     if (targets.has(name)) {
       for (const t of targets.get(name)) linkedTo.add(t);
     } else {
-      add('ERROR', 'broken-wikilink', rel(file),
-        `[[${name}]] matches no filename or frontmatter alias — renders as a phantom node`);
+      add(severity, 'broken-wikilink', rel(file),
+        `[[${name}]] matches no filename or frontmatter alias${severity === 'WARN' ? ' — likely memory another machine has not pushed' : ' — renders as a phantom node'}`);
     }
   }
+
+  // A project's CLAUDE.md is a *copy* of that repo's own file, so its relative links point into
+  // the source repo, not into this one. Checking them here reports the copy, not a defect.
+  const isCopiedClaudeMd = /^projects\/[^/]+\/CLAUDE\.md$/.test(rel(file));
 
   for (const m of text.matchAll(/\[[^\]]*\]\(([^)\s]+\.md)(?:#[^)]*)?\)/g)) {
     const href = m[1];
     if (/^(https?:|file:|mailto:)/i.test(href)) continue;
     const abs = resolve(dirname(file), decodeURIComponent(href));
     if (existsSync(abs)) linkedTo.add(abs);
-    else add('ERROR', 'broken-link', rel(file), `[…](${href}) does not resolve`);
+    else if (!isCopiedClaudeMd) add(severity, 'broken-link', rel(file), `[…](${href}) does not resolve`);
   }
 }
 
@@ -222,7 +240,54 @@ if (registry) {
   }
 }
 
-// ── 9. review horizons ─────────────────────────────────────────────────────
+// ── 9. superseded claims, including in files this machine cannot see ───────
+// Sparse checkout hides other machines' project folders, so a stale claim can sit in the repo,
+// be served by search_memories, and never appear to a disk-based linter. MIMP-006's copy of the
+// pre-2026-08-03 strategy was found by hand; this check is so the next one is not.
+const BANNED = [
+  [/master proof point/i, "'master proof point' is a banned term — use tier-matched proof"],
+  [/patient data ownership/i, "'patient data ownership' as the category is superseded by the Advanced Connected Imaging Network"],
+  [/complete owner of their/i, "the patient-ownership category claim is superseded; ownership is now the mechanism"],
+  [/three-layer sales chain/i, 'the three-layer chain is Enterprise-tier only; Standard runs Owner → light IT → counter staff'],
+  [/Radiologists\s*\/\s*Surgeons/i, 'radiologist and surgeon have opposite roles and must never be one sales layer'],
+  [/teleradiology platform/i, "'never teleradiology' is a standing brand hard line"],
+];
+// A file that is *documenting* a retired term is not asserting it. Case-insensitive and
+// deliberately broad: a genuinely stale file will not describe its own claim as superseded.
+const DISCUSSES = /superseded|banned|retired|_avoid_|demoted|no longer the headline|replaced by/i;
+
+let gitMdPaths = [];
+try {
+  gitMdPaths = execSync('git ls-tree -r --name-only origin/master', { cwd: REPO, encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 })
+    .trim().split('\n').filter(p => p.endsWith('.md'));
+} catch {
+  add('WARN', 'git-unreadable', 'origin/master', 'could not list origin/master — sparse-hidden files were not checked');
+}
+
+let hidden = 0;
+for (const gitPath of gitMdPaths) {
+  const onDisk = existsSync(join(REPO, gitPath));
+  let text;
+  if (onDisk) {
+    text = read(join(REPO, gitPath));
+  } else {
+    hidden++;
+    try {
+      text = execSync(`git show origin/master:${gitPath}`, { cwd: REPO, encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 });
+    } catch { continue; }
+  }
+  if (!text || DISCUSSES.test(text)) continue;
+
+  for (const [pattern, why] of BANNED) {
+    if (pattern.test(text)) {
+      add('ERROR', 'superseded-claim', gitPath,
+        `${why}${onDisk ? '' : ' [sparse-hidden on this machine — read from git objects]'}`);
+    }
+  }
+}
+if (hidden) add('INFO', 'sparse-hidden', 'origin/master', `${hidden} markdown file(s) exist in the repo but are not checked out here; they were still scanned`);
+
+// ── 10. review horizons ────────────────────────────────────────────────────
 for (const file of allMd) {
   const text = read(file);
   if (!text) continue;

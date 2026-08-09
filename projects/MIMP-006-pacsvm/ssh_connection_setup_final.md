@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: ec274d09-378a-48fd-92dd-697434882926
+aliases: [ssh-connection-setup-complete, ssh-connection-setup-final, ssh_connection_setup_complete]
 ---
 
 ## SSH Connection to PACS VM — RESOLVED

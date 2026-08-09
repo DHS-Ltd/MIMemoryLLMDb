@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: feedback
   originSessionId: 7cc38ce3-362e-466c-b092-ca4c0575f554
+aliases: [feedback-new-customer-scoping]
 ---
 
 Before proposing a deployment approach for any new DH PACS customer, **first read** `docs/researchDocs/MULTI_CUSTOMER_SCALING_ARCHITECTURE.md` and walk the user through the checklist in Part 8 of that document.

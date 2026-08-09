@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: b4a1a88a-0ab0-4252-ab44-cb471afc59b4
+aliases: [ibn-sina-cancer-pacs-system]
 ---
 
 # Ibn Sina Cancer PACS System (design phase — started 2026-06-20)

@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: reference
   originSessionId: c1b26584-3af3-457e-95ea-2ed4051a1c3a
+aliases: [reference-github-repo]
 ---
 
 GitHub repo: `https://github.com/DHS-Ltd/dh-pacs-central` (private, org DHS-Ltd)

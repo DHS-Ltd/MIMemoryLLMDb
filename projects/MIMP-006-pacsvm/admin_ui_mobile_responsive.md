@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: bc6e9cf7-6425-4157-affd-135faf97f43f
+aliases: [admin-ui-mobile-responsive]
 ---
 
 Made the admin UI (`deploy/admin-ui/`, the `pacs-admin-ui` SPA at `/admin/`) mobile-responsive. Done 2026-06-09 on branch `feat/safety-mt-gated`.

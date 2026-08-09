@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 809d919d-6d82-468b-b7a4-e38a4d3566fb
+aliases: [decision-branding-logo]
 ---
 
 ## Decision — 2026-06-16

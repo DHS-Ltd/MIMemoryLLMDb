@@ -3,7 +3,25 @@ name: Business Model & Architecture
 description: Core business model, data flow, and architectural decisions for the DICOM teleradiology platform
 type: project
 originSessionId: 153ccd2f-a8df-44cd-93d8-b2c6f901058b
+aliases: [Business Model & Architecture, project-business-model]
 ---
+> ## ⚠ BANNED FRAMING in the description above; business model superseded
+>
+> The frontmatter calls this a **"DICOM teleradiology platform."** *Never teleradiology* is a
+> standing hard line in the DH PACS brand voice — DH PACS does not compete with reporting services
+> and the hospital's radiologist workflow is untouched.
+>
+> The business model below ("patients can't access their data") was superseded on 2026-08-03: the
+> category is the **Advanced Connected Imaging Network**, patient access is the *mechanism* rather
+> than the claim, and DHS sells to the **surgeon's** need for post-processed studies.
+>
+> **The technical description below remains accurate** — data flow, Orthanc-per-site, Tailscale
+> tunnel. Only the framing is superseded.
+>
+> **Authority:** `E:\DHS-PACS\CONTEXT-MAP.md`. Current position: `org/north-star.md` (ADR-0006).
+
+---
+
 **Business model:** Break the barrier where local Orthanc PACS holds patient data — radiologists view but patients can't access. Central server provides patient-facing viewable links.
 
 **Data flow:**

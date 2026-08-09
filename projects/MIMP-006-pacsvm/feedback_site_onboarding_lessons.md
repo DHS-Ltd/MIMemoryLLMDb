@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: feedback
   originSessionId: d49fefb1-8b36-43cc-853e-5cf7a507795c
+aliases: [feedback-site-onboarding-lessons]
 ---
 
 ## Rule: Use NSSM, never `New-Service`, for Orthanc on Windows

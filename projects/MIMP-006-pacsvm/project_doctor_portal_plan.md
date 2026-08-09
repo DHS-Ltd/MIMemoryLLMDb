@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: dc36e067-b754-4f66-b127-5467b8ee3ecb
+aliases: [project-doctor-portal-plan]
 ---
 
 # Doctor Portal — Design Decisions (grill session 2026-06-13)

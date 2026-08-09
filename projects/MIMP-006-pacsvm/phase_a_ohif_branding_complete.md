@@ -3,6 +3,7 @@ name: Phase A OHIF Branding Complete
 description: Phase A (OHIF fork + DH Solutions branding) shipped 2026-05-19. pacs-ohif-dhs:v1 deployed to VM, gold-path verified, DHS logo + title + favicon rendering.
 type: project
 originSessionId: 7afc5ebd-90fe-4259-b4da-af3266b241ea
+aliases: [Phase A OHIF Branding Complete, phase-a-ohif-branding-complete]
 ---
 Phase A of the OHIF customization plan completed 2026-05-19. `pacs-ohif-dhs:v1` is live on the central VM at 192.168.1.10.
 

@@ -3,6 +3,7 @@ name: PostgreSQL Credentials (Central Server)
 description: Actual postgres user/db inside the pacs-postgres container is `pacs`/`pacs` — NOT `maidul` as the CLAUDE.md .env example suggests
 type: reference
 originSessionId: 77066828-a207-40dd-aa16-827a71eb1050
+aliases: [PostgreSQL Credentials (Central Server), reference-postgres-credentials]
 ---
 **Container:** `pacs-postgres` on the central VM (192.168.1.10)
 
