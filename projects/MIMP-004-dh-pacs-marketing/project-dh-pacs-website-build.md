@@ -5,6 +5,16 @@ metadata:
   node_type: memory
   type: project
   originSessionId: d8460f58-4103-477c-afa8-336658927641
+aliases: [dh-pacs-website-build]
+---
+
+> ## ⚠ SUPERSEDED — do not use for customer-facing work
+>
+> **Build status may be current; the content spec it targets is not.** `DH_PACS_WEBSITE_CONTENT_SPEC.md` still reflects the superseded category and a DHV-Workstation-only deployment model. Website revision is deferred by decision.
+>
+> **Authority:** `E:\DHS-PACS\CONTEXT-MAP.md` (2026-08-03). Current position: `org/north-star.md`.
+> Retained rather than deleted so stale copies elsewhere stay traceable (ADR-0006).
+
 ---
 
 ## Build Status: Phase 1 COMPLETE — pre-launch tasks remain

@@ -1,5 +1,20 @@
 ﻿# DH PACS Project Memory
 
+> ## ⚠ SUPERSEDED — do not use for customer-facing work
+>
+> **This index describes the pre-2026-08-03 strategy.** The DH PACS *sale* failed, not the product — but the positioning below is superseded:
+>
+> - "patient data ownership" as the category -> **Advanced Connected Imaging Network**; ownership is now the *mechanism*, not the claim
+>
+> - "Ibn Sina as master proof point" -> **`master proof point` is a banned term**; tier-matched proof (Ibn Sina => Enterprise only, Cumilla => Standard only, never crossed)
+>
+> - "three-layer sales chain (IT -> Management -> Clinical)" -> **Enterprise tier only**; Standard runs Owner -> light IT -> counter staff
+>
+> **Authority:** `E:\DHS-PACS\CONTEXT-MAP.md` (2026-08-03). Current position: `org/north-star.md`.
+> Retained rather than deleted so stale copies elsewhere stay traceable (ADR-0006).
+
+---
+
 - [Product Architecture & Market Positioning](project-dh-pacs-product.md) — What DH PACS actually does: images + report merged into complete patient record; NOT teleradiology; new market category
 - [Market Strategy & Sales Chain](project-dh-pacs-market-strategy.md) — Two angles (patient data ownership / film replacement), three-layer sales chain (IT → Management → Clinical), Ibn Sina as master proof point
 - [Pricing Model](project-dh-pacs-pricing.md) — Free install, per-patient charge, patient data agreement, future B2C channel; exact numbers pending notebook session
