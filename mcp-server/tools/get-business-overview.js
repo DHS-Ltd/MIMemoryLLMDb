@@ -38,6 +38,31 @@ export function registerGetBusinessOverview(server, repoPath) {
       }
       sections.push(programLines.join('\n'));
 
+      // Products (registry v2.1) — the commercial layer between pillars and projects.
+      const productLines = ['═══ Products (registry) ═══'];
+      for (const [id, pr] of Object.entries(registry.products || {})) {
+        const star = pr.north_star ? '  ★ NORTH STAR' : '';
+        productLines.push(
+          `${id} | ${pr.name} | pillar: ${pr.pillar ?? '?'} | ${pr.provenance ?? '?'} | ` +
+          `status: ${pr.status ?? '?'}${star}`
+        );
+        if (pr.role) productLines.push(`  role: ${pr.role}`);
+        if (pr.revenue_line) productLines.push(`  revenue: ${pr.revenue_line}`);
+        if (pr.vendor) productLines.push(`  vendor: ${pr.vendor}`);
+        if (pr.build_state) productLines.push(`  build: ${pr.build_state}`);
+        if (pr.commercial === false) productLines.push(`  NOT COMMERCIAL: ${pr.commercial_note ?? ''}`);
+        if (pr.succeeded_by) productLines.push(`  succeeded_by: ${pr.succeeded_by}`);
+        if (pr.succeeds) productLines.push(`  succeeds: ${pr.succeeds}`);
+        if (pr.proof) {
+          for (const [tier, evidence] of Object.entries(pr.proof)) {
+            productLines.push(`  proves ${tier}: ${evidence}`);
+          }
+        }
+        if (pr.projects?.length) productLines.push(`  projects: ${pr.projects.join(', ')}`);
+        for (const risk of pr.risks || []) productLines.push(`  RISK: ${risk}`);
+      }
+      sections.push(productLines.join('\n'));
+
       const relationships = gitReadFile(repoPath, 'org/relationships.md');
       sections.push(`═══ org/relationships.md ═══\n${relationships ?? '(not found)'}`);
 
@@ -48,7 +73,7 @@ export function registerGetBusinessOverview(server, repoPath) {
           .join('; ');
         projectLines.push(
           `${id} | ${p.short_name} | ${p.status} | entity: ${p.entity ?? 'personal'} | ` +
-          `${p.niche ?? '?'}/${p.business_unit ?? '?'} | ${p.role ?? ''}${edges ? ` | ${edges}` : ''}`
+          `${p.pillar ?? 'no-pillar'}/${p.product ?? 'no-product'} | ${p.role ?? ''}${edges ? ` | ${edges}` : ''}`
         );
       }
       sections.push(projectLines.join('\n'));

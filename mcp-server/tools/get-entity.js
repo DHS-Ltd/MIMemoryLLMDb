@@ -77,7 +77,7 @@ export function registerGetEntity(server, repoPath) {
         if (!owns && !serves) continue;
         projectCount++;
         const link = owns && serves ? 'owns+serves' : owns ? 'owns' : 'serves';
-        projectLines.push(`${projId} | ${p.short_name} | ${p.status} | ${link} | ${p.niche ?? '?'}/${p.business_unit ?? '?'} | ${p.role ?? ''}`);
+        projectLines.push(`${projId} | ${p.short_name} | ${p.status} | ${link} | ${p.pillar ?? 'no-pillar'}/${p.product ?? 'no-product'} | ${p.role ?? ''}`);
       }
       if (projectCount === 0) projectLines.push('(none)');
       projectLines.push('');

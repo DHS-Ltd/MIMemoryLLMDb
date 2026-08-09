@@ -1,313 +1,542 @@
 ﻿{
-    "schema_version":  "2.0",
-    "next_id":  8,
-    "next_program_id":  3,
-    "entities":  {
-                     "DHS":  {
-                                 "full_name":  "Direct Hospital Solution Ltd",
-                                 "role":  "Parent healthcare company; thesis: build trust via SaaS + diagnostic-centre -\u003e convert to equipment deals",
-                                 "market":  "Bangladesh healthcare",
-                                 "activities":  [
-                                                    "software-saas",
-                                                    "diagnostic-centre",
-                                                    "equipment-supply"
-                                                ],
-                                 "memory":  "org/entities/dhs.md",
-                                 "tags":  [
-                                              "parent",
-                                              "healthcare",
-                                              "bangladesh"
-                                          ]
-                             },
-                     "BDC":  {
-                                 "full_name":  "Baroicha Diagnostic Center Ltd",
-                                 "owned_by":  "DHS",
-                                 "ownership":  "100%",
-                                 "role":  "Rural diagnostic centre (different business model); DHS proving ground + patient-gen engine",
-                                 "location":  "Baroicha / Belabo / Raipura, Bangladesh",
-                                 "relationships":  [
-                                                       {
-                                                           "rel":  "runs-on",
-                                                           "target":  "MIMP-003"
-                                                       }
-                                                   ],
-                                 "memory":  "org/entities/bdc.md",
-                                 "tags":  [
-                                              "subsidiary",
-                                              "diagnostic-centre",
-                                              "belabo"
-                                          ]
-                             }
-                 },
-    "programs":  {
-                     "PROG-001-bdc-patient-gen":  {
-                                                      "name":  "BDC patient-generation \u0026 marketing",
-                                                      "entity":  "BDC",
-                                                      "stage":  "active",
-                                                      "memory":  "org/programs/bdc-patient-generation.md",
-                                                      "tags":  [
-                                                                   "marketing",
-                                                                   "funnel",
-                                                                   "facebook",
-                                                                   "video-consult",
-                                                                   "lead-capture"
-                                                               ]
-                                                  },
-                     "PROG-002-equipment-pipeline":  {
-                                                         "name":  "Equipment-deal pipeline",
-                                                         "entity":  "DHS",
-                                                         "stage":  "groundwork",
-                                                         "memory":  "org/programs/equipment-deal-pipeline.md",
-                                                         "tags":  [
-                                                                      "equipment",
-                                                                      "long-cycle",
-                                                                      "revenue-anchor"
-                                                                  ]
-                                                     }
-                 },
-    "projects":  {
-                     "MIMP-001":  {
-                                      "short_name":  "image-converter",
-                                      "full_name":  "ImageConverter",
-                                      "created":  "2026-05-28",
-                                      "created_by":  "machineA",
-                                      "status":  "active",
-                                      "niche":  "internal",
-                                      "business_unit":  "tooling",
-                                      "entity":  "DHS",
-                                      "role":  "Desktop image converter (SVG-\u003ePNG, multi-res ICO); Python + Pillow + GTK",
-                                      "serves":  [
-
-                                                 ],
-                                      "relationships":  [
-
-                                                        ],
-                                      "depends_on":  [
-
-                                                     ],
-                                      "tags":  [
-                                                   "python",
-                                                   "image-conversion",
-                                                   "desktop",
-                                                   "utility"
-                                               ],
-                                      "local_paths":  {
-                                                          "machineA":  "E:\\Self_project\\ImageConverter"
-                                                      },
-                                      "claude_memory_paths":  {
-                                                                  "machineA":  "C:\\Users\\maidu\\.claude\\projects\\e--Self-project-ImageConverter\\memory"
-                                                              }
-                                  },
-                     "MIMP-002":  {
-                                      "short_name":  "mimp",
-                                      "full_name":  "MIMemoryLLMDb",
-                                      "created":  "2026-05-28",
-                                      "created_by":  "machineA",
-                                      "status":  "active",
-                                      "niche":  "internal",
-                                      "business_unit":  "tooling",
-                                      "entity":  "DHS",
-                                      "role":  "Git-based cross-machine AI memory system + MCP server (the brain itself)",
-                                      "serves":  [
-                                                     "DHS",
-                                                     "BDC"
-                                                 ],
-                                      "relationships":  [
-
-                                                        ],
-                                      "depends_on":  [
-
-                                                     ],
-                                      "tags":  [
-                                                   "memory",
-                                                   "mcp",
-                                                   "powershell",
-                                                   "infrastructure"
-                                               ],
-                                      "local_paths":  {
-                                                          "machineA":  "E:\\MIMemoryLLMDb",
-                                                          "machineB":  "D:\\MIMemoryLLMDb"
-                                                      },
-                                      "claude_memory_paths":  {
-                                                                  "machineA":  "C:\\Users\\maidu\\.claude\\projects\\e--MIMemoryLLMDb\\memory",
-                                                                  "machineB":  "C:\\Users\\Administrator\\.claude\\projects\\d--MIMemoryLLMDb\\memory"
-                                                              }
-                                  },
-                     "MIMP-003":  {
-                                      "short_name":  "v1HMS",
-                                      "full_name":  "V1GasBDCHMS",
-                                      "created":  "2026-05-28",
-                                      "created_by":  "machineA",
-                                      "status":  "active",
-                                      "niche":  "software-saas",
-                                      "business_unit":  "hms",
-                                      "entity":  "DHS",
-                                      "role":  "Hospital/diagnostic management system; runs BDC; productization candidate for external centres",
-                                      "serves":  [
-                                                     "BDC"
-                                                 ],
-                                      "relationships":  [
-                                                            {
-                                                                "rel":  "dogfooded-by",
-                                                                "target":  "BDC"
-                                                            }
-                                                        ],
-                                      "depends_on":  [
-
-                                                     ],
-                                      "tags":  [
-                                                   "hms",
-                                                   "diagnostics",
-                                                   "analytics",
-                                                   "android",
-                                                   "web"
-                                               ],
-                                      "local_paths":  {
-                                                          "machineA":  "E:\\v1-BdcHmsApp"
-                                                      },
-                                      "claude_memory_paths":  {
-                                                                  "machineA":  "C:\\Users\\maidu\\.claude\\projects\\e--v1-BdcHmsApp\\memory"
-                                                              }
-                                  },
-                     "MIMP-004":  {
-                                      "short_name":  "dh-pacs-marketing",
-                                      "full_name":  "DHPACS",
-                                      "created":  "2026-05-30",
-                                      "created_by":  "machineA",
-                                      "status":  "active",
-                                      "niche":  "software-saas",
-                                      "business_unit":  "pacs",
-                                      "entity":  "DHS",
-                                      "role":  "DH PACS marketing site + product positioning (Supabase, HIPAA)",
-                                      "serves":  [
-                                                     "DHS"
-                                                 ],
-                                      "relationships":  [
-                                                            {
-                                                                "rel":  "markets",
-                                                                "target":  "pacs-product"
-                                                            }
-                                                        ],
-                                      "depends_on":  [
-
-                                                     ],
-                                      "tags":  [
-                                                   "pacs",
-                                                   "marketing",
-                                                   "website",
-                                                   "supabase",
-                                                   "hipaa",
-                                                   "gtm"
-                                               ],
-                                      "local_paths":  {
-                                                          "machineA":  "E:\\DH-PACs-Solutions"
-                                                      },
-                                      "claude_memory_paths":  {
-                                                                  "machineA":  "C:\\Users\\maidu\\.claude\\projects\\e--DHS-PACS\\memory"
-                                                              }
-                                  },
-                     "MIMP-005":  {
-                                      "short_name":  "DHV-OHIF",
-                                      "full_name":  "DHV-Online",
-                                      "created":  "2026-05-30",
-                                      "created_by":  "machineB",
-                                      "status":  "active",
-                                      "niche":  "software-saas",
-                                      "business_unit":  "pacs",
-                                      "entity":  "DHS",
-                                      "role":  "DHS PACS patient-facing DICOM viewer (OHIF fork) at pacs.dhsolutions.com.bd",
-                                      "serves":  [
-                                                     "DHS"
-                                                 ],
-                                      "relationships":  [
-                                                            {
-                                                                "rel":  "sold-to",
-                                                                "target":  "external-hospitals",
-                                                                "first_target":  "Ibn Sina",
-                                                                "deadline":  "2026-07"
-                                                            }
-                                                        ],
-                                      "depends_on":  [
-
-                                                     ],
-                                      "tags":  [
-                                                   "pacs",
-                                                   "dicom",
-                                                   "ohif",
-                                                   "viewer",
-                                                   "frontend"
-                                               ],
-                                      "local_paths":  {
-                                                          "machineB":  "D:\\ohif-fork"
-                                                      },
-                                      "claude_memory_paths":  {
-                                                                  "machineB":  "C:\\Users\\Administrator\\.claude\\projects\\d--ohif-fork\\memory"
-                                                              }
-                                  },
-                     "MIMP-006":  {
-                                      "short_name":  "pacsvm",
-                                      "full_name":  "PACS-CENTRAL-DHS",
-                                      "created":  "2026-06-02",
-                                      "created_by":  "machineB",
-                                      "status":  "active",
-                                      "niche":  "software-saas",
-                                      "business_unit":  "pacs",
-                                      "entity":  "DHS",
-                                      "role":  "Projects for the patient facing viewable link. Created PACS central with the inbound connections from the multiple sites",
-                                      "serves":  [
-                                                     "DHS"
-                                                 ],
-                                      "relationships":  [
-
-                                                        ],
-                                      "depends_on":  [
-
-                                                     ],
-                                      "tags":  [
-                                                   "pacs",
-                                                   "dhv",
-                                                   "site"
-                                               ],
-                                      "local_paths":  {
-                                                          "machineB":  "D:\\Pacs_Viewer_Storage_Project"
-                                                      },
-                                      "claude_memory_paths":  {
-                                                                  "machineB":  "C:\\Users\\Administrator\\.claude\\projects\\D--Pacs-Viewer-Storage-Project\\memory"
-                                                              }
-                                  },
-                     "MIMP-007":  {
-                                      "short_name":  "mt-portal-pacs-server",
-                                      "full_name":  "DH_PACS_MT_Portal",
-                                      "created":  "2026-06-08",
-                                      "created_by":  "machineB",
-                                      "status":  "active",
-                                      "niche":  "software-saas",
-                                      "business_unit":  "pacs",
-                                      "entity":  "DHS",
-                                      "role":  "MT Portal DH PACS server",
-                                      "serves":  [
-                                                     "DH"
-                                                 ],
-                                      "relationships":  [
-
-                                                        ],
-                                      "depends_on":  [
-
-                                                     ],
-                                      "tags":  [
-                                                   "pacs",
-                                                   "dhpacs",
-                                                   "saas",
-                                                   "mt",
-                                                   "portal",
-                                                   "dhv"
-                                               ],
-                                      "local_paths":  {
-                                                          "machineB":  "D:\\dh-pacs-workstation"
-                                                      },
-                                      "claude_memory_paths":  {
-                                                                  "machineB":  "C:\\Users\\Administrator\\.claude\\projects\\d--dh-pacs-workstation\\memory"
-                                                              }
-                                  }
-                 }
+  "schema_version": "2.1",
+  "next_id": 10,
+  "next_program_id": 4,
+  "entities": {
+    "DHS": {
+      "full_name": "Direct Hospital Solution Ltd",
+      "role": "Parent healthcare company; thesis: build trust via SaaS + diagnostic-centre -> convert to equipment deals",
+      "market": "Bangladesh healthcare",
+      "activities": [
+        "software-saas",
+        "diagnostic-centre",
+        "equipment-supply"
+      ],
+      "memory": "org/entities/dhs.md",
+      "tags": [
+        "parent",
+        "healthcare",
+        "bangladesh"
+      ]
+    },
+    "BDC": {
+      "full_name": "Baroicha Diagnostic Center Ltd",
+      "owned_by": "DHS",
+      "ownership": "100%",
+      "role": "Rural diagnostic centre (different business model); DHS proving ground + patient-gen engine",
+      "location": "Baroicha / Belabo / Raipura, Bangladesh",
+      "relationships": [
+        {
+          "rel": "runs-on",
+          "target": "MIMP-003"
+        }
+      ],
+      "memory": "org/entities/bdc.md",
+      "tags": [
+        "subsidiary",
+        "diagnostic-centre",
+        "belabo"
+      ]
+    }
+  },
+  "programs": {
+    "PROG-001-bdc-patient-gen": {
+      "name": "BDC patient-generation & marketing",
+      "entity": "BDC",
+      "stage": "active",
+      "memory": "org/programs/bdc-patient-generation.md",
+      "tags": [
+        "marketing",
+        "funnel",
+        "facebook",
+        "video-consult",
+        "lead-capture"
+      ]
+    },
+    "PROG-002-equipment-pipeline": {
+      "name": "Equipment-deal pipeline",
+      "entity": "DHS",
+      "stage": "groundwork",
+      "memory": "org/programs/equipment-deal-pipeline.md",
+      "tags": [
+        "equipment",
+        "long-cycle",
+        "revenue-anchor"
+      ]
+    },
+    "PROG-003-adpp-campaign": {
+      "name": "Advanced Post-Processing marketing campaign",
+      "entity": "DHS",
+      "product": "PRD-003",
+      "pillar": "Supply",
+      "stage": "planning",
+      "goal": "Generate demand for the Advanced DICOM Image Viewer to land the north-star licence by 2026-10-10",
+      "memory": "org/programs/adpp-campaign.md",
+      "authority": "E:\\DHS-PACS",
+      "blocked_by": [
+        "R4 - Inobitec marketing-use permission NOT IN WRITING"
+      ],
+      "relationships": [
+        {
+          "rel": "serves-north-star",
+          "target": "PRD-003",
+          "deadline": "2026-10-10"
+        }
+      ],
+      "tags": [
+        "marketing",
+        "campaign",
+        "post-processing",
+        "surgeon",
+        "inobitec",
+        "line-2",
+        "demand-gen"
+      ],
+      "primary_audience": "P1 - Centre Owner / MD (the signature)",
+      "audience_rationale": "ADR-0002 rejected doctor-first as the primary motion. Serve-the-surgeon is the POSITIONING; the centre is who DHS sells to. Surgeon value is the argument; technologist-facing assets are the evaluation proof pack."
+    }
+  },
+  "products": {
+    "PRD-001": {
+      "name": "DH PACS",
+      "pillar": "Build",
+      "provenance": "dh-built",
+      "status": "selling",
+      "flagship": true,
+      "role": "Cloud DICOM + patient-record delivery. Merges images and the written report into one record delivered by secure link. NOT teleradiology. Middle link of the Surgeon Chain.",
+      "category": "Advanced Connected Imaging Network",
+      "tiers": [
+        "Standard",
+        "Enterprise"
+      ],
+      "proof": {
+        "Enterprise": "Ibn Sina - 7 DHV Workstations, 5 centres, ~1,257 patients since Feb 2026",
+        "Standard": "Cumilla - 5 centres, 56 enrolments, 7 referring doctors (Jul 2026)"
+      },
+      "revenue_line": "Line 1 - per-patient link enrolment (low value, high volume)",
+      "authority": "E:\\DHS-PACS",
+      "projects": [
+        "MIMP-004",
+        "MIMP-006",
+        "MIMP-007"
+      ],
+      "repos": [
+        "E:\\DHS-PACS",
+        "E:\\DHS-PACS\\dh-pacs-website",
+        "E:\\DHPacs"
+      ],
+      "risks": [
+        "R2 Cumilla metric definitions unlabelled",
+        "R5 counter opt-in underperforms automatic forwarding"
+      ]
+    },
+    "PRD-002": {
+      "name": "DHV",
+      "pillar": "Build",
+      "provenance": "dh-built",
+      "status": "selling",
+      "role": "The DH Viewer. Two active technical tracks under one product name.",
+      "tracks": {
+        "web": "OHIF-based web viewer (MIMP-005)",
+        "desktop": "Weasis-based desktop client (E:\\DHV-Weasis)"
+      },
+      "authority": "E:\\DHS-PACS",
+      "projects": [
+        "MIMP-005",
+        "MIMP-009"
+      ],
+      "repos": [
+        "E:\\DHV-Weasis"
+      ],
+      "notes": "Do not use 'DHV-Weasis' to mean the product - that is the engineering repo name.",
+      "risks": [
+        "DHV product vs 'DHV Workstation' naming collision - deferred"
+      ]
+    },
+    "PRD-003": {
+      "name": "Advanced DICOM Image Viewer",
+      "pillar": "Supply",
+      "provenance": "resold",
+      "vendor": "Inobitec",
+      "status": "selling",
+      "north_star": true,
+      "north_star_set": "2026-08-09",
+      "role": "Fills the Advanced Post-Processing engine slot in the Surgeon Chain: segmentation, 3D reconstruction, vascular analysis, biomodeling. A new billable line for the hospital.",
+      "revenue_line": "Line 2 - Advanced Post-Processing licence (high value, lower volume)",
+      "branding_rule": "Brand the capability, not the engine. Market the outcome as 'DH Advanced Post-Processing'. Never claim DHS built it; never conceal that a specialist engine is involved.",
+      "sales_assets": "E:\\DH-Advanced-Viewer\\Inobitec\\Sales_Enablement",
+      "authority": "E:\\DHS-PACS",
+      "projects": [
+        "MIMP-008"
+      ],
+      "repos": [
+        "E:\\DH-Advanced-Viewer\\Inobitec"
+      ],
+      "succeeded_by": "PRD-004",
+      "risks": [
+        "R4 Inobitec marketing-use permission NOT IN WRITING - first blocker",
+        "R7 'Advanced' collides with the category name - needs a naming pass"
+      ],
+      "north_star_target": "Sell 1 licence of the Advanced DICOM Image Viewer by 2026-10-10 (two months from 2026-08-10).",
+      "relationships": [
+        {
+          "rel": "sell-licence",
+          "target": "first external licence",
+          "count": 1,
+          "deadline": "2026-10-10",
+          "set": "2026-08-10"
+        }
+      ],
+      "pillar_rationale": "Confirmed 2026-08-10. Supply already means goods DHS sources and resells rather than builds; software is such a good. Deliberately NOT Build, which is defined as DH-produced software - filing a reseller product there would make the exact claim the brand rule forbids. Note the pillar definition in DHS-PACS reads \"medical equipment & accessories\"; software sits here by extension. PRD-004 moves to Build at engine swap."
+    },
+    "PRD-004": {
+      "name": "DHDicomAnalyzerPro",
+      "pillar": "Build",
+      "provenance": "dh-built",
+      "status": "planning",
+      "role": "3D Slicer-based DICOM analysis and biomodeling tool (segment -> model -> STL). Will replace Inobitec in the Advanced Post-Processing slot. Same slot, sequenced.",
+      "build_state": "NO CODE YET - product source will live at E:\\DHDAPro\\Src (separate repo, not created). Phase 1 dev environment unstarted; UX-Foundation parked 2026-08-03.",
+      "regulatory": "Bangladesh-domestic track (DGDA, not CE/FDA). Planned to ship as a non-diagnostic aid while DGDA registration proceeds.",
+      "authority": "E:\\DHS-PACS",
+      "projects": [
+        "MIMP-008"
+      ],
+      "repos": [
+        "E:\\DH-Advanced-Viewer\\DHDicomAnalyzerPro-Planning",
+        "E:\\DHDAPro\\Src (planned)"
+      ],
+      "supersedes_name": "DHDicomAnalyzer (pre-rescaffold, superseded 2026-07-27)",
+      "succeeds": "PRD-003",
+      "risks": [
+        "R3 regulatory step-down vs certified Inobitec at the moment surgeon trust matters most"
+      ]
+    },
+    "PRD-005": {
+      "name": "HMS",
+      "pillar": "Facility",
+      "provenance": "dh-built",
+      "status": "internal",
+      "role": "Hospital/diagnostic management system. Runs BDC.",
+      "commercial": false,
+      "commercial_note": "Facility is BANNED from all Commercial Content. HMS is no longer a commercial proof point - reversal of the June 2026 dogfooding narrative.",
+      "projects": [
+        "MIMP-003"
+      ],
+      "repos": [
+        "E:\\v1-BdcHmsApp",
+        "E:\\BDCHMSV2"
+      ]
+    }
+  },
+  "projects": {
+    "MIMP-001": {
+      "short_name": "image-converter",
+      "full_name": "ImageConverter",
+      "created": "2026-05-28",
+      "created_by": "machineA",
+      "status": "active",
+      "entity": "DHS",
+      "role": "Desktop image converter (SVG->PNG, multi-res ICO); Python + Pillow + GTK",
+      "serves": [],
+      "relationships": [],
+      "depends_on": [],
+      "tags": [
+        "python",
+        "image-conversion",
+        "desktop",
+        "utility"
+      ],
+      "local_paths": {
+        "machineA": "E:\\Self_project\\ImageConverter"
+      },
+      "claude_memory_paths": {
+        "machineA": "C:\\Users\\maidu\\.claude\\projects\\e--Self-project-ImageConverter\\memory"
+      },
+      "pillar": null,
+      "product": null,
+      "classification": "internal"
+    },
+    "MIMP-002": {
+      "short_name": "mimp",
+      "full_name": "MIMemoryLLMDb",
+      "created": "2026-05-28",
+      "created_by": "machineA",
+      "status": "active",
+      "entity": "DHS",
+      "role": "Git-based cross-machine AI memory system + MCP server (the brain itself)",
+      "serves": [
+        "DHS",
+        "BDC"
+      ],
+      "relationships": [],
+      "depends_on": [],
+      "tags": [
+        "memory",
+        "mcp",
+        "powershell",
+        "infrastructure"
+      ],
+      "local_paths": {
+        "machineA": "E:\\MIMemoryLLMDb",
+        "machineB": "D:\\MIMemoryLLMDb"
+      },
+      "claude_memory_paths": {
+        "machineA": "C:\\Users\\maidu\\.claude\\projects\\e--MIMemoryLLMDb\\memory",
+        "machineB": "C:\\Users\\Administrator\\.claude\\projects\\d--MIMemoryLLMDb\\memory"
+      },
+      "pillar": null,
+      "product": null,
+      "classification": "internal"
+    },
+    "MIMP-003": {
+      "short_name": "v1HMS",
+      "full_name": "V1GasBDCHMS",
+      "created": "2026-05-28",
+      "created_by": "machineA",
+      "status": "active",
+      "entity": "DHS",
+      "role": "Hospital/diagnostic management system; runs BDC; productization candidate for external centres",
+      "serves": [
+        "BDC"
+      ],
+      "relationships": [
+        {
+          "rel": "dogfooded-by",
+          "target": "BDC"
+        }
+      ],
+      "depends_on": [],
+      "tags": [
+        "hms",
+        "diagnostics",
+        "analytics",
+        "android",
+        "web"
+      ],
+      "local_paths": {
+        "machineA": "E:\\v1-BdcHmsApp"
+      },
+      "claude_memory_paths": {
+        "machineA": "C:\\Users\\maidu\\.claude\\projects\\e--v1-BdcHmsApp\\memory"
+      },
+      "pillar": "Facility",
+      "product": "PRD-005",
+      "classification": "internal"
+    },
+    "MIMP-004": {
+      "short_name": "dh-pacs-marketing",
+      "full_name": "DHS-PACS - DH PACS Commercial Hub",
+      "created": "2026-05-30",
+      "created_by": "machineA",
+      "status": "active",
+      "entity": "DHS",
+      "role": "Commercial Hub: single home for Commercial Content across all three products (per DHS-PACS ADR-0001), plus the DH PACS marketing site. Holds AUTHORITY over Commercial Content.",
+      "serves": [
+        "DHS"
+      ],
+      "relationships": [
+        {
+          "rel": "holds-authority-over",
+          "target": "commercial-content",
+          "scope": [
+            "PRD-001",
+            "PRD-002",
+            "PRD-003",
+            "PRD-004"
+          ]
+        }
+      ],
+      "depends_on": [],
+      "tags": [
+        "pacs",
+        "commercial-hub",
+        "marketing",
+        "crm",
+        "gtm",
+        "authority"
+      ],
+      "local_paths": {
+        "machineA": "E:\\DHS-PACS"
+      },
+      "claude_memory_paths": {
+        "machineA": "C:\\Users\\maidu\\.claude\\projects\\e--DHS-PACS\\memory"
+      },
+      "pillar": "Build",
+      "product": "PRD-001",
+      "classification": "commercial-hub",
+      "note": "short_name 'dh-pacs-marketing' and folder projects/MIMP-004-dh-pacs-marketing/ are now misleading; rename deferred (needs a git folder move + sparse-checkout update). Previous machineA path E:\\DH-PACs-Solutions no longer exists."
+    },
+    "MIMP-005": {
+      "short_name": "DHV-OHIF",
+      "full_name": "DHV-Online",
+      "created": "2026-05-30",
+      "created_by": "machineB",
+      "status": "active",
+      "entity": "DHS",
+      "role": "DHS PACS patient-facing DICOM viewer (OHIF fork) at pacs.dhsolutions.com.bd",
+      "serves": [
+        "DHS"
+      ],
+      "relationships": [
+        {
+          "rel": "proves",
+          "target": "Enterprise Tier",
+          "via": "Ibn Sina",
+          "evidence": "7 DHV Workstations, 5 centres, ~1,257 patients since Feb 2026"
+        }
+      ],
+      "depends_on": [],
+      "tags": [
+        "pacs",
+        "dicom",
+        "ohif",
+        "viewer",
+        "frontend"
+      ],
+      "local_paths": {
+        "machineB": "D:\\ohif-fork"
+      },
+      "claude_memory_paths": {
+        "machineB": "C:\\Users\\Administrator\\.claude\\projects\\d--ohif-fork\\memory"
+      },
+      "pillar": "Build",
+      "product": "PRD-002",
+      "classification": "product-engineering"
+    },
+    "MIMP-006": {
+      "short_name": "pacsvm",
+      "full_name": "PACS-CENTRAL-DHS",
+      "created": "2026-06-02",
+      "created_by": "machineB",
+      "status": "active",
+      "entity": "DHS",
+      "role": "Projects for the patient facing viewable link. Created PACS central with the inbound connections from the multiple sites",
+      "serves": [
+        "DHS"
+      ],
+      "relationships": [],
+      "depends_on": [],
+      "tags": [
+        "pacs",
+        "dhv",
+        "site"
+      ],
+      "local_paths": {
+        "machineB": "D:\\Pacs_Viewer_Storage_Project"
+      },
+      "claude_memory_paths": {
+        "machineB": "C:\\Users\\Administrator\\.claude\\projects\\D--Pacs-Viewer-Storage-Project\\memory"
+      },
+      "pillar": "Build",
+      "product": "PRD-001",
+      "classification": "product-engineering"
+    },
+    "MIMP-007": {
+      "short_name": "mt-portal-pacs-server",
+      "full_name": "DH_PACS_MT_Portal",
+      "created": "2026-06-08",
+      "created_by": "machineB",
+      "status": "active",
+      "entity": "DHS",
+      "role": "MT Portal DH PACS server",
+      "serves": [
+        "DH"
+      ],
+      "relationships": [],
+      "depends_on": [],
+      "tags": [
+        "pacs",
+        "dhpacs",
+        "saas",
+        "mt",
+        "portal",
+        "dhv"
+      ],
+      "local_paths": {
+        "machineB": "D:\\dh-pacs-workstation"
+      },
+      "claude_memory_paths": {
+        "machineB": "C:\\Users\\Administrator\\.claude\\projects\\d--dh-pacs-workstation\\memory"
+      },
+      "pillar": "Build",
+      "product": "PRD-001",
+      "classification": "product-engineering"
+    },
+    "MIMP-008": {
+      "full_name": "DH-Advanced-Viewer",
+      "short_name": "dh-advanced-viewer",
+      "status": "active",
+      "created": "2026-08-09",
+      "created_by": "machineA",
+      "local_paths": {
+        "machineA": "E:\\DH-Advanced-Viewer",
+        "machineB": null
+      },
+      "claude_memory_paths": {
+        "machineA": "C:\\Users\\maidu\\.claude\\projects\\E--DH-Advanced-Viewer\\memory",
+        "machineB": null
+      },
+      "entity": "DHS",
+      "pillar": "Build",
+      "product": "PRD-004",
+      "classification": "product-engineering",
+      "role": "Three bounded contexts: DHDicomAnalyzerPro planning (PRD-004), the Inobitec knowledge base + Sales Enablement (PRD-003 - the north-star sales assets), and the 3D Slicer knowledge base. 13 ADRs.",
+      "serves": [
+        "DHS"
+      ],
+      "relationships": [
+        {
+          "rel": "routes-commercial-content-to",
+          "target": "MIMP-004"
+        }
+      ],
+      "depends_on": [],
+      "tags": [
+        "slicer",
+        "inobitec",
+        "dicom",
+        "post-processing",
+        "sales-enablement",
+        "dhdicomanalyzerpro"
+      ]
+    },
+    "MIMP-009": {
+      "full_name": "DHV-Weasis",
+      "short_name": "dhv-weasis",
+      "status": "active",
+      "created": "2026-08-09",
+      "created_by": "machineA",
+      "local_paths": {
+        "machineA": "E:\\DHV-Weasis",
+        "machineB": null
+      },
+      "claude_memory_paths": {
+        "machineA": "C:\\Users\\maidu\\.claude\\projects\\e--DHV-Weasis\\memory",
+        "machineB": null
+      },
+      "entity": "DHS",
+      "pillar": "Build",
+      "product": "PRD-002",
+      "classification": "product-engineering",
+      "role": "DHV desktop track - Weasis-based DICOM viewer client. 17 ADRs (the largest ADR set on machineA).",
+      "serves": [
+        "DHS"
+      ],
+      "relationships": [
+        {
+          "rel": "routes-commercial-content-to",
+          "target": "MIMP-004"
+        }
+      ],
+      "depends_on": [],
+      "tags": [
+        "dhv",
+        "weasis",
+        "viewer",
+        "desktop",
+        "dicom"
+      ]
+    }
+  },
+  "next_product_id": 6
 }

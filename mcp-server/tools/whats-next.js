@@ -22,16 +22,20 @@ function classifyDeadline(deadline, todayIso) {
 
 function collectDeadlines(registry, todayIso) {
   const lines = [];
-  const scan = (nodeId, nodeName, relationships) => {
+  const scan = (nodeId, nodeName, relationships, isNorthStar) => {
     for (const r of relationships || []) {
       if (!r.deadline) continue;
       const verdict = classifyDeadline(String(r.deadline), todayIso);
       const target = r.first_target ? `${r.target} (first: ${r.first_target})` : r.target;
-      lines.push(`[${verdict}] ${nodeId} (${nodeName}): ${r.rel} -> ${target} — deadline ${r.deadline}`);
+      const count = r.count ? `${r.count}x ` : '';
+      const star = isNorthStar ? ' ★ NORTH STAR' : '';
+      lines.push(`[${verdict}]${star} ${nodeId} (${nodeName}): ${r.rel} -> ${count}${target} — deadline ${r.deadline}`);
     }
   };
   for (const [id, e] of Object.entries(registry.entities || {})) scan(id, e.full_name, e.relationships);
   for (const [id, p] of Object.entries(registry.programs || {})) scan(id, p.name, p.relationships);
+  // Products carry the north-star deadline (registry v2.1) — scanned before projects so it leads.
+  for (const [id, pr] of Object.entries(registry.products || {})) scan(id, pr.name, pr.relationships, pr.north_star);
   for (const [id, p] of Object.entries(registry.projects || {})) scan(id, p.short_name, p.relationships);
   return lines;
 }
@@ -56,8 +60,14 @@ export function registerWhatsNext(server, repoPath) {
 
       sections.push(
         `═══ TODAY: ${todayIso} ═══\n` +
-        `Compare every date below against today. Flag anything OVERDUE or LIVE NOW first, ` +
-        `then derive the highest-leverage next moves through the DHS flywheel lens (trust -> equipment deals).`
+        `Compare every date below against today. Flag anything OVERDUE or LIVE NOW first, then ` +
+        `derive the highest-leverage next moves through the DHS strategy lens: DH Solutions Ltd ` +
+        `serves the SURGEON, not the radiologist. Four Business Pillars — Build (prime), Supply, ` +
+        `Service, Facility. The value chain is CT/MRI patient -> Advanced Post-Processing -> ` +
+        `DH PACS -> Surgeon -> Patient. Weigh moves by whether they advance the north-star product ` +
+        `(marked ★ above) and Line 2 revenue (the Advanced Post-Processing licence). ` +
+        `NOTE: the old "trust -> equipment deals" flywheel is SUPERSEDED (2026-08-03) — do not ` +
+        `reason with it. Authority for commercial claims is E:\\DHS-PACS, not this repo (ADR-0006).`
       );
 
       const deadlineLines = collectDeadlines(registry, todayIso);
@@ -106,7 +116,7 @@ export function registerWhatsNext(server, repoPath) {
             statusContent = gitReadFile(repoPath, `${gitFolder}/MEMORY.md`);
             source = 'MEMORY.md';
           }
-          const header = `═══ ${projId} ${p.short_name} (${p.niche ?? '?'}/${p.business_unit ?? '?'}) — ${source}, first ${PROJECT_HEAD_LINES} lines ═══`;
+          const header = `═══ ${projId} ${p.short_name} (${p.pillar ?? 'no-pillar'}/${p.product ?? 'no-product'}) — ${source}, first ${PROJECT_HEAD_LINES} lines ═══`;
           if (!statusContent) {
             sections.push(`${header}\n(no current-state.md or MEMORY.md found)`);
             continue;
