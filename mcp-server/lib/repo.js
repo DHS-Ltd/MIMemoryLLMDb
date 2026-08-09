@@ -222,6 +222,23 @@ export function gitListProjectPaths(repoPath) {
   }
 }
 
+// List .md git paths under a prefix, RECURSIVELY, from the remote tracking branch.
+// gitListMdPaths is depth-1 only, which is fine for a project folder but misses org/decisions,
+// org/entities and org/programs.
+export function gitListMdTree(repoPath, gitPrefix) {
+  try {
+    const out = execSync(`git ls-tree -r --name-only origin/master ${gitPrefix}/`, {
+      cwd: repoPath,
+      encoding: 'utf8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+      maxBuffer: 10 * 1024 * 1024,
+    });
+    return out.trim().split('\n').filter(n => n && n.endsWith('.md'));
+  } catch {
+    return [];
+  }
+}
+
 // List .md git paths inside a project folder from remote tracking branch
 export function gitListMdPaths(repoPath, gitFolderPath) {
   try {

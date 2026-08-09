@@ -120,26 +120,47 @@ E:\MIMemoryLLMDb\              ← Obsidian vault root
 
 **Exit:** `org/` cites DHS-PACS for every strategic claim, and the registry speaks Pillars and Products.
 
-### Phase 2 — Lint
+### Phase 2 — Lint ✅ **DONE 2026-08-10**
 
-| # | Task | Detail |
-|---|---|---|
-| 2.1 | `mimp lint` (mechanical, deterministic, no tokens) | Broken links · wikilink/filename mismatch · orphan pages · Wiki claims with no card · cards that fed no page · **Source hash drift** (card SHA vs file on disk) · review-horizon breaches · passed registry deadlines. Runnable on either machine; warn-only pre-push. |
-| 2.2 | Semantic lint prompt | Contradictions between pages, claims gone stale, concepts referenced everywhere with no page. Run every N ingests or monthly. |
+**`tools/lint.mjs`, wired as `mimp lint`.** Deterministic, no model, no tokens; exit 1 on any error
+so it can gate a push. Implemented in Node because it hashes files and parses markdown — PS 5.1 is
+the wrong tool. Ten checks:
 
-Keeps the MCP server a context-assembler that never calls a model. Note 2.1 would have caught both
-the passed `MIMP-005` deadline and the 6 broken wikilinks months ago.
+`broken-wikilink` · `broken-link` · `source-drift` (card SHA-256 vs the file on disk) ·
+`source-missing` · `card-fed-nothing` · `card-no-abstract` · `uncited-page` · `orphan-page` ·
+`deadline-passed` · `dead-path` · `unpushed-memory` · `review-overdue`
 
-### Phase 3 — Retrieval
+**First run found 18 errors — including its own false positives**, which was the most useful
+result. It flagged the MEMORY.md template inside `SCHEMA.md` and the `[[wikilink]]` in SCHEMA.md's
+own rule 7. A linter that cries wolf gets ignored, so `stripIllustrative()` now blanks fenced code,
+inline code spans, and `---begin/end template---` regions before scanning.
 
-| # | Task |
+Real defects found and fixed: **6 broken README links** (files had moved to `docs/Phase1-Build/`)
+and **`org/programs/bdc-patient-generation.md` uncited**. Now **0 errors, 3 warnings** — all three
+`unpushed-memory`, which is genuine signal: MIMP-004 has 16 memory files against 8 in the repo,
+MIMP-008 has 19 against 0, MIMP-009 has 6 against 0.
+
+Note 2.1 would have caught the passed `MIMP-005` deadline and the 6 broken MIMP-004 wikilinks
+months ago.
+
+**2.2 Semantic lint** (contradictions, meaning gone stale, missing concept pages) stays a prompt,
+run every N ingests. Keeps the MCP server a context-assembler that never calls a model.
+
+### Phase 3 — Retrieval ✅ **DONE 2026-08-10**
+
+| # | Delivered |
 |---|---|
-| 3.1 | `search_memories` gains `scope` ∈ {projects, wiki, org, all}, default `all` — also closes the existing gap where `org/` is unsearchable |
-| 3.2 | `get_wiki_page` — page plus outbound links |
-| 3.3 | Extend `mcp-server/test-brain-tools.mjs`; restart Claude Desktop; `git pull` + restart on machineB |
+| 3.1 | `search_memories` gains `scope` ∈ {all, projects, wiki, org, cards}, default `all`. **Closes the pre-existing gap where `org/` was entirely unsearchable** — it only ever walked `projects/`. `project_filter` implies `scope=projects`, so old callers are unaffected. |
+| 3.2 | `get_wiki_page` — lists pages when called bare, resolves loose names (`INDEX`, `INDEX.md`, `wiki/INDEX.md`, or a frontmatter alias), returns the page plus its outbound links. |
+| 3.3 | `gitListMdTree()` added — `gitListMdPaths` is depth-1 only and would have missed `org/decisions`, `org/entities`, `org/programs`. Test harness extended by 8 calls. |
+
+**Verified:** 8 tools register (was 7); `scope='org'` returns 9 matches where org/ was previously
+unreachable; `scope='projects'` preserves legacy results; `get_wiki_page` correctly reports the
+not-yet-pushed state.
 
 ⚠ MCP reads `origin/master` ([repo.js:199](../../mcp-server/lib/repo.js#L199)) — **nothing is
-retrievable until pushed.** Document this in `wiki/RULES.md`.
+retrievable until pushed.** Documented in `wiki/RULES.md` §8 and surfaced in `get_wiki_page`'s own
+empty-state message.
 
 ### Phase 4 — Widen the corpus, then the vault
 
@@ -167,8 +188,14 @@ absolute paths across repos — the exact thing Obsidian cannot do.
 
 ### Phase 5 — Freshness
 
-Absorbs the pending step-1.5 weekly `DIGEST.md` strategist on machineB, now fed by lint output.
-`whats_next` becomes a routine that is actually run — it worked correctly all along; nobody called it.
+⚠ **Needs re-planning.** Step 1.5 scheduled the weekly `DIGEST.md` strategist on **machineB** — but
+machineB holds only the DH PACS technical codebase (confirmed 2026-08-10), so it is the wrong host
+for a whole-business strategist job. Options: run it on machineA, or drop the scheduled job in
+favour of `mimp lint` plus `whats_next` on demand. Decide before building.
+
+The underlying point stands either way: `whats_next` worked correctly all along — the passed
+`MIMP-005` deadline was there to be seen. Nobody ran it. Freshness needs a *routine*, not another
+tool.
 
 ---
 
