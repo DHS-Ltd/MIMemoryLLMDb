@@ -711,6 +711,23 @@ switch ($Command) {
     'list'          { Cmd-List }
     'status'        { Cmd-Status -ProjectRef $Arg1 }
     'sync'          { Cmd-Pull -ProjectRef $Arg1; Cmd-Push -ProjectRef $Arg1 }
+    'lint'          {
+        # Mechanical lint (Phase 2.1) - deterministic, no model, no tokens. Implemented in Node
+        # because it hashes files and parses markdown; PowerShell 5.1 is the wrong tool for that.
+        $lintScript = Join-Path $PSScriptRoot 'lint.mjs'
+        if (-not (Test-Path $lintScript)) {
+            Write-Host "ERROR: lint.mjs not found at $lintScript" -ForegroundColor Red
+            exit 1
+        }
+        $node = Get-Command node -ErrorAction SilentlyContinue
+        if (-not $node) {
+            Write-Host 'ERROR: node is not on PATH. mimp lint needs Node (same requirement as the MCP server).' -ForegroundColor Red
+            exit 1
+        }
+        $lintArgs = @($lintScript) + @($Arg1, $Arg2 | Where-Object { $_ })
+        & node @lintArgs
+        exit $LASTEXITCODE
+    }
     'sparse-status' {
         Sync-SparseCheckout
         Write-Host ''
@@ -737,6 +754,11 @@ switch ($Command) {
         Write-Host '    status        [project_id_or_short_name]             Compare local vs repo'
         Write-Host '    sync          [project_id_or_short_name]             Pull then push'
         Write-Host '    sparse-status                                        Show this machine''s sparse checkout paths'
+        Write-Host '    lint          [--json] [--quiet]                      Mechanical brain lint (exit 1 on error)'
+        Write-Host ''
+        Write-Host '  lint checks: broken links and wikilinks, Source hash drift, uncited pages,'
+        Write-Host '  orphan wiki pages, passed deadlines, dead registry paths, unpushed memory,'
+        Write-Host '  overdue reviews. Reports only - it never fixes.' -ForegroundColor DarkGray
         Write-Host ''
     }
 }

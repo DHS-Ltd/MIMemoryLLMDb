@@ -36,9 +36,14 @@ mimp status MIMP-001                                           Check if local an
 | Document | Description |
 |----------|-------------|
 | [SCHEMA.md](./SCHEMA.md) | Memory file format specification |
-| [docs/workflow.md](./docs/workflow.md) | Daily workflow: push, pull, create, update |
-| [docs/add-new-machine.md](./docs/add-new-machine.md) | Step-by-step guide to add a new machine |
-| [docs/llm-guide.md](./docs/llm-guide.md) | How any LLM can use this memory system |
-| [docs/troubleshooting.md](./docs/troubleshooting.md) | Known issues and fixes |
-| [docs/roadmap.md](./docs/roadmap.md) | Future enhancement ideas |
-| [docs/MaidulMemoryProject-Implementation-Guide.md](./docs/MaidulMemoryProject-Implementation-Guide.md) | Original build guide |
+| [docs/Phase1-Build/workflow.md](./docs/Phase1-Build/workflow.md) | Daily workflow: push, pull, create, update |
+| [docs/Phase1-Build/add-new-machine.md](./docs/Phase1-Build/add-new-machine.md) | Step-by-step guide to add a new machine |
+| [docs/Phase1-Build/llm-guide.md](./docs/Phase1-Build/llm-guide.md) | How any LLM can use this memory system |
+| [docs/Phase1-Build/troubleshooting.md](./docs/Phase1-Build/troubleshooting.md) | Known issues and fixes |
+| [docs/Phase1-Build/roadmap.md](./docs/Phase1-Build/roadmap.md) | Future enhancement ideas |
+| [docs/Phase1-Build/MaidulMemoryProject-Implementation-Guide.md](./docs/Phase1-Build/MaidulMemoryProject-Implementation-Guide.md) | Original build guide |
+| [CONTEXT.md](./CONTEXT.md) | Glossary — the shared language of the brain |
+| [org/](./org/) | The cited company index: business, north-star, entities, programs, decisions |
+| [wiki/RULES.md](./wiki/RULES.md) | How the assistant ingests Sources and maintains the Wiki |
+| [docs/BrainBuild/brain-build-plan.md](./docs/BrainBuild/brain-build-plan.md) | Phase 2 — the brain layer |
+| [docs/Phase3-Wiki/wiki-build-plan.md](./docs/Phase3-Wiki/wiki-build-plan.md) | Phase 3 — the Wiki layer (current) |

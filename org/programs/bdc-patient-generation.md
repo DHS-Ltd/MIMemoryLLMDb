@@ -2,12 +2,31 @@
 
 # Program: BDC Patient-Generation & Marketing
 
+> ## ⚠ STALE — written 2026-06-02 from a 2026-05-23 audit
+>
+> **BDC is now the Facility pillar and is banned from all Commercial Content**
+> (`E:\DHS-PACS\CONTEXT-MAP.md`, 2026-08-03). Nothing in this program may be cited, reused, or
+> referenced in any DHS commercial material. It remains valid as **BDC's own operational record**.
+>
+> The overdue/live-now items below (lead magnet, health camp, ACS launch, KPI tracking) were flagged
+> unknown in June and have not been checked since — **assume all four are unresolved**.
+>
+> **Deliberately deprioritised**, not forgotten: irrelevant to the current north-star (sell one
+> Advanced DICOM Image Viewer licence by 2026-10-10). **Review by 2026-10-15.**
+
 | Field | Value |
 |-------|-------|
 | Type | Program (operational, non-code) |
-| Entity | BDC |
+| Entity | BDC · **Pillar: Facility** |
+| Commercial Content | 🚫 **Banned** — this program is invisible to all DHS commercial material |
 | Goal | Convert local awareness into diagnostic-centre patients; build the video-consult funnel |
-| Related project | BDC website / patient-gen system (to be registered) · HMS (MIMP-003) |
+| Related project | BDC website / patient-gen system (unregistered; `E:\BDC_Marketing` holds 8 sub-projects) · HMS (MIMP-003) |
+
+## Sources
+
+First-party BDC operational record, not derived from an external Source. The underlying material is
+the **2026-05-23 BDC marketing audit**; the Facility-pillar exclusion above is cited from
+`E:\DHS-PACS\CONTEXT-MAP.md` (2026-08-06).
 
 ## The intended funnel ("you don't need to come if you can't come")
 
