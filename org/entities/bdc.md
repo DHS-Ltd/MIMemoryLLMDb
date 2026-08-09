@@ -2,10 +2,24 @@
 
 # Entity: BDC — Baroicha Diagnostic Center Ltd
 
+> ## ⚠ STALE — last verified 2026-06-02, **69 days ago**
+>
+> **Role changed materially:** BDC is now the **Facility pillar** and is **banned from all
+> Commercial Content** (`E:\DHS-PACS\CONTEXT-MAP.md`, 2026-08-03). It is no longer the
+> "proof/credibility engine backing the PACS sale" that the June brain described — that framing came
+> from the retired flywheel.
+>
+> **People and roles below remain TO VERIFY** and were not resolved in the 2026-08-10 reconciliation.
+> **Deliberately deprioritised**, not forgotten: Facility is out of scope for Commercial Content and
+> irrelevant to the current north-star (sell one Advanced DICOM Image Viewer licence by 2026-10-10).
+>
+> **Review by 2026-10-15** — after the north-star window closes.
+
 | Field | Value |
 |-------|-------|
-| Type | Entity (subsidiary) |
+| Type | Entity (subsidiary) · **Pillar: Facility** |
 | Owned by | DHS — 100% |
+| Commercial Content | 🚫 **Banned** — never name BDC in any commercial material |
 | Business model | **Different from DHS** — a real, operating rural diagnostic centre + patient-generation engine |
 | Location | Baroicha / Belabo / Raipura area (rural Bangladesh) |
 | Runs on | HMS (MIMP-003) |

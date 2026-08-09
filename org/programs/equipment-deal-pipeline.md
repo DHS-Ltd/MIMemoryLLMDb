@@ -2,14 +2,28 @@
 
 # Program: Equipment-Deal Pipeline
 
+> ## ⚠ SUPERSEDED FRAMING — 2026-08-03
+>
+> **The flywheel this program is built on no longer exists.** `E:\DHS-PACS\CONTEXT-MAP.md`
+> establishes four **Business Pillars** — Supply, Facility, **Build (prime)**, Service — in which
+> equipment supply is the **Supply pillar**, a peer line of business. It is **not** "the
+> destination", "the long-term revenue anchor", or the thing SaaS builds trust toward. **Build is
+> prime.** See `../business.md` §3 and ADR-0006.
+>
+> Everything below the line was written 2026-06-02 against the retired thesis. Retained, not
+> deleted, because stale copies of this framing survive elsewhere and must stay traceable.
+> **Rewrite pending** — the Supply pillar needs a program written from the current strategy.
+
 | Field | Value |
 |-------|-------|
 | Type | Program (operational, non-code) |
-| Entity | DHS |
-| Goal | Convert accumulated trust into high-ticket medical-equipment deals (the long-term revenue anchor) |
-| Stage | Groundwork / awareness — no forced motion yet |
+| Entity | DHS · **Pillar: Supply** |
+| Goal | ⚠ superseded — was "convert accumulated trust into high-ticket equipment deals" |
+| Stage | Groundwork — but **no longer the destination of a flywheel** |
 
-## Why this is the destination, not the start
+---
+
+## Why this is the destination, not the start ⚠ SUPERSEDED
 
 Equipment supply is DHS's **long-term core target** and intended primary revenue anchor: very
 expensive equipment, very long sales cycles, backed by 25+ years of experience and strong global
