@@ -1,10 +1,19 @@
-# MIMemoryLLMDb — Memory Schema v1.0
+# MIMemoryLLMDb — Memory Schema v1.1
 
 ## Purpose
 
-This document defines the format for project memory files stored in this
-repository. AI assistants (Claude Code, ChatGPT, Gemini, local models)
-should read this to understand how memory is structured.
+This document defines the **format** for markdown files stored in this repository. AI assistants
+(Claude Code, ChatGPT, Gemini, local models) should read this to understand how memory is structured.
+
+> **Scope note.** This is a *format* specification and nothing else. How the assistant *operates*
+> the Wiki — ingest, lint, citation discipline, Q&A behaviour — is `wiki/RULES.md`. Vocabulary is
+> `CONTEXT.md`. Keeping the three apart is deliberate; the video that prompted Phase 3 calls its
+> rules doc "the schema", and that collision is banned here.
+
+> **v1.1 (2026-08-10)** — corrects rule 5, which forbade frontmatter that roughly half the repo
+> already used. Claude Code's own auto-memory writes frontmatter, and `mimp push` copies those files
+> in verbatim, so the repo has always had two writers with two conventions. The rule lost. Also adds
+> the wikilink rule, after 6 links in MIMP-004 were found resolving to nothing.
 
 ## Structure per project
 
@@ -81,5 +90,25 @@ Rules:
    useful things for an AI to know
 3. Keep MEMORY.md under 200 lines — split into referenced files if longer
 4. Referenced files should be self-contained — readable without MEMORY.md
-5. Use plain markdown only — no HTML, no special tags, no frontmatter
+5. **YAML frontmatter is permitted and, for machine-read files, expected.** It is how Claude Code's
+   auto-memory writes files and how `get_decisions` filters ADRs. Recognised keys:
+
+   | Key | Used by | Notes |
+   |-----|---------|-------|
+   | `name` | auto-memory | Short slug. **Not** the filename — see rule 7 |
+   | `description` | auto-memory, recall | One line; used to judge relevance |
+   | `aliases` | wikilink resolution | Array. Include `name` here whenever it differs from the filename |
+   | `metadata.type` | auto-memory | `user` / `feedback` / `project` / `reference` |
+   | `id`, `date`, `status`, `scope`, `tags`, `supersedes`, `superseded_by` | ADRs | See `org/decisions/_TEMPLATE.md` |
+   | `card`, `origin`, `sha256`, `source_modified`, `registered` | Source cards | See ADR-0007 |
+
+   Keep it flat and simple — the parser in `mcp-server/lib/repo.js` handles scalars and inline
+   arrays (`[a, b]`) only. No block sequences, no nested maps beyond `metadata`.
+
 6. The metadata table at the top is required for all MEMORY.md files
+7. **A `[[wikilink]]` must match a filename or an `aliases:` entry.** Frontmatter `name` is *not*
+   resolvable on its own. Six links in MIMP-004 pointed at `name` values and silently resolved to
+   nothing until 2026-08-10. When `name` differs from the filename, add `aliases: [<name>]`.
+8. **Superseded claims are bannered, never deleted.** Use a blockquote at the top naming what
+   replaced the claim, when, and which Source holds Authority. Stale copies survive in other repos;
+   deleting the record here destroys the only trace that the claim ever existed (ADR-0006).
