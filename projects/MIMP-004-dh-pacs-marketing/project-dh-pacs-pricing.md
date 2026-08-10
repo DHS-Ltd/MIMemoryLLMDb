@@ -7,6 +7,18 @@ metadata:
   originSessionId: da756dae-fcc1-41f9-b54e-e0c23d99ce97
 ---
 
+> ## ⚠ SUPERSEDED — do not use for customer-facing work
+>
+> **Superseded.** Pricing is now **two tiers and two revenue lines**: Standard (free install, per-patient billing) and Enterprise (licensed, charged, on-prem). Free installation is a **Standard-tier term only** — Ibn Sina bought workstation licences at ~300k BDT/unit.
+>
+> Line 1 = per-patient link enrolment. Line 2 = the **Advanced Post-Processing licence**, which is the current north star: sell one by 2026-10-10.
+>
+> **Authority:** `E:\DHS-PACS\CONTEXT-MAP.md` (2026-08-03). Current position:
+> MIMemoryLLMDb `org/north-star.md`. Retained rather than deleted so stale copies stay
+> traceable (ADR-0006).
+
+---
+
 The DH PACS pricing model has three components. This is a core part of the business architecture, not just a commercial decision.
 
 **Component 1 — Installation: Free (STANDARD small-tier model ONLY)**

@@ -1,5 +1,23 @@
 ﻿# DH PACS Project Memory
 
+> ## ⚠ SUPERSEDED — do not use for customer-facing work
+>
+> **This index describes the pre-2026-08-03 positioning.** The DH PACS *sale* failed, not the product — DH PACS is the flagship under Build, the prime pillar, and the middle link of the Surgeon Chain. Superseded below:
+>
+> - "patient data ownership" as the category → **Advanced Connected Imaging Network**; ownership is the *mechanism*, not the claim
+>
+> - "Ibn Sina as master proof point" → **banned term**; **tier-matched proof** — Ibn Sina proves Enterprise only, Cumilla proves Standard, never crossed
+>
+> - "three-layer sales chain (IT → Management → Clinical)" → **Enterprise tier only**; Standard runs Owner → light IT → counter staff
+>
+> See `project-dhs-brand-strategy.md` and `project-linkedin-surgeon-first.md` in this same folder for the current position.
+>
+> **Authority:** `E:\DHS-PACS\CONTEXT-MAP.md` (2026-08-03). Current position:
+> MIMemoryLLMDb `org/north-star.md`. Retained rather than deleted so stale copies stay
+> traceable (ADR-0006).
+
+---
+
 - [DHS Brand Strategy](project-dhs-brand-strategy.md) — **READ FIRST for any positioning work.** Set 2026-08-03: DHS serves the SURGEON not the radiologist; category = Advanced Connected Imaging Network; endorsed house (DHS master brand); 4 Business Pillars, Build prime; 2 tiers with tier-matched proof (Cumilla=Standard, IbnSina=Enterprise); 2 revenue lines; personas P1–P6. Supersedes the patient-ownership category claim and several CLAUDE.md hard lines. See docs/adr/0002
 - [Commercial Content Hub Rule](commercial-content-hub-rule.md) — DHS-PACS is the single home for marketing/positioning/pricing/official-post content for DH PACS, DHV, and DHDicomAnalyzerPro, wherever drafted; see CONTEXT-MAP.md and ADR-0001; migration of existing DHV-Weasis/DH-Advanced-Viewer content deferred
 - [Product Architecture & Market Positioning](project-dh-pacs-product.md) — What DH PACS actually does: images + report merged into complete patient record; NOT teleradiology; new market category

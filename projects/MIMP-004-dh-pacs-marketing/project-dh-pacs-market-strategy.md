@@ -7,6 +7,24 @@ metadata:
   originSessionId: da756dae-fcc1-41f9-b54e-e0c23d99ce97
 ---
 
+> ## ⚠ SUPERSEDED — do not use for customer-facing work
+>
+> **Superseded on every major point.** DHS serves the **surgeon, not the radiologist** — the radiologist is a *deliberate non-persona* (DHS-PACS ADR-0002, 2026-08-03).
+>
+> - "patient data ownership" differentiator → demoted to mechanism
+>
+> - "Ibn Sina as the master proof point" → **banned framing**; use tier-matched proof
+>
+> - three-layer sales chain → **Enterprise only**
+>
+> - The competitive set is not PACS vendors but the ~30 radiology-reporting companies; the argument is differentiation by *customer*, not by product.
+>
+> **Authority:** `E:\DHS-PACS\CONTEXT-MAP.md` (2026-08-03). Current position:
+> MIMemoryLLMDb `org/north-star.md`. Retained rather than deleted so stale copies stay
+> traceable (ADR-0006).
+
+---
+
 **The core differentiator:**
 Patient data ownership — giving patients their complete imaging record (DICOM images + written report, merged) — is currently absent in the Bangladesh medical imaging market. This is the sharpest competitive edge. No film, CD, USB, PACS, or reporting service does this.
 

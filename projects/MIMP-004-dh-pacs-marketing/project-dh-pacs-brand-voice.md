@@ -7,6 +7,16 @@ metadata:
   originSessionId: 2e2b3906-f138-4a7c-b192-ca1b909fa8e7
 ---
 
+> ## ⚠ SUPERSEDED — do not use for customer-facing work
+>
+> **The voice profile this points at was revised 2026-08-03** — goal and flywheel rewritten, audience layers replaced by personas P1–P6, tier-matched proof added, 8 new banned moves, litmus tests 7 → 10. Read the current `E:\DHS-PACS\docs\DH_PACS_BRAND_VOICE.md`.
+>
+> **Authority:** `E:\DHS-PACS\CONTEXT-MAP.md` (2026-08-03). Current position:
+> MIMemoryLLMDb `org/north-star.md`. Retained rather than deleted so stale copies stay
+> traceable (ADR-0006).
+
+---
+
 A full reusable VOICE PROFILE for DH PACS was created on 2026-06-10 and saved at
 `E:\DHS-PACS\docs\DH_PACS_BRAND_VOICE.md`. It was derived from the website content
 spec copy, the 2026-05-29 strategy decisions (see [[dh-pacs-website-decisions]]),

@@ -7,6 +7,16 @@ metadata:
   originSessionId: da756dae-fcc1-41f9-b54e-e0c23d99ce97
 ---
 
+> ## ⚠ SUPERSEDED — do not use for customer-facing work
+>
+> **Predates the 2026-08-03 repositioning.** Website revision is **deferred by decision**, so these older decisions are not yet resolved either way. Pending changes: elevate DHS above product level, remove "Complete Radiology Department Setup" from the lead form (equipment-chain ambition is internal-only), rewrite Hero/HowItWorks for the surgeon chain.
+>
+> **Authority:** `E:\DHS-PACS\CONTEXT-MAP.md` (2026-08-03). Current position:
+> MIMemoryLLMDb `org/north-star.md`. Retained rather than deleted so stale copies stay
+> traceable (ADR-0006).
+
+---
+
 The website blueprint (DH_PACS_WEBSITE_CONTENT_BLUEPRINT.md) was reviewed and the following decisions were agreed. These have NOT yet been applied to the blueprint file — they need to be implemented in a future session.
 
 **Agreed changes to the blueprint:**

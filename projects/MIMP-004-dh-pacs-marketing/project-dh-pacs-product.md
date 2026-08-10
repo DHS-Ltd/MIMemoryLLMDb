@@ -7,6 +7,18 @@ metadata:
   originSessionId: da756dae-fcc1-41f9-b54e-e0c23d99ce97
 ---
 
+> ## ⚠ SUPERSEDED — do not use for customer-facing work
+>
+> **The category claim below is superseded.** "The patient as complete owner of their own imaging record" is no longer the headline — the category is the **Advanced Connected Imaging Network**, and patient ownership is the mechanism that makes it work (DHS-PACS ADR-0002, 2026-08-03).
+>
+> Still true: DH PACS is NOT teleradiology, and the product is built and deployed.
+>
+> **Authority:** `E:\DHS-PACS\CONTEXT-MAP.md` (2026-08-03). Current position:
+> MIMemoryLLMDb `org/north-star.md`. Retained rather than deleted so stale copies stay
+> traceable (ADR-0006).
+
+---
+
 DH PACS is a cloud DICOM imaging platform built for Bangladesh hospitals. The product is already built and deployed.
 
 **Company vs Product:**
