@@ -162,29 +162,49 @@ not-yet-pushed state.
 retrievable until pushed.** Documented in `wiki/RULES.md` §8 and surfaced in `get_wiki_page`'s own
 empty-state message.
 
-### Phase 4 — Widen the corpus, then the vault
+### Phase 4 — Widen the corpus, then the vault ✅ **DONE 2026-08-10**
 
-Build pillar first: DHV-Weasis (17 ADRs, now MIMP-009) → DH-Advanced-Viewer (13, now MIMP-008),
-prioritising the **Inobitec Sales_Enablement** corpus since PRD-003 is the north-star. Then
-Isotope/Cyclotron, BDC Marketing, DHS-CRM, DHS-ERP, Personal_Branding — **none of which the brain
-knows exist**. Register repos under v2.1 as they are ingested, not in a big-bang pass.
+**Corpus widened.** 41 unpushed memory files brought in: **MIMP-008** (DH-Advanced-Viewer — the
+Inobitec sales material the north-star depends on), **MIMP-009** (DHV-Weasis), and **MIMP-004**
+refreshed with 9 files that did not exist in the repo, including `project-dhs-brand-strategy.md`
+and `project-linkedin-surgeon-first.md`. `projects/` went from **33 → 74** markdown files.
 
-**Obsidian vault — demoted here from Phase 1.7 on 2026-08-10.** The reason is architectural, not
-scheduling: ADR-0006 made the brain **cite** rather than assert, so `wiki/` and `org/` links point at
-absolute paths in *other* repos — and **Obsidian cannot draw a graph edge to a file outside the
-vault**. The provenance edges, which are the entire point of citing, are structurally invisible to it.
-Nor can the vault simply be widened: `E:\` holds **6,660** markdown files (DHSR 3,744,
-ClaudeRulesMemoryRepository 1,110, SR 749), so an `E:\`-rooted vault is noise.
+**First two Wiki pages written** — both serving the north star, both holding synthesis no single
+repo does:
 
-What survives is the **internal** concept graph among wiki pages — which only becomes informative
-once `wiki/` has real page count (the video's own ~100-article threshold). At 68 files today, a
-folder listing tells you more. Setup remains trivial whenever wanted: open the repo root as a vault,
-exclude `mcp-server/node_modules` (**148** md files against **60** real), commit `.obsidian/` so
-machineB shares the config.
+- [`wiki/advanced-post-processing.md`](../../wiki/advanced-post-processing.md) — the engine slot:
+  two engines sequenced, three naming rules that conflict if read carelessly, the vascular-only
+  scope, and the figure-sourcing trap where the wrong folder is the obvious one.
+- [`wiki/selling-the-first-licence.md`](../../wiki/selling-the-first-licence.md) — the north-star
+  play: why the *sale* failed and not the product, why the copy is aimed at the centre owner rather
+  than the surgeon, candidates, blockers in order.
 
-For provenance visualisation the right tool is a **generated** graph (Phase 3 Graph Brain or
-`/graphify`), which is built from the registry plus parsed citations and can therefore follow
-absolute paths across repos — the exact thing Obsidian cannot do.
+**What the Wiki immediately earned:** it surfaced a contradiction neither repo could see alone.
+`E:\DH-Advanced-Viewer` holds a standing rule (2026-07-26) that *"DH PACS and the DHV Workstation
+are out of scope for this product's sales material"*, while `DHS_BRAND_STRATEGY.md` §12 records
+**R8** — that the same rule **must be revised**, because the Surgeon Chain only works if they are
+sold as one thing. Both current. The campaign cannot write a lead message until one gives way.
+
+**ADR-0008 written**, at real cost: `mimp push` destroyed the seven Phase 0 supersession banners
+because they were applied to `projects/` rather than to the Claude memory source. `mimp lint`
+caught it within seconds. Rule now in `SCHEMA.md` rule 9 and `CLAUDE.md`.
+
+**Obsidian vault — built, with its limitation recorded rather than discovered later.**
+`.obsidian/app.json` excludes `mcp-server/node_modules` (**148** md files against the real corpus)
+and the video folder; `.obsidian/graph.json` colour-codes by tier — wiki green, org blue, decisions
+red, Source cards purple, projects orange, docs grey — so the graph is legible by layer. Committed
+so both machines share it.
+
+⚠ **What it cannot show, by construction:** ADR-0006 made the brain **cite**, so `wiki/` and `org/`
+point at absolute paths in *other* repos, and **Obsidian cannot draw an edge to a file outside the
+vault**. The provenance edges are invisible to it. Widening is not an option either — `E:\` holds
+**6,660** markdown files. For provenance visualisation the right tool is a **generated** graph
+(Phase 3 Graph Brain or `/graphify`), built from the registry plus parsed citations, which can
+follow absolute paths across repos.
+
+**Remaining corpus** (deliberately not ingested yet): Isotope/Cyclotron, BDC Marketing, DHS-CRM,
+DHS-ERP, Personal_Branding, BDCHMSV2 — none registered. Add under v2.1 as they are ingested, not in
+a big-bang pass.
 
 ### Phase 5 — Freshness
 
