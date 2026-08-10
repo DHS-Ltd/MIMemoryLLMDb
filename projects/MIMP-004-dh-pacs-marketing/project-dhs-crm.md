@@ -6,6 +6,7 @@ metadata:
   type: project
   originSessionId: 0af12712-f8f3-49c9-b187-b0d176d3b68c
   modified: 2026-08-08T17:02:05.754Z
+aliases: [project_dhs_crm]
 ---
 
 CRM design fully settled in a grill session on 2026-08-06. Doctrine at `docs/CRM/CONTEXT.md` + `docs/CRM/BUILD_PLAN.md`; decisions in [ADR-0003](e:/DHS-PACS/docs/adr/0003-crm-lives-in-three-layers.md) and [ADR-0004](e:/DHS-PACS/docs/adr/0004-crm-holds-case-shape-not-case-identity.md).

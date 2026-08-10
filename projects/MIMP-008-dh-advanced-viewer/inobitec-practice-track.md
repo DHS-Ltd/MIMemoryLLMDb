@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 1bd97867-006e-4fcb-920c-16bc00105e7b
+aliases: [inobitec_practice_track]
 ---
 
 Standalone, explicitly separate from the DHDicomAnalyzer/Slicer scope-loop project ([[inobitec-scope-loop]], [[scope-current-position]] — those have their own CONTEXT.md). This track is the user's personal 10-day trial-license hands-on practice through `Inobitec_Resources\Manual\Inobitec_Viewer_default.pdf`, chapter by chapter, via `/grill-with-docs`.

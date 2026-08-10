@@ -112,3 +112,10 @@ Rules:
 8. **Superseded claims are bannered, never deleted.** Use a blockquote at the top naming what
    replaced the claim, when, and which Source holds Authority. Stale copies survive in other repos;
    deleting the record here destroys the only trace that the claim ever existed (ADR-0006).
+9. 🚫 **Never hand-edit files under `projects/`.** That folder is a **replica**. `mimp push` copies
+   one way — Claude memory → repo, with `Copy-Item -Force` — so any repo-side edit is destroyed by
+   the next push, silently. Edit
+   `~/.claude/projects/<encoded>/memory/<file>.md` instead, then `mimp push`. This is not
+   hypothetical: seven supersession banners were lost this way on 2026-08-10 and only `mimp lint`
+   noticed. See **ADR-0008**. Files the brain itself owns — `org/`, `wiki/`, `raw/_cards/`,
+   `CONTEXT.md`, `SCHEMA.md`, `registry.json` — are authored in the repo and unaffected.

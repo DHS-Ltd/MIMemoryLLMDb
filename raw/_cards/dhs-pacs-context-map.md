@@ -28,6 +28,8 @@ The authoritative DHS commercial glossary and context map. Establishes the four 
 - `org/north-star.md`
 - `org/relationships.md`
 - `org/entities/dhs.md`
+- `wiki/advanced-post-processing.md`
+- `wiki/selling-the-first-licence.md`
 
 ---
 

@@ -6,6 +6,7 @@ metadata:
   type: project
   originSessionId: f2b377b6-f216-4c06-86b7-9f584a13dd36
   modified: 2026-08-03T01:44:40.059Z
+aliases: [ux_foundation_study]
 ---
 
 > **PARKED 2026-08-03 by the user.** Surface 1 (G4 3D VRT) and its Slicer map are complete and

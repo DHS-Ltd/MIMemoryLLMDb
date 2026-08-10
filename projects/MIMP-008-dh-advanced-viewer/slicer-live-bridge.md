@@ -6,6 +6,7 @@ metadata:
   type: project
   originSessionId: 64bb8465-991b-4f39-9a63-acea2f1b844c
   modified: 2026-07-28T13:45:07.274Z
+aliases: [slicer_live_bridge]
 ---
 
 Wired up 2026-07-28, closing the deferral in [[dhdicomanalyzerpro-rescaffold]]. Claude can

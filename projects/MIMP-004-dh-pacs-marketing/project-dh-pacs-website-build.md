@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: d8460f58-4103-477c-afa8-336658927641
+aliases: [dh-pacs-website-build, dh_pacs_website_build]
 ---
 
 ## Build Status: Phase 1 COMPLETE — pre-launch tasks remain

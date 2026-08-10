@@ -6,6 +6,7 @@ metadata:
   type: project
   originSessionId: 7e74d688-a15a-475f-91b0-384878641c92
   modified: 2026-07-27T18:41:16.023Z
+aliases: [dhdicomanalyzer_product]
 ---
 
 **Renamed as of 2026-07-27**: DHDicomAnalyzer → **DHDicomAnalyzerPro** ("Direct Hospital Dicom

@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: da756dae-fcc1-41f9-b54e-e0c23d99ce97
+aliases: [dh-pacs-market-strategy, dh_pacs_market_strategy]
 ---
 
 > ## ⚠ SUPERSEDED — do not use for customer-facing work

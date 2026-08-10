@@ -4,6 +4,7 @@ description: "Named pointer to the RESOLVED 'black cell on sheet re-hydrate' Fil
 metadata:
   type: reference
   originSessionId: d4c1d434-e85f-4053-b7c7-c8246741c0ca
+aliases: [black_cell_rehydrate_fix]
 ---
 
 **Call this "the black-cell-rehydrate-fix"** — a two-bug fix landed 2026-07-07

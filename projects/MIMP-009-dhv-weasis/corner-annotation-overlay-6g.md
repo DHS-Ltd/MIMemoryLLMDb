@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 6191d691-d6b1-4ed1-b96d-f41537cf933a
+aliases: [corner_annotation_overlay_6g]
 ---
 
 **Status: DONE, built and live-verified 2026-07-07.** Film Composer's four-corner

@@ -6,6 +6,7 @@ metadata:
   type: feedback
   originSessionId: 63fc8d3b-5bb0-41c2-8a45-8bb94b72bb0e
   modified: 2026-07-20T18:06:49.845Z
+aliases: [marketing_caption_voice]
 ---
 
 Rules for writing captions/overlays on [[client-facing-clips-pipeline]] assets:

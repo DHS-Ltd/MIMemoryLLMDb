@@ -27,6 +27,8 @@ Company-level brand strategy, accepted 2026-08-03. Sections 1-13 cover the strat
 - `org/north-star.md`
 - `org/business.md`
 - `org/programs/adpp-campaign.md`
+- `wiki/advanced-post-processing.md`
+- `wiki/selling-the-first-licence.md`
 
 ---
 

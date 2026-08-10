@@ -6,6 +6,7 @@ metadata:
   type: project
   originSessionId: dbddbbae-3976-449d-8444-208ccfb41382
   modified: 2026-07-28T08:36:59.930Z
+aliases: [slicer_knowledge_base]
 ---
 
 `3DSlicer_Research/` (raw scrape of upstream 3D Slicer developer+user docs, 148 `.md` files) was

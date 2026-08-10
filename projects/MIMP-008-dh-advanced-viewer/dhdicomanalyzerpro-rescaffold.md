@@ -6,6 +6,7 @@ metadata:
   type: project
   originSessionId: 2de5aacc-d307-4d24-94a9-3db941cc4a4e
   modified: 2026-07-28T13:06:25.362Z
+aliases: [dhdicomanalyzerpro_rescaffold]
 ---
 
 **2026-07-28**: repo layout rearranged to match the rename decision (was left inconsistent

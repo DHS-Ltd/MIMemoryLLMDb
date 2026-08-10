@@ -6,6 +6,7 @@ metadata:
   type: project
   originSessionId: 4de72df4-8d91-4812-9562-9e924c24629f
   modified: 2026-08-01T18:46:47.910Z
+aliases: [sales_enablement_answer_bank]
 ---
 
 A live Inobitec reseller deal drove a new bounded workstream, specified and **built** 2026-08-01.

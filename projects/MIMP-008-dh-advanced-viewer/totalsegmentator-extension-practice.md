@@ -6,6 +6,7 @@ metadata:
   type: project
   originSessionId: a0f30f35-c75f-44a6-8500-c3c75c56093c
   modified: 2026-08-08T19:07:32.247Z
+aliases: [totalsegmentator_extension_practice]
 ---
 
 Started 2026-08-08. **A third, separate thread** — not the [[slicer-learning-track]]

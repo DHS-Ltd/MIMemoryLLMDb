@@ -6,6 +6,7 @@ metadata:
   type: project
   originSessionId: 7e74d688-a15a-475f-91b0-384878641c92
   modified: 2026-07-27T16:04:35.551Z
+aliases: [scope_current_position]
 ---
 
 As of **2026-07-10**, strategy is locked and the feature-scoping pipeline is validated. Building the

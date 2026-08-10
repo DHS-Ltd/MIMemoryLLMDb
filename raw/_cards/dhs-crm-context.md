@@ -26,6 +26,7 @@ CRM doctrine and glossary. Defines Account, Contact, Last Interaction, Opportuni
 
 - `org/north-star.md`
 - `org/relationships.md`
+- `wiki/selling-the-first-licence.md`
 
 ---
 

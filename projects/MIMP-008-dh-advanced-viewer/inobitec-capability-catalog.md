@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 95591ef8-ca5a-4f34-925c-f4bb31fb0d2d
+aliases: [inobitec_capability_catalog]
 ---
 
 Built 2026-07-20 (design via `/grill-with-docs`, then implemented). A sub-project **separate**

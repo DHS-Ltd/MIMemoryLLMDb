@@ -6,6 +6,7 @@ metadata:
   type: project
   originSessionId: 64bb8465-991b-4f39-9a63-acea2f1b844c
   modified: 2026-07-28T13:45:28.243Z
+aliases: [slicer_learning_track]
 ---
 
 Started 2026-07-28, immediately after the live bridge was wired ([[slicer-live-bridge]]).

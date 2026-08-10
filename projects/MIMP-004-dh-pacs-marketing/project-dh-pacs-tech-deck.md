@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 7c0034ad-0073-4342-97a9-22d14339372e
+aliases: [dh-pacs-tech-deck, dh_pacs_tech_deck]
 ---
 
 A second Ibn Sina deck — **technical-facing**, distinct from the management deck ([[dh-pacs-ibnsina-commercial-posture]]). Built `docs/IbnSinaCancerPacs/presentation/build_tech_deck.py` → `DH_PACS_IbnSina_Technical.pptx` (19 slides, English-only, same visual system/palette/fonts/helpers as `build_deck.py`).

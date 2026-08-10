@@ -6,6 +6,7 @@ metadata:
   type: project
   originSessionId: 13b278a4-36ad-47f9-85ee-263cd946ce84
   modified: 2026-08-08T11:44:34.041Z
+aliases: [project_loop_engineering]
 ---
 
 Loop engineering was studied and mapped to DHS work on **2026-08-08**, from a video in `E:\DHS-PACS\Loop_engineering\`. Three docs exist there: `LOOP_ENGINEERING_EXTRACTION.md` (the source content), `CONTEXT.md` (glossary), `LOOP_ENGINEERING_APPLICATION.md` (the DHS map). **Nothing has been built yet.**

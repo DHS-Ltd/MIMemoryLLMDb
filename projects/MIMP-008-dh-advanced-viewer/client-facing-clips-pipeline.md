@@ -6,6 +6,7 @@ metadata:
   type: project
   originSessionId: 63fc8d3b-5bb0-41c2-8a45-8bb94b72bb0e
   modified: 2026-07-20T18:06:36.446Z
+aliases: [client_facing_clips_pipeline]
 ---
 
 **Client_Facing_Clips pipeline** — a third bucket inside `Inobitec/`, alongside

@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 9bbda442-24e3-4549-949b-54d24379e20d
+aliases: [mcp_ai_control_surface]
 ---
 
 **M3 (Film Composer surface) planned in full 2026-07-05, via `/grill-with-docs`.**

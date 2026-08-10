@@ -1,4 +1,4 @@
-﻿# DH PACS Project Memory
+# DH PACS Project Memory
 
 > ## ⚠ SUPERSEDED — do not use for customer-facing work
 >
@@ -33,4 +33,3 @@
 - [DHS CRM Design](project-dhs-crm.md) — **READ before any CRM build or schema work.** Settled 2026-08-06: Account+Contact linked (surgeons never buy, centres do); "lead" retired; job is the nag not monitoring; Notion store + Cloudflare Worker cron + local capture bot; two Stage Sets both ending past signature (Standard ends at Enrolling); Owner vs Assigned To from day one; phase gate ~27 Aug. **Amended 2026-08-08:** append-only Log in Notion page bodies (Interactions DB rejected on mobile friction), Last Interaction added to Accounts, Going Quiet weekly nag designed but held at the gate. See docs/CRM/ + ADR-0003/0004/0005
 - [Loop Engineering](project-loop-engineering.md) — **PARKED 2026-08-08 — learning banked, do not pitch building it; Maidul triggers.** Studied from video in Loop_engineering/. "Loop Spec" is the unit (`/loop` is a scheduler, not a loop); evaluator-first sequencing; convergent→Claude Code in-repo vs perpetual→Worker+Notion+Telegram; prohibitions are gameable by silence; memory is the PHI leak vector so ADR-0004 moves to the tool boundary. Read when a repeated, checkable task shows up in real work
 - [Personal Brand Content Skill](personal-brand-angles-skill.md) — skill at ~/.claude/skills/personal-brand-angles/SKILL.md; invoke with /personal-brand-angles; generates Idea Cards across 4 pillars; source material (voice profile, research) now lives in Self_project/Personal_Branding, not here; note: /content-angles is a separate Notion pipeline skill, do not confuse
-

@@ -3,6 +3,7 @@ name: workspace-containment
 description: Keep everything for this project inside e:\DH-Advanced-Viewer — don't create or wire in repos elsewhere on E:
 metadata:
   type: feedback
+aliases: [workspace_containment]
 ---
 
 Everything for this project lives inside `e:\DH-Advanced-Viewer`. Do **not** create new

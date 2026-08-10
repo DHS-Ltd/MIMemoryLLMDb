@@ -42,6 +42,17 @@ Both are keyed by `machine_id` (user-defined label set in `~/.mimp-config.json`)
 
 `~/.mimp-config.json` — set `machine_id` and `repo_path` per machine. Never committed.
 
+## Read before editing anything
+
+- 🚫 **Never hand-edit files under `projects/`** — it is a replica. `mimp push` copies Claude memory
+  → repo one-way and will silently destroy your edit. Edit
+  `~/.claude/projects/<encoded>/memory/` instead, then push. See **ADR-0008**.
+- **The brain cites; it does not assert.** `org/` and `wiki/` name the Source that owns each claim.
+  Authority for anything commercial is `E:\DHS-PACS`. If this repo and a Source disagree, the
+  **Source wins**. See **ADR-0006**.
+- **Run `mimp lint` before pushing.** Deterministic, no tokens, exit 1 on error.
+- **The MCP server reads `origin/master`** — nothing is retrievable until it is pushed.
+
 ## Important Notes
 
 - `mimp.ps1` targets PowerShell 5.1 — use single-quoted strings, nested `Join-Path` calls

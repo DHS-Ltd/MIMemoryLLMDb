@@ -6,6 +6,7 @@ metadata:
   type: reference
   originSessionId: 7e74d688-a15a-475f-91b0-384878641c92
   modified: 2026-08-02T23:22:50.954Z
+aliases: [watch_tooling_windows]
 ---
 
 `/watch` on this machine needs its binaries PATH-patched per run — its setup `--check` reports them

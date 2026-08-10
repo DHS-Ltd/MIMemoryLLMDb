@@ -25,6 +25,7 @@ Build plan and contract for the Answer Bank: the internal sales-enablement layer
 ## Pages fed
 
 - `org/programs/adpp-campaign.md`
+- `wiki/advanced-post-processing.md`
 
 ---
 

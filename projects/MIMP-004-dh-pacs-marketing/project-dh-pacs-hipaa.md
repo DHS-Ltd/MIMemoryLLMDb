@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: da756dae-fcc1-41f9-b54e-e0c23d99ce97
+aliases: [dh-pacs-hipaa-compliance, dh_pacs_hipaa_compliance]
 ---
 
 DHS/DH PACS is actively working toward HIPAA compliance as a product requirement.

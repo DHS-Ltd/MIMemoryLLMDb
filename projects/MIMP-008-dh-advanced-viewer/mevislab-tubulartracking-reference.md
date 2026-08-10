@@ -6,6 +6,7 @@ metadata:
   type: reference
   originSessionId: 4c4bcfa7-bdfa-4040-9782-952910e3ba21
   modified: 2026-07-27T16:04:26.114Z
+aliases: [mevislab_tubulartracking_reference]
 ---
 
 MeVisLab ships a module called `TubularTracking` — a tubular-template-model centerline

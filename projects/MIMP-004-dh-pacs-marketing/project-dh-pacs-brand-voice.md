@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 2e2b3906-f138-4a7c-b192-ca1b909fa8e7
+aliases: [dh-pacs-brand-voice, dh_pacs_brand_voice]
 ---
 
 > ## ⚠ SUPERSEDED — do not use for customer-facing work

@@ -6,6 +6,7 @@ metadata:
   type: project
   originSessionId: f79638df-8ceb-459b-95dd-2dc4d08da5bf
   modified: 2026-08-02T19:20:25.179Z
+aliases: [customer_facing_sales_docs]
 ---
 
 Started 2026-07-26: `Inobitec/Client_Facing_Docs/` holds customer-facing **sales** material

@@ -6,14 +6,22 @@ Sourced synthesis across DHS's repos. Every claim on every page below cites a So
 [`../raw/_cards/`](../raw/_cards/). Rules: [`RULES.md`](./RULES.md). Vocabulary:
 [`../CONTEXT.md`](../CONTEXT.md).
 
-> **Status: scaffolded 2026-08-10, no pages yet.** Phase 1 registered the Sources and rebuilt `org/`
-> as cited; page-writing begins in Phase 4 once the corpus widens beyond DHS-PACS. This is
-> deliberate — writing synthesis pages before the ingest loop has run more than once would bake any
-> systematic mistake into every page at the same time.
+> **Status: 2 pages, written 2026-08-10 (Phase 4).** Both serve the north star. Written only after
+> the corpus widened past DHS-PACS — writing synthesis before the ingest loop had run more than once
+> would have baked any systematic mistake into every page at the same time.
 
 ## Pages
 
-_(none yet)_
+| Page | What it holds that no single repo does |
+|------|----------------------------------------|
+| [Advanced Post-Processing](./advanced-post-processing.md) | The north-star product: two engines sequenced in one slot, three conflicting naming rules, the vascular-only scope, the figure-sourcing trap, and **R8** — a rule in `E:\DH-Advanced-Viewer` that directly contradicts the Surgeon Chain |
+| [Selling the first licence](./selling-the-first-licence.md) | The whole north-star play: why the *sale* failed and not the product, who the copy is aimed at and why that is not the surgeon, candidate accounts, blockers in order, and what is already built |
+
+**The contradiction these pages surfaced:** `E:\DH-Advanced-Viewer` says *"DH PACS and the DHV
+Workstation are out of scope for this product's sales material"* (2026-07-26); `DHS_BRAND_STRATEGY`
+§12 says that rule **must be revised** because the Surgeon Chain only works if they are sold as one
+thing. Both are current, both written down, and the campaign cannot write a lead message until one
+gives way. Neither repo could see it alone.
 
 ## Sources registered — 19 cards
 

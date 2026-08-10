@@ -6,6 +6,7 @@ metadata:
   type: reference
   originSessionId: 2a5dbb6d-8cda-45a6-93cc-29c2d972972e
   modified: 2026-08-03T01:50:51.174Z
+aliases: [dhs-pacs-commercial-content-hub-rule, dhs_pacs_commercial_content_hub_rule]
 ---
 
 Established 2026-08-03 via `/grill-with-docs`. DH Solutions Ltd sells three products, each with

@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 6895c065-c5bb-4ae3-8b97-098d836a47c2
+aliases: [grill_film_composer_skill]
 ---
 
 Built a project-scoped skill **`grill-film-composer`** at

@@ -6,6 +6,7 @@ metadata:
   type: reference
   originSessionId: df17acb4-349e-433d-909d-40e520a668aa
   modified: 2026-08-03T01:30:24.933Z
+aliases: [personal_brand_angles_skill]
 ---
 
 Skill at `~/.claude/skills/personal-brand-angles/SKILL.md`, invoked with `/personal-brand-angles`.

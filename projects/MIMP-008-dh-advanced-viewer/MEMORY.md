@@ -1,4 +1,4 @@
-﻿# Project Memory — DH-Advanced-Viewer
+# Project Memory — DH-Advanced-Viewer
 
 - [DHDicomAnalyzer product](dhdicomanalyzer-product.md) — what it is (branded 3D Slicer for Bangladesh), strategy, where the decision docs live; RENAMED, see next entry
 - [DHDicomAnalyzerPro re-scaffold](dhdicomanalyzerpro-rescaffold.md) — 2026-07-27 rename+full re-scaffold to fix the 5hr rebuild problem; 2026-07-28 repo physically rearranged to match (planning docs now in `DHDicomAnalyzerPro-Planning/`, old repo archived to `E:\Archive\DHDicomAnalyzer`); Phase 1 (env) plan written, Phase 2 (module port) still pending
@@ -18,4 +18,3 @@
 - [Slicer learning track](slicer-learning-track.md) — hands-on stock-Slicer literacy; NEXT SESSION starts with bone removal on a lower-limb CTA to isolate vessels
 - [TotalSegmentator extension practice](totalsegmentator-extension-practice.md) — 2026-08-08/09: THIRD thread, separate from the learning track and the catalog; new sibling Slicer 5.12.3 install at `E:\Slicer.org`; findings go to new `Practise_Resoucres/` folder, deliberately kept out of `Knowledge_Base/MODULES.md` (third-party extension, no upstream doc to cite). **Install DONE after a ~5hr saga — read the "Install saga" section before ever reinstalling a Python-heavy Slicer extension on this machine**: three stacked bugs (a slow `inspect.getmodule` fallback, a non-short-circuiting file-existence check in the PyTorch extension, and a genuine cross-thread import deadlock from running the install in a background thread) each needed a different fix
 - [Workspace containment](workspace-containment.md) — keep everything inside `e:\DH-Advanced-Viewer`; don't wire in stray repos found elsewhere on E:
-

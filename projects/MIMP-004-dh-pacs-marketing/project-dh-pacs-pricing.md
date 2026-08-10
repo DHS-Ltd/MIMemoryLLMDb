@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: da756dae-fcc1-41f9-b54e-e0c23d99ce97
+aliases: [dh-pacs-pricing, dh_pacs_pricing]
 ---
 
 > ## ⚠ SUPERSEDED — do not use for customer-facing work

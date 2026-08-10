@@ -26,6 +26,8 @@ Maps three bounded contexts: DHDicomAnalyzerPro planning (product source will li
 
 - `org/programs/adpp-campaign.md`
 - `org/business.md`
+- `wiki/advanced-post-processing.md`
+- `wiki/selling-the-first-licence.md`
 
 ---
 

@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: bcf65a9b-c7d6-4e0c-959c-18dcb62a2e17
+aliases: [dh-pacs-ibnsina-commercial-posture, dh_pacs_ibnsina_commercial_posture]
 ---
 
 The Ibn Sina **Cancer & Diagnostic Center** deal is an **enterprise** engagement that deliberately diverges from DH's standard small-tier model ([[dh-pacs-pricing]]). Full record: `docs/IbnSinaCancerPacs/adr/0005-ibnsina-enterprise-commercial-posture.md` and `docs/IbnSinaCancerPacs/CONTEXT.md`.

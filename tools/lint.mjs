@@ -122,9 +122,10 @@ for (const file of allMd) {
     }
   }
 
-  // A project's CLAUDE.md is a *copy* of that repo's own file, so its relative links point into
-  // the source repo, not into this one. Checking them here reports the copy, not a defect.
-  const isCopiedClaudeMd = /^projects\/[^/]+\/CLAUDE\.md$/.test(rel(file));
+  // CLAUDE.md and everything under a project's .claude/ are *copies* of that repo's own files, so
+  // their relative links point into the source repo, not into this one. Reporting them describes
+  // the copy, not a defect.
+  const isCopiedClaudeMd = /^projects\/[^/]+\/(CLAUDE\.md|\.claude\/)/.test(rel(file));
 
   for (const m of text.matchAll(/\[[^\]]*\]\(([^)\s]+\.md)(?:#[^)]*)?\)/g)) {
     const href = m[1];

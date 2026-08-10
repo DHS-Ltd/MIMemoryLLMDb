@@ -27,6 +27,7 @@ Records why the patient-ownership category was abandoned: the category had no pu
 - `org/north-star.md`
 - `org/relationships.md`
 - `org/programs/adpp-campaign.md`
+- `wiki/selling-the-first-licence.md`
 
 ---
 

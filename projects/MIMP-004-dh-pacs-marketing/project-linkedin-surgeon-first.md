@@ -6,6 +6,7 @@ metadata:
   type: project
   originSessionId: 0e343e85-8ad9-46e5-8cf1-262f928afdf6
   modified: 2026-08-04T19:33:20.941Z
+aliases: [project_linkedin_surgeon_first]
 ---
 
 Maidul's LinkedIn personal brand was re-planned on **2026-08-05** to follow the
