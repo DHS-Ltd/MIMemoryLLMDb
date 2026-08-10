@@ -5,16 +5,6 @@ metadata:
   node_type: memory
   type: project
   originSessionId: d8460f58-4103-477c-afa8-336658927641
-aliases: [dh-pacs-website-build]
----
-
-> ## ⚠ SUPERSEDED — do not use for customer-facing work
->
-> **Build status may be current; the content spec it targets is not.** `DH_PACS_WEBSITE_CONTENT_SPEC.md` still reflects the superseded category and a DHV-Workstation-only deployment model. Website revision is deferred by decision.
->
-> **Authority:** `E:\DHS-PACS\CONTEXT-MAP.md` (2026-08-03). Current position: `org/north-star.md`.
-> Retained rather than deleted so stale copies elsewhere stay traceable (ADR-0006).
-
 ---
 
 ## Build Status: Phase 1 COMPLETE — pre-launch tasks remain
@@ -39,12 +29,13 @@ aliases: [dh-pacs-website-build]
 ## Tech Stack Decisions (all confirmed)
 
 - **Framework:** Next.js 16.2.6 (App Router, SSG)
-- **Hosting:** Cloudflare Pages (domain already on Cloudflare)
+- **Hosting:** Cloudflare **Workers** via **Workers Builds** (native GitHub integration) — NOT classic Cloudflare Pages. Decided 2026-06-17: see `dh-pacs-website/docs/adr/0001-deploy-via-cloudflare-workers-not-pages-or-vm.md`. Classic Pages was rejected because the only Pages-compatible adapter (`@cloudflare/next-on-pages`) caps at Next.js 15.5.2 and is deprecated; this app runs 16.2.6 with Server Actions.
 - **Cloudflare adapter:** `@opennextjs/cloudflare` v1.19.11
 - **Styling:** Tailwind CSS v4 + shadcn/ui
 - **Database:** Supabase Cloud Free tier (PostgreSQL)
-- **Domain:** `pacs.dhsolutions.com.bd`
-- **Site structure:** Long-scroll homepage + separate pages for `/case-study`, `/contact`, `/privacy-policy`, `/demo`
+- **Domain:** NOT `pacs.dhsolutions.com.bd` — that domain belongs to "the Server" (separate DICOM/patient-link platform, its own CI/CD). This website ships to the free `*.workers.dev` URL until a real domain/subdomain is chosen.
+- **VM/Docker deploy retired:** `DEPLOY.md` and `Dockerfile` (Docker + nginx on a VM) were deleted 2026-06-17 — that path was for deploying this exact website and is now superseded by Cloudflare Workers.
+- **Site structure:** Long-scroll homepage + separate pages for `/case-study`, `/contact`, `/privacy-policy`, `/product-demo` (renamed from `/demo`)
 
 ---
 
@@ -152,20 +143,42 @@ Working through a visual quality pass one section at a time. Build remains green
 
 ## Known Issues / Notes
 
-- **`middleware.ts` deprecation warning:** Next.js 16 renamed `middleware.ts` to `proxy.ts`. The warning appears on build but is non-fatal. Fix: `git mv src/middleware.ts src/proxy.ts` and rename the exported function from `middleware` to `proxy`. Cannot do this in-editor (file rename requires git).
+- **`middleware.ts` is intentionally KEPT, not renamed to `proxy.ts`.** Earlier guidance said to rename it — that's now wrong. Next 16's `proxy.ts` is hard-locked to the `nodejs` runtime with no opt-out, but the Cloudflare Workers adapter (`@opennextjs/cloudflare`) refuses to build Node.js middleware ("Node.js middleware is not currently supported"). The fix that actually works: keep `middleware.ts`, keep the exported function named `middleware`, and add `runtime: "experimental-edge"` to the `config` export. Verified working as of 2026-06-17 (`npm run build:cf` and `wrangler deploy --dry-run` both pass). Do not "fix" the deprecation warning by renaming — it will break the Cloudflare build.
 - **Phone mockup in Hero:** Uses a styled dark panel representing the OHIF viewer. Replace by searching `// TODO: replace with real OHIF screenshot` in `Hero.tsx`.
+- **`docs/Architecture/DH_PACS_WEBSITE_ARCHITECTURE.md` is now stale** — still says "Cloudflare Pages" and `pacs.dhsolutions.com.bd` as this site's domain in ~10 places (hosting table, env var examples, JSON-LD, UTM URL examples). Not rewritten yet since the real domain isn't picked. Update it once a domain is chosen.
 
 ---
+
+## CI/CD: LIVE (confirmed 2026-06-17)
+
+Live URL: **https://dh-pacs-website.directhospitalsolutionsltd.workers.dev/** — deployed via Cloudflare Workers Builds (GitHub → auto-deploy on push to `main`). Confirmed working: all routes return 200 (`/`, `/contact`, `/case-study`, `/privacy-policy`, `/product-demo`), and the edge `middleware.ts` UTM-cookie capture works correctly in production.
+
+**Gotcha hit during setup:** the dashboard project was first created as a classic **Pages** project by mistake (no "Deploy command" field, had a "Pages configuration" sidebar link instead) — Pages can't run this stack (see ADR-0001). Fix was to delete that Pages project and create a genuine **Worker** via Workers & Pages → Create → **Workers** (not Pages) → Import a repository. The Worker's "Settings → Builds" tab has the Build command (`npm run build:cf`) + Deploy command (`npx wrangler deploy`) fields that the Pages project lacked.
 
 ## Remaining Pre-Launch Tasks
 
 1. Replace Hero phone mockup with real de-identified OHIF screenshot
-2. Add GitHub repo secrets `SUPABASE_URL` + `SUPABASE_ANON_KEY` for the ping workflow
-3. Rename `middleware.ts` → `proxy.ts` via `git mv` to clear build warning
-4. Deploy to Cloudflare Pages (Group G from original plan): create CF Pages project → connect GitHub → add env vars → connect domain `pacs.dhsolutions.com.bd`
-5. Test contact form end-to-end in production: submit → confirm row appears in Supabase leads table
+2. ~~Add GitHub repo secrets `SUPABASE_URL` + `SUPABASE_ANON_KEY` for the ping workflow~~ — DONE 2026-06-18 (see Supabase Outage incident below)
+3. ~~Rename `middleware.ts` → `proxy.ts`~~ — REVERSED, do not do this (see Known Issues above)
+4. Pick a real domain/subdomain for this website (NOT `pacs.dhsolutions.com.bd`) once ready, map it in Cloudflare (Custom domains tab on the Worker), then update `NEXT_PUBLIC_SITE_URL` **and** fix the hardcoded `pacs.dhsolutions.com.bd` literals in `src/app/layout.tsx` (`metadataBase`, OG `url`, `canonical`) and all 4 `<loc>` entries in `public/sitemap.xml` — see Known Issues below. User explicitly chose to leave these wrong-domain literals in place on 2026-06-18 pending the real domain decision.
 6. Test Open Graph: paste production URL into WhatsApp, confirm preview card renders
 7. Add OG image (`public/og-image.jpg`, 1200×630px) — currently missing, WhatsApp preview will have no image until this is added
+8. Update `docs/Architecture/DH_PACS_WEBSITE_ARCHITECTURE.md` (stale Cloudflare Pages / domain references) once the real domain is picked
+
+---
+
+## Incident: Supabase Free-Tier Pause (resolved 2026-06-18)
+
+**What happened:** The `supabase-ping.yml` keep-alive workflow (created 2026-05-30) was never functional — its GitHub repo secrets (`SUPABASE_URL`, `SUPABASE_ANON_KEY`) were never set, so every scheduled run failed silently (nobody was watching Actions). With ~3 weeks of zero real API traffic (site didn't go live until 2026-06-17), the Supabase free-tier project paused. DNS for `tdvixhpnnljrhvhxsvzw.supabase.co` returned NXDOMAIN at one point during diagnosis, but the user restored the project via the dashboard and the **same URL + same API keys came back working** — confirms pause+restore, not full deletion. No data was lost (user confirmed acceptable either way).
+
+**Fix applied:**
+- `gh secret set SUPABASE_URL` / `SUPABASE_ANON_KEY` on the repo — verified via manual `workflow_dispatch` run: `completed success`
+- Verified `leads` table is live and schema-intact via direct service-role INSERT (201) + DELETE (204) test against the REST API (test row cleaned up immediately, not left in the table)
+- User separately mis-set `NEXT_PUBLIC_SITE_URL` to `https://pacs.dhsolutions.com.bd` in both `.env.local` and the Cloudflare dashboard while doing this — reverted in both places to `http://localhost:3000` (local) / `https://dh-pacs-website.directhospitalsolutionsltd.workers.dev` (Cloudflare dashboard). **Why this matters:** that domain belongs to "the Server" per `CONTEXT.md`, not this website.
+
+**How to apply:** If Supabase issues resurface, check `gh secret list` and `gh run list --workflow=supabase-ping.yml` first — this exact failure mode (missing secrets → silent ping failure → free-tier pause) is now a known, previously-occurred root cause.
+
+**Known issue surfaced but NOT fixed (user's call):** `NEXT_PUBLIC_SITE_URL` is dead code — nothing in `src/` reads it. The site's actual canonical identity (`metadataBase`/OG `url`/`canonical` in `layout.tsx`, plus all of `public/sitemap.xml`) is hardcoded to literal `pacs.dhsolutions.com.bd` strings, which per `CONTEXT.md` belongs to a different system. This has likely been wrong since these files were first built (predates ADR-0001). Demo-viewer links (`/open?token=...` in Hero/HowItWorks/IbnSinaTeaser/WhoItsFor/FeaturesOverview) are NOT part of this bug — those correctly point at the Server, which does own that domain.
 
 ---
 

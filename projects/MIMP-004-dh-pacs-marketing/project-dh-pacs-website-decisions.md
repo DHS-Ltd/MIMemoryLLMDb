@@ -5,16 +5,6 @@ metadata:
   node_type: memory
   type: project
   originSessionId: da756dae-fcc1-41f9-b54e-e0c23d99ce97
-aliases: [dh-pacs-website-decisions]
----
-
-> ## ⚠ SUPERSEDED — do not use for customer-facing work
->
-> **Predates the 2026-08-03 repositioning.** The website is flagged for revision — elevate DHS above product level, remove "Complete Radiology Department Setup" from the lead form (equipment-chain ambition is internal-only), and rewrite Hero/HowItWorks for the surgeon chain. Those edits are **deferred by decision**, so these older decisions are not yet resolved either way.
->
-> **Authority:** `E:\DHS-PACS\CONTEXT-MAP.md` (2026-08-03). Current position: `org/north-star.md`.
-> Retained rather than deleted so stale copies elsewhere stay traceable (ADR-0006).
-
 ---
 
 The website blueprint (DH_PACS_WEBSITE_CONTENT_BLUEPRINT.md) was reviewed and the following decisions were agreed. These have NOT yet been applied to the blueprint file — they need to be implemented in a future session.

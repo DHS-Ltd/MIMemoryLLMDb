@@ -5,24 +5,13 @@ metadata:
   node_type: memory
   type: project
   originSessionId: da756dae-fcc1-41f9-b54e-e0c23d99ce97
-aliases: [dh-pacs-pricing]
----
-
-> ## ⚠ SUPERSEDED — do not use for customer-facing work
->
-> **Superseded.** Pricing is now **two tiers and two revenue lines**: Standard (free install, per-patient billing) and Enterprise (licensed, charged, on-prem). Free installation is a term of the **Standard tier only** — Ibn Sina bought workstation licences at ~300k BDT/unit.
->
-> Line 1 = per-patient link enrolment. Line 2 = the Advanced Post-Processing licence, which is the current north-star. See `org/business.md` §6.
->
-> **Authority:** `E:\DHS-PACS\CONTEXT-MAP.md` (2026-08-03). Current position: `org/north-star.md`.
-> Retained rather than deleted so stale copies elsewhere stay traceable (ADR-0006).
-
 ---
 
 The DH PACS pricing model has three components. This is a core part of the business architecture, not just a commercial decision.
 
-**Component 1 — Installation: Free**
+**Component 1 — Installation: Free (STANDARD small-tier model ONLY)**
 DH Solutions handles the full DHV Workstation installation and configuration on-site at no charge. This removes the largest procurement barrier in Bangladesh hospital buying: the capital expenditure approval process. Free installation means no committee, no budget cycle, no delay.
+> ⚠️ SCOPE: "Free installation" applies to the **standard small-tier hospital model** (e.g. Cumilla). It does **NOT** apply to the **Ibn Sina enterprise deal**, where installation is **charged**. See [[dh-pacs-ibnsina-commercial-posture]].
 
 **Component 2 — Per-patient link generation: Charged**
 A charge occurs for every patient link generated — i.e., every time a complete patient record (images + report) is packaged and delivered. The hospital pays only when value is delivered. This aligns DHS revenue with hospital patient volume.

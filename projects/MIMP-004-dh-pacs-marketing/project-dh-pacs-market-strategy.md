@@ -5,24 +5,6 @@ metadata:
   node_type: memory
   type: project
   originSessionId: da756dae-fcc1-41f9-b54e-e0c23d99ce97
-aliases: [dh-pacs-market-strategy]
----
-
-> ## ⚠ SUPERSEDED — do not use for customer-facing work
->
-> **Superseded on every major point.** DHS now serves the **surgeon, not the radiologist** — the radiologist is a deliberate non-persona (DHS-PACS ADR-0002).
->
-> - "patient data ownership" differentiator -> demoted to mechanism
->
-> - "Ibn Sina as the master proof point" -> **banned framing**; use tier-matched proof
->
-> - three-layer sales chain -> **Enterprise only**
->
-> - The competitive set is not PACS vendors but the ~30 radiology-reporting companies, and the argument is differentiation by *customer*, not by product.
->
-> **Authority:** `E:\DHS-PACS\CONTEXT-MAP.md` (2026-08-03). Current position: `org/north-star.md`.
-> Retained rather than deleted so stale copies elsewhere stay traceable (ADR-0006).
-
 ---
 
 **The core differentiator:**
