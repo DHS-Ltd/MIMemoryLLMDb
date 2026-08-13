@@ -1,30 +1,32 @@
 ---
 name: dicom-compression-pipeline
-description: No compression applied by this system; transfer syntax and size determined by the modality; transcoding caveat on C-STORE to Central
+description: JPEG-LS lossless IngestTranscoding now applied at BOTH central (ADR-0016) and site (ADR-0017); how to verify transfer syntax
 metadata: 
   node_type: memory
   type: project
-  originSessionId: 44c25fb6-c031-450c-9d70-4893c680f0f4
+  originSessionId: f75c9e1a-865d-4bcf-a52c-95e0a770961e
 ---
 
-No compression is applied anywhere in the DH PACS Workstation pipeline.
+**SUPERSEDED 2026-07-15 — the system now DOES apply compression.** The prior version of this note
+("no compression applied anywhere") was true only until Phase 2. As of 2026-07-15, **JPEG-LS lossless**
+(`1.2.840.10008.1.2.4.80`) is transcoded at **ingest** in two places via Orthanc's `IngestTranscoding`
+key (transcodes each instance once on receipt, stores + serves it compressed; lossless, MPR/HU-safe;
+failed transcode falls back to storing the original TS — no data loss):
 
-**Orthanc (Component A) storage:**
-- `StorageCompression: false` — files stored on disk exactly as received
-- `IngestTranscoding` is **commented out** in `orthanc.json` — no forced recompression on ingest
-- Accepts all transfer syntaxes (`1.2.840.10008.1.*`) — whatever the modality sends is stored verbatim
+- **Central** (`dh-pacs-central`, ADR-0016, live 2026-07-14) — fixed the ~80 min doctor-side viewer load;
+  a 1.9 GB CT abdomen stores as ~560 MB. See [[dh-pacs-leg1-upload-compression]].
+- **Site Receiver** (this repo, ADR-0017, live on SITE005 2026-07-15) — `IngestTranscoding` in
+  `orthanc/payload/config/orthanc.json.template` and on the box at
+  `C:\DHPacs\Receiver\config\orthanc.json`. Shrinks the site->central **upload** ~3.4x
+  (2.4x faster wall-clock after per-instance C-STORE overhead). See [[dh-pacs-leg1-upload-compression]].
 
-**Portal (Component B) push to Central:**
-- Push is `POST /modalities/Central/store` (`server.js:98`) — a plain C-STORE; no transcoding requested
-- No pixel manipulation in portal code at any point
+`StorageCompression` is still `false` (that's zlib-at-rest, unrelated). New arrivals only —
+`IngestTranscoding` never rewrites already-stored studies.
 
-**Transcoding caveat — `TranscodeDicomProtocol: true` (`orthanc.json:899`):**
-If Central's Orthanc only advertises uncompressed transfer syntaxes during SCP negotiation, local Orthanc will transcode before sending. Fallback syntax is `1.2.840.10008.1.2.1` (Little Endian Explicit, **uncompressed**) — this makes files *larger*, not smaller.
+**How to verify a study's actual codec:** `GET http://localhost:8042/instances/<id>/metadata/TransferSyntax`
+(or `/tags?simplify` -> `TransferSyntaxUID`). `1.2.840.10008.1.2.4.80` = JPEG-LS (transcoded by us);
+`1.2.840.10008.1.2.1` = uncompressed (a pre-change study, or a site without IngestTranscoding yet).
 
-**Why a study may look small:**
-Small file sizes are almost certainly because the imaging modality (CT/MRI/X-ray) itself sent already-compressed DICOM (e.g., JPEG 2000, JPEG-LS). The system stores and forwards without modification.
-
-**How to verify:** `GET http://localhost:8042/instances/<id>/tags?simplify` → check `TransferSyntaxUID`. Anything other than `1.2.840.10008.1.2.1` or `1.2.840.10008.1.2` means the modality sent compressed data.
-
-**Why:** Confirmed via code review 2026-06-14; user asked about unexpectedly small study sizes.
-**How to apply:** If asked about compression, transcoding, or unexpectedly small/large DICOM sizes — the system does not compress; look at the modality's transfer syntax first.
+**How to apply:** If asked about compression/transcoding/study sizes, the answer is now "yes, JPEG-LS
+lossless at ingest on both legs" — not the old "we don't compress." Check the transfer syntax to tell a
+transcoded study from a pre-change one.

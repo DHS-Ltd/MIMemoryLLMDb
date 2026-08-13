@@ -1,6 +1,6 @@
 ---
 name: dh-pacs-program-status
-description: Build/deploy state of the DH PACS Workstation program (both components + central safety extension) as of 2026-06-14
+description: Build/deploy state of the DH PACS Workstation program (both components + central safety extension) as of 2026-07-10
 metadata:
   node_type: memory
   type: project
@@ -8,6 +8,23 @@ metadata:
 ---
 
 DH PACS Workstation = two Windows installers from `d:\dh-pacs-workstation` + a wrong-patient-match **safety extension** to central PACS at `D:\Pacs_Viewer_Storage_Project` (dh-pacs-central).
+
+**UPDATE 2026-07-15 — Leg-1 upload compression LIVE (ADR-0017) + shipped in installer v1.3.0.** Site Receiver `IngestTranscoding`=JPEG-LS live on SITE005 + baked into repo template; site→central upload 72→29.5min (2.4x). Committed to `main` (3 commits: feat e57360e template+ADR-0017, docs 189047a ADR-0011 supersession, chore ddb4ae5 v1.3.0 bump). **Combined installer REBUILT: `dist\dh-pacs-workstation-setup-v1.3.0.exe` (84.8MB, 2026-07-15) — new-site installs now get compression automatically, zero config.** v1.2.0 and older installers do NOT (predate the change). Existing already-installed sites still need the one-off box edit (`C:\DHPacs\Receiver\config\orthanc.json` + restart `DH-PACS-Receiver`). **Production-verified 2026-07-15 (Al Amin fresh study auto-compressed 442MB JPEG-LS); IngestTranscoding is arrival-gated (only new modality arrivals). Residual upload-time bottleneck is now the site's VARIABLE UPLINK (0.14-0.45 MB/s, changing public IP), not the codec — biggest next lever is stabilising site internet, non-software.** Optional fast-follows: (1) roll box edit to other live sites, (2) Lever 2 concurrent C-STORE (~15min), (3) code-signing. See [[dh-pacs-leg1-upload-compression]].
+
+**UPDATE 2026-07-12 — Dirty working tree from 2026-07-10 is now fully committed (8 logical commits on `main`); README.md rewritten.** Resolves the "nothing was committed this session" caveat below: all of Tailscale tenancy (ADR-0009), Bogra brownfield reuse (ADR-0010), Ibn Sina standalone receiver (ADR-0011), desktop-shortcut/branding assets, the portal "Open in DH Viewer" button, docs cleanup, and the v1.0.0→v1.2.0 version bump landed as 8 separate commits (split by concern, with hunk-level staging on files that mixed concerns — e.g. `CONTEXT-MAP.md`, `installer/dh-pacs-workstation.iss`, `.gitignore`). `docs/IBN_Sina_Bogra/monitor.log` (a growing runtime log, not a doc) was excluded and gitignored rather than committed. `README.md` was rewritten to explain the **two-repo split** — this repo (`dh-pacs-workstation`, no git remote) vs. `dh-pacs-central` (`D:\Pacs_Viewer_Storage_Project`, remote `github.com/DHS-Ltd/dh-pacs-central`) — plus the new `sites/` (non-Central-paired standalone deployments) and `infra/` (Tailscale ACL) top-level dirs that didn't exist when the README was last written. Status section in the README is now capability-based (no dated snapshot) per explicit preference — see [[dh-pacs-commit-and-doc-preferences]].
+
+**UPDATE 2026-07-10 — v1.2.0 combined installer BUILT. Portal: "Open in DH Viewer" verification button added to claim-success screen.**
+- New portal feature: MT-only "↗ Open in DH Viewer" button on `ClaimSuccessPage` (next to the patient Link box) opens `result.viewer_url` (untracked, no token) in a new tab so the MT can visually confirm the transfer before moving on — deliberately NOT `open_url` (the patient's tracked **Link**), since reusing it would inflate `app.links.access_count`/`audit_log` with the MT's own QA click before the patient ever opens it. No backend change — `viewer_url` was already returned in the claim response. Domain term + rationale captured in `portal/CONTEXT.md` ("Open in DH Viewer").
+- `dist\dh-pacs-workstation-setup-v1.2.0.exe` (84.8 MB) built via `build-combined.ps1`; `MyAppVersion` bumped 1.1.0 → 1.2.0 in `installer/dh-pacs-workstation.iss`. This build also resolves the 2026-06-26 pending item below — the Tailscale Connectivity wizard page now ships in this installer (it was sitting uncommitted in the working tree; the rebuild picked it up). Remaining future-scope item: **code-signing only**.
+- **NOTE: build was from a dirty working tree.** Substantial pre-existing uncommitted work (Tailscale bundling, Bogra brownfield ADRs 0009-0011, branding assets) is baked into the v1.2.0 binary but is **not yet committed to git** — nothing was committed this session. If you rebuild again before committing, the artifact still won't trace to a single commit; check `git status` before assuming the working tree is clean.
+- **Build gotcha**: don't wrap `build-combined.ps1` with `*>&1` (or any stderr-merging redirect) for logging. The script sets `$ErrorActionPreference='Stop'`, and Vite/npm emit benign warnings on stderr (e.g. the CJS Node API deprecation notice) that PowerShell 5.1 turns into a fatal `NativeCommandError`, killing the build mid-`npm test` even though nothing actually failed. Pipe stdout only, or don't redirect at all — first attempt this session died this way before a clean rerun succeeded.
+
+**UPDATE 2026-06-26 — Tailscale tenancy locked down (ADR-0009), LIVE. New pending item.** Multi-site
+Tailscale is now hub-and-spoke isolated (one tailnet, tagged per-site auth keys) — see
+[[dh-pacs-tailscale-tenancy]]. This adds a NEW pending build task beyond code-signing: **rebuild the
+combined installer** so its new Tailscale Connectivity wizard page ships (deferred to next session;
+until then sites join Tailscale manually). So "future scope only: code-signing" below is now stale —
+there are two pending items: (1) combined-installer rebuild, (2) code-signing.
 
 **UPDATE 2026-06-14 — BOTH REPOS MERGED TO MAIN. NIGHTLY CRON ACTIVE.**
 - `feat/safety-mt-gated` → `main` in central repo (19 commits, 138 files). ✅
