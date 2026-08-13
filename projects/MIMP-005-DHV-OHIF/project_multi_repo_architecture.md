@@ -28,3 +28,13 @@ The DHS viewer customization is split across **four repos by audience**:
 - Before editing this fork, ask: "could this go in `app-config.js` instead?" If yes, that change belongs in the PACS repo.
 - New patient-facing features (panels, buttons) go in the extension repo, not in `extensions/default`.
 - Build sequence: this fork → docker image → consumed by PACS-repo `docker-compose.yml`.
+
+**Correction (2026-06-22):** `dh-pacs-doctor` is a **browse-and-launch portal SPA**
+(login, patient list, "Open study"), NOT a viewer. The doctor's actual diagnostic
+**viewer** is NOT a separate fork — it's the existing `tmtv` + `longitudinal` OHIF
+modes served as a second config off the same `pacs-ohif-dhs` image at `/viewer-doctor`
+(demo-viewer nginx pattern). The portal just opens the URL the backend returns. So
+"doctor workstation viewer = separate repo with full tools" (above) is superseded for
+the read/measure/fusion case. See [[project-doctor-viewer-oncology]] and ohif-fork
+`docs/adr/0001`. Truly heavy doctor-only tooling (film layout builder Option B, DICOM
+print) may still warrant separate work, but the core viewer does not.

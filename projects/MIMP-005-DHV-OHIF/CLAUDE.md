@@ -12,18 +12,23 @@ The viewer is the standalone OHIF v3 React SPA — **not** Orthanc's Stone Web V
 
 ## Repo role in the bigger picture
 
-Four repos work together for the DHS viewer system, split **by audience**. Know which one you're in:
+Seven repos make up the DH PACS platform. Know which one you're in:
 
 | Repo | Audience | What it owns |
 |---|---|---|
-| **`ohif-fork`** (this repo) | **Patients** | The OHIF SPA source for the patient-facing viewer. Brand assets, mobile UX, patient features (film view, share, report view). Produces `pacs-ohif-dhs:vN`. |
-| **PACS repo** (on the VM under `/srv/pacs/`) | Ops/Infra | `docker-compose.yml`, `app-config.js` (mounted at runtime), nginx config, the token landing page (`viewer.html`), the backend, Orthanc configuration. |
-| **`dh-pacs-doctor`** (`D:\dh-pacs-doctor`, planned) | **Hospital doctors** | Dedicated workstation viewer with full interactive tools — film layout builder with drag-and-drop, advanced hanging protocols, measurements, DICOM print. Built separately; not part of this repo. |
-| **`ohif-extension-dhs-patient`** (not created yet — Phase C) | Dev/packaging | The custom extension package (`@dhsolutions/extension-patient`) registering patient-info, share, and report panels. Added to this fork via `yarn add` before building the image. |
+| **`ohif-viewer-dhs`** (this repo) | **Patients + hospital doctors** | The OHIF SPA source. Ships two deployments from one image (`pacs-ohif-dhs:vN`, see ADR-0001): the Patient Viewer (`/viewer` — brand assets, mobile UX, film view, share, report view) and the Doctor Viewer (`/viewer-doctor` — Oncology PET-CT mode, `tmtv`/`longitudinal`). |
+| **`dh-pacs-central`** (PACS repo, on the VM under `/srv/pacs/`) | Ops/Infra | The hub: `docker-compose.yml`, `app-config.js` (mounted at runtime), nginx config, backend API, DB schema, Orthanc configuration, doctor/patient/admin UI shells. |
+| **`dh-pacs-doctor`** | **Hospital doctors** | The doctor-facing *portal* SPA — login, patient list, launches this fork's Doctor Viewer mode. A launcher, not a viewer; doesn't render DICOM itself. |
+| **`dh-pacs-workstation`** (local only, no GitHub remote — distributed as installers) | Ops/Infra | The on-prem site installer: branded Orthanc receiver + MT operator portal. |
+| **`dh-pacs-website`** | Public/marketing | The public marketing site, mirrored at `pacs.dhsolutions.com.bd` via nginx → Cloudflare Workers. |
+| **`ohif-extension-dhs-cardiac`** _(in development, local only)_ | **Hospital doctors (cardiologists)** | Cardiac LVA tooling (ejection fraction, chamber volumes) — bundled into this repo's `pacs-ohif-dhs` image as a further Doctor Viewer instance, surfaced at `/viewer-cardiac`. |
+| **`ohif-extension-dhs-liver`** _(in development, local only)_ | **Hospital doctors (radiologists)** | Liver & lesion volumetry (LLV) tooling — bundled into this repo's `pacs-ohif-dhs` image as an opt-in panel inside the existing `longitudinal` mode. |
 
-**Critical rule (decided 2026-06-14):** This repo is **patient viewer only**. Before adding any feature here, ask: *"is this for a patient or a doctor?"* Doctor workflow tools belong in `dh-pacs-doctor`, not here.
+`ohif-extension-dhs-patient` (the originally planned Tier 4 package for patient-info/share/report panels) was **superseded** — those features shipped as direct Tier 3 fork edits instead (see Film View, Report, Share features below). Not pursued as a separate package.
 
-If a customization can live in the PACS repo's `app-config.js`, **prefer that over editing this fork.** Source edits here cost merge effort at every upstream pull.
+**Rule (updated per ADR-0001, supersedes the 2026-06-14 "patient viewer only" rule):** This repo now ships two deployments from the same image — Patient Viewer and Doctor Viewer (Oncology PET-CT) — as config/mode differences on one fork, not separate repos. Dedicated *interactive* doctor tooling (drag-and-drop film builder, advanced measurements, DICOM print) still belongs in `dh-pacs-doctor` or a future doctor-specific build, not here. Before adding a feature here, ask: *"is this a mode/config difference on the existing fork, or does it need new interactive tooling that belongs in a dedicated doctor build?"*
+
+If a customization can live in `dh-pacs-central`'s `app-config.js`, **prefer that over editing this fork.** Source edits here cost merge effort at every upstream pull.
 
 ## Customization tier discipline
 
@@ -44,7 +49,7 @@ If you find yourself reaching for nginx `sub_filter` CSS injection (Tier 2), sto
   - SVG favicon at [platform/app/public/assets/dhs-favicon.svg](platform/app/public/assets/dhs-favicon.svg)
   - Page title + meta in [platform/app/public/html-templates/index.html](platform/app/public/html-templates/index.html)
 - Single source commit on `dhs-main`: `48f99e181` "feat(branding): DH Solutions branding v1 placeholder".
-- Phase A is **done**. Phase B is **done** (see below). Phase C (custom extension) has not started.
+- Phase A is **done**. Phase B is **done** (see below). Phase C (`ohif-extension-dhs-patient` custom extension) was **superseded** — its planned scope (patient info/share/report panels) shipped as direct fork edits instead; see Report and Share features below.
 - **Film View** shipped `51dbb1ec8`: `FilmViewDH` toolbar button (2×2 grid, first 4 series one per cell, mobile+desktop visible). See `extensions/cornerstone/src/hps/filmViewDH.ts`.
 
 **Phase B — mobile UX — COMPLETE (2026-06-02)**

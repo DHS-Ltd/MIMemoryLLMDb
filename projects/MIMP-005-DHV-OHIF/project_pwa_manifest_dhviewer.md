@@ -11,7 +11,7 @@ The browser "Install OHIF" / "Open in App" popup is the **OHIF PWA install promp
 
 **Change made (2026-06-05):** `manifest.json` `name`/`short_name`/`description` set to **`DHViewer`** (was `OHIF Viewer`). So the prompt now reads "Install DHViewer" / "Open DHViewer".
 
-**Deferred:** icons still OHIF defaults (`android-chrome-*.png`); `theme_color` still OHIF blue `#20a5d6` (DHS teal is `#36918d` if wanted later). User will swap the favicon/icons separately.
+**Deferred → partially done:** icons were OHIF defaults; `android-chrome-512x512.png` was fixed to the DHV mark 2026-06-17 (commit `1bd2c77e7`, see [[project_favicon_rebrand]]), but `android-chrome-36/48/72/96/144/192/256/384.png` (the other 8 sizes in `manifest.json`'s `icons` array) are still OHIF. `theme_color` still OHIF blue `#20a5d6` (DHS teal is `#36918d` if wanted later) — untouched by the favicon rebrand.
 
 **Deploy & commit state (FINAL):** committed as `0b2f0c445` ("feat(branding): rename PWA manifest to DHViewer") on `dhs-main` and pushed to origin 2026-06-06. VM checkout `/srv/pacs/ohif-fork` discarded its scp'd copy (`git checkout`) and fast-forwarded (`git pull`) to `0b2f0c445` — clean tree, manifest = DHViewer. Running image is `pacs-ohif-dhs:v1` (built earlier from the scp'd file; content identical to the commit, so no rebuild was needed).
 
