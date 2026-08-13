@@ -1,6 +1,8 @@
 # CLAUDE.md
 
-Multi-site teleradiology platform: DICOM images received centrally, served to patients via shareable mobile-friendly links (no app). Full docs in [Site01Docs/](Site01Docs/).
+> ⚠ **Positioning below is SUPERSEDED (2026-08-03).** The engineering content is accurate and current; only the commercial framing is out of date. **"Teleradiology" is a banned term** — DH PACS does not compete with reporting services. See `org/north-star.md` in MIMemoryLLMDb for the current position (ADR-0006).
+
+Multi-site **medical imaging** platform: DICOM images received centrally, served to patients via shareable mobile-friendly links (no app). Full docs in [Site01Docs/](Site01Docs/).
 
 ---
 
@@ -239,9 +241,13 @@ CENTRAL_AET=PACS_CENTRAL   CENTRAL_TAILSCALE_IP=100.118.47.99
 
 **Product:** DH PACS — **Company:** DH Solutions (brand names are distinct; use DH PACS in headlines, DH Solutions for legal/company references)
 
-**Key client:** Ibn Sina Hospital — 7 DHV Workstations, 5 centers across Bangladesh. Primary social proof for all marketing. Confirm public naming permission before website launch; fallback: "5 centers of a leading Dhaka-based hospital chain."
+**Key client:** Ibn Sina Hospital — 7 DHV Workstations, 5 centers across Bangladesh. Confirm public naming permission before website launch; fallback: "5 centers of a leading Dhaka-based hospital chain."
 
-**Market:** Bangladesh medical film market ৳14.6 billion/year. Source: `docs/Website/Value_proposition_mRayImaging_BD.pdf`. Use in hero headline and market vision sections.
+> ⚠ **"Primary social proof for all marketing" is SUPERSEDED (2026-08-03).** The rule is now **tier-matched proof**: Ibn Sina proves the **Enterprise tier only** (workstation licences at ~300k BDT/unit); **Cumilla** proves the **Standard tier** (free install, per-patient billing). They are never crossed. `master proof point` is a banned term.
+
+**Market:** Bangladesh medical film market ৳14.6 billion/year. Source: `docs/Website/Value_proposition_mRayImaging_BD.pdf` (NBR import data, HS code 3701.10) — figure's year unverified. Use in hero headline and market vision sections.
+
+> ⚠ **Category SUPERSEDED (2026-08-03).** DH PACS no longer claims "patient data ownership" as its category. The category is the **Advanced Connected Imaging Network**; patient ownership is the *mechanism*, not the headline. DHS serves the **surgeon**, not the radiologist — the radiologist is a deliberate non-persona. Current north star: sell one Advanced DICOM Image Viewer licence by 2026-10-10. Authority: `E:\DHS-PACS\CONTEXT-MAP.md`.
 
 ---
 
