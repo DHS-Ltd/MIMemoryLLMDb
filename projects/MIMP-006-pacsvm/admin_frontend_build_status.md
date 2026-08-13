@@ -5,7 +5,6 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 0d830bd0-02d2-424f-b27f-c10dc899e13e
-aliases: [admin-frontend-build-status]
 ---
 
 ## Current Status (2026-05-25) — ALL PHASES COMPLETE ✅

@@ -3,7 +3,6 @@ name: OHIF Fork Reference
 description: DHS-Ltd/ohif-viewer-dhs private fork details — GitHub repo, branches, SSH aliases, build mechanic, key file paths, version pin.
 type: reference
 originSessionId: 7afc5ebd-90fe-4259-b4da-af3266b241ea
-aliases: [OHIF Fork Reference, reference-ohif-fork]
 ---
 The OHIF viewer is built from a private fork at **`DHS-Ltd/ohif-viewer-dhs`** on GitHub (private repo). All viewer changes flow through this fork.
 

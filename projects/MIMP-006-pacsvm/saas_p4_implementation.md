@@ -5,7 +5,6 @@ metadata:
   node_type: memory
   type: project
   originSessionId: c7f860b2-c79c-4513-ab52-7b2cbf33b5d6
-aliases: [saas-p4-implementation]
 ---
 
 ## SaaS P4 — Patient Portal — LIVE 2026-06-04

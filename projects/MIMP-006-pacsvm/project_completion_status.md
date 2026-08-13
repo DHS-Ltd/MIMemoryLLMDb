@@ -5,7 +5,6 @@ metadata:
   node_type: memory
   type: project
   originSessionId: c1b26584-3af3-457e-95ea-2ed4051a1c3a
-aliases: [project-completion-status, project-completion-status-deployment-progress, project_completion_status_deployment_progress]
 ---
 
 ## Overall Status (2026-06-02) — ALL PHASES COMPLETE ✅ | 2 Sites Live

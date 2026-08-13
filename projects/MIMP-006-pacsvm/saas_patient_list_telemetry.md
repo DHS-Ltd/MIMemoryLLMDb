@@ -5,7 +5,6 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 7067f1aa-04e0-43bb-8561-5fe375d0199e
-aliases: [saas-patient-list-telemetry]
 ---
 
 Admin **patient list/detail Tier-1 + §10 telemetry (Tier A)** built and **deployed live 2026-06-06**. Implements `docs/260525_Admin_Frontend/CENTRAL_PATIENT_LIST_DATA_REFERENCE.md` (§7 prerequisite + Tier-1 + §10 Tier A).

@@ -5,7 +5,6 @@ metadata:
   node_type: memory
   type: project
   originSessionId: cde41700-1ca7-4c95-af38-802a60e18884
-aliases: [phase0-schema-migration]
 ---
 
 Phase 0 schema migration for the SaaS Admin Frontend build was applied to the live VM (`pacs-postgres` container) on 2026-06-03. Spec: [docs/260525_Admin_Frontend/Phases_Build/P0_DB_Schema_Migration.md]. All changes are additive and idempotent; no backend, Lua, or frontend code was touched.

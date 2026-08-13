@@ -5,12 +5,11 @@ metadata:
   node_type: memory
   type: reference
   originSessionId: 4a1b770e-8ea6-4b4c-a188-2bed29f37d05
-aliases: [reference-mimp004-business-memory]
 ---
 
 The DH PACS marketing website was originally planned with docs inside this repo (`docs/Website/DH_PACS_WEBSITE_CONTENT_BLUEPRINT.md`, see [[project_website_work]]), but the actual implementation has since moved to its own dedicated repo and project memory:
 
-- **Repo:** `E:\DHS-PACS\dh-pacs-website` — GitHub `https://github.com/DHS-Ltd/DH-PACs-Solutions.git` (private)
+- **Repo:** GitHub `https://github.com/DHS-Ltd/dh-pacs-website.git` (private; renamed from `DH-PACs-Solutions` — old URL still redirects). Local path `E:\DHS-PACS\dh-pacs-website` was NOT found on the central-project machine as of 2026-07-12 (E: drive mounted but empty) — the site is likely only cloned on a different machine.
 - **Stack:** Next.js 16.2.6 (App Router, server runtime via `output: "standalone"` — NOT static export), Tailwind v4 + shadcn/ui, Supabase Cloud (Singapore region, `tdvixhpnnljrhvhxsvzw`), deployed via OpenNext Cloudflare adapter to **Cloudflare Workers + Workers Builds** (not classic Pages — Next 16 isn't supported there; see [[project_marketing_site_central_integration]] for the full decision)
 - **Domain:** Will be mirrored at `pacs.dhsolutions.com.bd` itself via nginx reverse proxy in `dh-pacs-central` — not a separate domain (overrides the original blueprint's `dhsolutions.com.bd` plan, see [[project_marketing_site_central_integration]])
 - **Content source of truth:** `E:\DHS-PACS\docs\Architecture\DH_PACS_WEBSITE_CONTENT_SPEC.md`

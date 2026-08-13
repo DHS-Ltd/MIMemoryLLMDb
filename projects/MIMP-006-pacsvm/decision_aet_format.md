@@ -5,7 +5,6 @@ metadata:
   node_type: memory
   type: project
   originSessionId: d08a4847-734e-47e9-8ccf-1d4ea7106f45
-aliases: [decision-aet-format]
 ---
 
 ## Decision (2026-06-02)

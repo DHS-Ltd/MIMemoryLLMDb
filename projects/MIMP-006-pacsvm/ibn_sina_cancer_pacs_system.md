@@ -5,7 +5,6 @@ metadata:
   node_type: memory
   type: project
   originSessionId: b4a1a88a-0ab0-4252-ab44-cb471afc59b4
-aliases: [ibn-sina-cancer-pacs-system]
 ---
 
 # Ibn Sina Cancer PACS System (design phase — started 2026-06-20)
@@ -31,6 +30,8 @@ A **new, separate infrastructure** being designed for **Ibn Sina** (large hospit
 Full design lives in the repo (separate context from DH PACS Central):
 - `docs/IbnSinaCancerPacs/ARCHITECTURE.md` — consolidated design
 - `docs/IbnSinaCancerPacs/BUILD_PLAN.md` — phased build plan (Phase 0 confirmations+parameterize → 1 tracer 2-site remote read → 2 replicate → 3 patient plane → 4 browse/audit → 5 provisioning → 6 redundancy → 7 pilot). Critical path to demo = Phase 0→1→3.
+- `docs/IbnSinaCancerPacs/SERVER_SPEC.md` — internal/technical Site Server spec
+- `docs/IbnSinaCancerPacs/Ibn_Sina_PACS_Server_Procurement_Report.md` — **management-facing** build/procurement report for Ibn Sina (Dell turnkey + vendor-neutral component build, indicative budgetary costs, procurement checklist)
 - `docs/IbnSinaCancerPacs/CONTEXT.md` — glossary (Site Server, Patient Directory, Owning Site, Enterprise Patient ID, Local/Remote read, branding)
 - `docs/IbnSinaCancerPacs/adr/0001..0004` — federated mesh / two-plane exposure / single-codebase-flagged / DR posture
 
@@ -44,6 +45,9 @@ Full design lives in the repo (separate context from DH PACS Central):
 - **One codebase, `FEDERATED_MODE` flag** — NOT a fork (ADR 0003). Mesh is resellable.
 - Branding per-deployment config: front = Ibn Sina, admin/login = subtle DH; **DHV viewer keeps DHV identity + adds Ibn Sina logo (co-branded), NOT replaced.**
 - Redundancy: **L1 RAID+local backup mandatory**, L2 peer DR-buddy designed-in optional, L3 cloud future.
+- **Repo boundary (2026-06-21):** new `dh-pacs-ibnsina` repo = `pacs-directory` service + infra/provisioning (Ansible, Tailscale/Cloudflare per-site configs, server spec) + Ibn Sina branding bundle + support runbooks. Shared app (backend/admin/viewer/patient) STAYS in `dh-pacs-central` behind `FEDERATED_MODE` — NOT forked (ADR 0003 reaffirmed; Reading A). Mirrors workstation/doctor repo pattern.
+- **DH Remote Support model (2026-06-21):** SSH-over-Tailscale to `dhs-ops` user for software; **Claude Code runs on DH engineer's laptop**, pulls logs/configs over SSH, applies fixes over SSH → **server needs ZERO outbound internet**. iDRAC Enterprise over Tailscale for hardware/OS rescue (console, power, virtual-media reinstall). Customer "DH access ON/OFF" + audit. No Google/Chrome Remote Desktop (iDRAC has its own browser console; server is headless).
+- **Server spec COMPLETE (2026-06-21)** → `docs/IbnSinaCancerPacs/SERVER_SPEC.md`. Ibn Sina rate = **1 GB/study (1 TB per 1000 studies), ~11 studies/day, ~4 TB/yr → 5yr retention = ~20 TB pixels**. Standard Site Server = bare-metal Ubuntu+Docker on Dell PowerEdge 2U (≥12 LFF bays), 8C/16T + 64 GB ECC, RAID6 HDD bulk (start lean **~16 TB usable / 4×8TB**, grow in-place to ~80 TB) + NVMe RAID1 OS/DB/cache, PERC H755, redundant PSU, iDRAC Enterprise, dual 10 GbE. Variants: HQ step-up (12-16C/128GB/32TB), small-center tower, BYO-VM fallback. Site-readiness: ≥100 Mbps/center, ≥300-500 Mbps HQ; local reads LAN-only (internet-independent).
 
 **Parked (decide later):**
 - Q5 — do modalities embed Enterprise Patient ID via DMWL worklist? (impl-time; decides if HIS API is a v1 dependency)

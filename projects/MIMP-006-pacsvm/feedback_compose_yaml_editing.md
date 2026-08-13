@@ -3,7 +3,6 @@ name: Don't regex-patch docker-compose.yml — rewrite whole file
 description: Discovered 2026-05-19 when a regex-based ohif-service replacement failed silently. Multi-line YAML blocks with blank lines between services break lookahead patterns; full rewrite is safer.
 type: feedback
 originSessionId: 7afc5ebd-90fe-4259-b4da-af3266b241ea
-aliases: [Don't regex-patch docker-compose.yml — rewrite whole file, Don't regex_patch docker_compose.yml — rewrite whole file, feedback-compose-yaml-editing]
 ---
 When modifying `/srv/pacs/compose/docker-compose.yml` (or any compose file with multi-line service blocks), **provide a single heredoc that rewrites the entire file** rather than attempting a regex/sed patch of one service block.
 

@@ -5,7 +5,6 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 5e66b66b-5a69-4a0c-a6fd-fd063f958c8f
-aliases: [project-study-purge]
 ---
 
 ## Status: LIVE on VM — deployed 2026-06-12

@@ -5,34 +5,6 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 4a1b770e-8ea6-4b4c-a188-2bed29f37d05
-aliases: [dh-pacs-business-strategy]
----
-
-> ## ⚠ SUPERSEDED — do not use for customer-facing work
->
-> **This is a second copy of the MIMP-004 strategy, pulled 2026-06-17 and superseded on
-> 2026-08-03.** It is exactly the "stale copies survive in other repos" case ADR-0006 predicts, and
-> it is reachable by `search_memories`, so it is corrected here rather than left to be found.
->
-> - **"The pitch is 'patient data ownership,' a new market category"** → superseded by the
->   **Advanced Connected Imaging Network**; ownership is now the *mechanism*, not the claim.
-> - **"Three-layer sales chain: IT → Management → Radiologists/Surgeons"** → the chain is
->   **Enterprise-tier only** (Standard runs Owner → light IT → counter staff), and
->   **`Radiologists/Surgeons` must be split**: DHS serves the **surgeon**; the radiologist is a
->   *deliberate non-persona*. `DHS_BRAND_STRATEGY.md` §10 names this exact line as requiring
->   correction — *"two different people with opposite roles in this strategy."*
-> - **"Ibn Sina proof point"** → `master proof point` is a **banned term**; tier-matched proof
->   applies (Ibn Sina ⇒ Enterprise only, Cumilla ⇒ Standard only, never crossed).
-> - **"Installation: free"** → a **Standard-tier term only**. Ibn Sina bought workstation licences
->   at ~300k BDT/unit.
->
-> **Still true:** never teleradiology · never quote exact pricing · never mention BDC (now the
-> Facility pillar, banned from all Commercial Content) · "built to HIPAA standards", never
-> "certified" · the ৳14.6B figure must always be sourced — and note its year is still unverified.
->
-> **Authority:** `E:\DHS-PACS\CONTEXT-MAP.md` (2026-08-03). Current position: `org/north-star.md`.
-> Retained rather than deleted so the stale copy stays traceable (ADR-0006).
-
 ---
 
 Pulled from [[reference_mimp004_business_memory]] (MIMP-004) because it directly shapes how to talk about this platform's "front side" (marketing site, sales material, demo framing).

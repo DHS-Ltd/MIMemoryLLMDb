@@ -3,7 +3,6 @@ name: PacsVM Credentials & Access
 description: Login credentials and access info for the central Ubuntu PACS VM
 type: project
 originSessionId: 153ccd2f-a8df-44cd-93d8-b2c6f901058b
-aliases: [PacsVM Credentials & Access, project-vm-credentials]
 ---
 **PacsVM (central server, Hyper-V on Windows host):**
 - Hyper-V VM name: PacsVM

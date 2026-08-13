@@ -4,6 +4,9 @@
 - [Ibn Sina Cancer PACS System](ibn_sina_cancer_pacs_system.md) — **DESIGN + BUILD PLAN COMPLETE (2026-06-20), not yet built.** Federated multi-site PACS: NO central data server, replicated Patient Directory (index only), per-site distributed storage, proxy-stream Remote reads over Tailscale, two-plane exposure, one codebase behind `FEDERATED_MODE`. USP = modular per-site investment. Docs + ADRs 0001–0004 + phased BUILD_PLAN in `docs/IbnSinaCancerPacs/`. Parked: DMWL identity (Q5), DH access/telemetry terms (Q9).
 
 ## Project Status
+- [JPEG-LS Ingest Compression — LIVE](project_jpegls_ingest_compression_live.md) — **LIVE on prod 2026-07-14 (ADR 0016).** Orthanc IngestTranscoding fixes 80-min large-CT load bug without touching MPR/viewer mode. Backfill of old studies explicitly deferred as separate project.
+- [Site Creation MT-Gated Default](site_creation_mt_gated_default.md) — **LIVE on VM 2026-06-28 (ADR 0012), COMMITTED 2026-07-12.** New sites default mt_gated (aligns with box installer); instructions.js rewritten to slim DH-staff onboarding; zero-MT warning banner. Cross-repo follow-up: update workstation NEW_SITE_ONBOARDING.md.
+- [Patient PDF Redesign + Settings + Logo Fix](patient_pdf_redesign_plan.md) — **ALL LIVE on prod 2026-06-28.** Redesigned Patient Access Sheet (honors ADR 0003) + admin-editable Support Phone (`app.app_settings` KV table p9, folded into Dashboard, precedence DB→env→default) + logo-upload bug fixed (root cause was the global `express.json()` 100KB limit, NOT missing UI; route cap now 5MB). Uncommitted on `main`. Bangla + DICOM study-description still deferred. Remaining: user browser QA (upload Ibn Sina logo, set phone) + commit strategy.
 - [Project Completion Status](project_completion_status.md) — Platform COMPLETE. **2 sites live: SITE01 (Ibn Sina) + SITE03 (Cumilla Medical College) 2026-06-02.**
 - [SITE01 Workstation Status](site01_workstation_status.md) — SITE01 COMPLETE 2026-05-25. AET=SITE01_ORTHANC, Tailscale 100.86.132.36, autolink.lua bugs fixed.
 - [SITE03 Cumilla Status](site03_cumilla_status.md) — SITE03 COMPLETE 2026-06-02. Cumilla Medical College, AET=SITE03_ORTHANC, Tailscale 100.81.132.123, Philips MRI live.
@@ -56,7 +59,9 @@
 ## Doctor Portal
 - [Doctor Portal Plan](project_doctor_portal_plan.md) — Multi-site view-only portal for consultant doctors. Email+password auth, many-to-many site access, admin-assigned. **Radiology report = critical future phase.**
 - [Doctor Portal P8 — LIVE](saas_p8_doctor_portal.md) — **FULLY LIVE 2026-06-13**. DB migration, 5 backend routes, 3 admin-UI pages, nginx `/doctor/` + `pacs-doctor-ui` container all deployed. SPA repo at `D:\dh-pacs-doctor`.
+- [Doctor Reports P10 — LIVE](saas_p10_doctor_reports.md) — **FULLY LIVE 2026-07-12**. Real prescribing (chief complaint/diagnosis/medications), Test Catalog, PDF letterhead. Deployed via scoped manual deploy, NOT CI/CD (see file for why). `feat/patient-pdf-redesign-settings` commit-strategy debt RESOLVED 2026-07-12 — 6 logical commits, still not merged to main.
 
 ## Repository & Tooling
 - [GitHub Repo & Issue Tracker](reference_github_repo.md) — Repo URL, gitignore details, Google Form URL (forms.gle/v4rfsYmka8Lhs4oS8), Apps Script integration notes
+- [Companion Repo Map](reference_companion_repo_map.md) — Full 7-repo family incl. 2 undocumented OHIF extension scaffolds (cardiac/liver) found 2026-07-12; workstation has no GitHub remote (intentional). Mirrors README.md's "Related Repositories" section.
 

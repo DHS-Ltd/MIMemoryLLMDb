@@ -5,7 +5,6 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 4a1b770e-8ea6-4b4c-a188-2bed29f37d05
-aliases: [marketing-site-central-integration, marketing_site_central_integration, project-marketing-site-central-integration]
 ---
 
 Session started from a CI/CD request for `dh-pacs-central` (ADR 0011: self-hosted GitHub Actions runner on the production VM, manual `workflow_dispatch` deploy, SHA-tagged rollback, auto health-check rollback, `nginx -t`-gated config deploys, migrations excluded). Mid-session, the user revealed the actual immediate driver: the `dh-pacs-website` marketing site (built on a separate machine, see [[reference_mimp004_business_memory]]) needs to be reachable at `pacs.dhsolutions.com.bd` itself, not a separate domain.

@@ -3,7 +3,6 @@ name: Central Server Phase 1 — COMPLETE (End-to-End Working)
 description: Phase 1 closed 2026-05-19. OHIF renders pixel data for patient E1027809 via token link. Full E2E: DICOM ingest → DB → token → viewer → pixels.
 type: project
 originSessionId: 4b13a283-8d5d-4011-a897-060e85082666
-aliases: [Central Server Phase 1 — COMPLETE (End-to-End Working), Central Server Phase 1 — COMPLETE (End_to_End Working), central-server-phase1-complete]
 ---
 **Status (2026-05-19): Phase 1 COMPLETE.** Pixel data rendering confirmed end-to-end in production.
 

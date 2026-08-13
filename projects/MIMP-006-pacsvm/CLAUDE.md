@@ -1,11 +1,6 @@
 # CLAUDE.md
 
-> ⚠ **Positioning below is SUPERSEDED (2026-08-03).** The engineering content is accurate and
-> current; only the commercial framing is out of date. **"Teleradiology" is a banned term** — DH
-> PACS does not compete with reporting services. See the Business Context section for the
-> corrections, and `org/north-star.md` in MIMemoryLLMDb for the current position (ADR-0006).
-
-Multi-site **medical imaging** platform: DICOM images received centrally, served to patients via shareable mobile-friendly links (no app). Full docs in [Site01Docs/](Site01Docs/).
+Multi-site teleradiology platform: DICOM images received centrally, served to patients via shareable mobile-friendly links (no app). Full docs in [Site01Docs/](Site01Docs/).
 
 ---
 
@@ -21,7 +16,7 @@ Multi-site **medical imaging** platform: DICOM images received centrally, served
 | Issue Tracker | Google Form → GitHub Issues via Apps Script | ✅ 2026-05-26 |
 | Website Docs | Content blueprint + demo portal build guide | ✅ 2026-05-29 |
 | SaaS Phase 0 | DB schema: patients identity, `mt_users`, `link_mode`, claim tracking | ✅ 2026-06-03 |
-| Doctor Portal | Design decided 2026-06-13. Separate repo `dh-pacs-doctor`. ADR 0007 + 0008. | 📋 Planned |
+| Doctor Portal | Separate repo `dh-pacs-doctor`. ADR 0007 + 0008. P8 (portal) live 2026-06-13, P10 (reports) live 2026-07-12. | ✅ Live |
 
 **Admin panel:** `https://pacs.dhsolutions.com.bd/admin` — creds from VM `.env`.
 **Gold-path link:** `https://pacs.dhsolutions.com.bd/open?token=7729128b-13f7-4db4-ab4c-c041ce045f81` (AYESHA AKTER, MR lumbar spine, 29 series)
@@ -45,7 +40,7 @@ If you change any of the above here, note the impact for the workstation side (a
 
 ## Companion project — DH PACS Doctor Portal
 
-The consulting-physician frontend is a **separate repo** `dh-pacs-doctor` (planned, not yet created). It is a React SPA served at `/doctor/` on the central server. Doctors log in with email + password (`doctor_jwt` cookie), see patients across their admin-assigned sites, and open studies in the existing DHV viewer (`pacs-ohif-dhs`).
+The consulting-physician frontend is a **separate repo** `dh-pacs-doctor` (github.com/DHS-Ltd/dh-pacs-doctor, live at `D:\dh-pacs-doctor`). It is a React SPA served at `/doctor/` on the central server (container `pacs-doctor-ui`). Doctors log in with email + password (`doctor_jwt` cookie), see patients across their admin-assigned sites, and open studies in the existing DHV viewer (`pacs-ohif-dhs`).
 
 **Before changing the doctor API contract**, check the coupled surfaces:
 
@@ -55,6 +50,8 @@ The consulting-physician frontend is a **separate repo** `dh-pacs-doctor` (plann
 - **Viewer** — reuses existing `pacs-ohif-dhs` instance at `/`; no separate DHV build in the doctor portal.
 
 See [docs/adr/0007-doctor-portal-as-separate-repository.md](docs/adr/0007-doctor-portal-as-separate-repository.md) and [docs/adr/0008-multi-site-doctor-access-via-junction-table.md](docs/adr/0008-multi-site-doctor-access-via-junction-table.md).
+
+**UI note (2026-07-12):** the patient list now uses expand-in-place accordion rows instead of navigating to a separate detail page — a pure frontend change on that side, no API contract impact. `dh-pacs-doctor` also got its own `README.md` documenting the repo map from that side (mirrors this section); its `CLAUDE.md` has the full behavior spec if you need more than this summary.
 
 ---
 
@@ -242,21 +239,9 @@ CENTRAL_AET=PACS_CENTRAL   CENTRAL_TAILSCALE_IP=100.118.47.99
 
 **Product:** DH PACS — **Company:** DH Solutions (brand names are distinct; use DH PACS in headlines, DH Solutions for legal/company references)
 
-**Key client:** Ibn Sina Hospital — 7 DHV Workstations, 5 centers across Bangladesh. Confirm public naming permission before website launch; fallback: "5 centers of a leading Dhaka-based hospital chain."
+**Key client:** Ibn Sina Hospital — 7 DHV Workstations, 5 centers across Bangladesh. Primary social proof for all marketing. Confirm public naming permission before website launch; fallback: "5 centers of a leading Dhaka-based hospital chain."
 
-> ⚠ **"Primary social proof for all marketing" is SUPERSEDED (2026-08-03).** The rule is now
-> **tier-matched proof**: Ibn Sina proves the **Enterprise tier only** (they bought workstation
-> licences at ~300k BDT/unit); **Cumilla** proves the **Standard tier** (free install, per-patient
-> billing). **They are never crossed** — citing Ibn Sina to support free installation is false.
-> `master proof point` is a banned term.
-
-**Market:** Bangladesh medical film market ৳14.6 billion/year. Source: `docs/Website/Value_proposition_mRayImaging_BD.pdf` (NBR import data, HS code 3701.10). ⚠ **The year of this figure is still unverified** — always cite the source, never the bare number.
-
-> ⚠ **Category SUPERSEDED (2026-08-03).** DH PACS no longer claims "patient data ownership" as its
-> category. The category is the **Advanced Connected Imaging Network**; patient ownership is the
-> *mechanism*, not the headline. DHS serves the **surgeon**, not the radiologist — the radiologist
-> is a deliberate non-persona. Current north star: sell one **Advanced DICOM Image Viewer** licence
-> by 2026-10-10. Authority: `E:\DHS-PACS\CONTEXT-MAP.md`.
+**Market:** Bangladesh medical film market ৳14.6 billion/year. Source: `docs/Website/Value_proposition_mRayImaging_BD.pdf`. Use in hero headline and market vision sections.
 
 ---
 

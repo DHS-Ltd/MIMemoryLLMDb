@@ -5,7 +5,6 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 175a2653-6aad-43fe-a244-c566d81e2f17
-aliases: [project-website-work]
 ---
 
 > **STALE as of 2026-06-17:** This describes the original blueprint-stage plan only. The website has since been fully implemented as a separate Next.js repo (`E:\DHS-PACS\dh-pacs-website`) with its own memory in `mmp-memory` project `MIMP-004`. See [[reference_mimp004_business_memory]] for the current state before acting on anything below.

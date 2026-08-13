@@ -4,7 +4,6 @@ description: SITE01 (IBN Sina Hospital, Windows 11) FULLY COMPLETE 2026-05-25. A
 type: project
 lastUpdated: 2026-05-10
 originSessionId: e8446a9d-e451-42c4-b1f2-a501f048073a
-aliases: [SITE01 Workstation Setup & Blocking Issues, site01-workstation-status]
 ---
 ## SITE01 Workstation Details
 

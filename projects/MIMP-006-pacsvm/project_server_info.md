@@ -3,7 +3,6 @@ name: Server Hardware & Network Info
 description: Physical server specs, network topology, existing services, and connectivity plan for the DICOM project
 type: project
 originSessionId: 153ccd2f-a8df-44cd-93d8-b2c6f901058b
-aliases: [Server Hardware & Network Info, project-server-info]
 ---
 Server is an on-premise Windows Server 2022 Standard (not Ubuntu as CLAUDE.md assumed).
 
