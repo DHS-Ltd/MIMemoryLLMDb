@@ -14,6 +14,8 @@ authoritative, timestamped record of structural decisions is
 | `DHDicomAnalyzerPro-Planning/docs/UX-Foundation/` | **New 2026-08-03.** The three-step interaction-design study run *before* any UI code: six **UX surface** docs → per-area Slicer mapping with evidenced bucket calls → design decisions. Also the foundation corpus for a future **feature-implementation agent** (D24). | [`README.md`](./DHDicomAnalyzerPro-Planning/docs/UX-Foundation/README.md) |
 | `Inobitec/` | The Inobitec knowledge base: capability catalog, client-facing marketing material, hands-on practice track. Inobitec is DH's **reference standard** (certified comparator + feature-idea source) — never a code/interop target. | [`CONTEXT.md`](./Inobitec/CONTEXT.md) |
 | `Inobitec/Sales_Enablement/` | The **Answer Bank** (new 2026-08-01): internal sales-enablement layer turning Inobitec's video corpus into answers for a prospect's **radiographers**, in a live deal. Never customer-facing; out of catalog scope. Run `/inobitec-sales`. | [`README.md`](./Inobitec/Sales_Enablement/README.md) |
+| `Inobitec/Client_Facing_Docs/Synapse_3D_Fujifilm/` | **New 2026-08-15.** The first **OEM-Substitution Lead** — a Fujifilm distributor sold an MRI to a private diagnostic centre whose requirement names **Synapse 3D**. Holds an internal **Competitor Profile** and a customer-facing **Requirement Brochure**. ⚠️ **`Client_Facing_Docs/` is no longer single-audience** and the two scope rules below are now lead-scoped. | [`README.md`](./Inobitec/Client_Facing_Docs/Synapse_3D_Fujifilm/README.md) |
+| `Inobitec/docs/Mail_Communication/` | **New 2026-08-15.** All correspondence with **Inobitec Software FZ-LLC** — the vendor *company* — plus its drafts. The **Vendor Channel**: DH in front of the vendor, as opposed to everything in `Sales_Enablement/`, which is DH in front of a customer. Has its own subordinate glossary (parent `Inobitec/CONTEXT.md` still wins). What DH learns *through* this channel is quarantined from DHDicomAnalyzerPro — [root ADR-0002](./docs/adr/0002-inobitec-taught-material-is-quarantined-from-dhdicomanalyzerpro.md). | [`CONTEXT.md`](./Inobitec/docs/Mail_Communication/CONTEXT.md) |
 | `3DSlicer_Research/` | The 3D Slicer knowledge base (own bounded context, resolved 2026-07-28): raw scraped upstream 3D Slicer developer+user docs (`developer_docs/`, `user_docs/`) distilled by the `slicer-cataloguer` agent into `Knowledge_Base/{MODULES,ARCHITECTURE,BUILD_AND_TOOLING}.md`. Product-agnostic Slicer reference — no DHDicomAnalyzerPro tagging baked in. | [`CONTEXT.md`](./3DSlicer_Research/CONTEXT.md) |
 | `slicer-skill/` | Third-party repo (own git remote, `pieper/slicer-skill`) — **read-only, never edit.** Its live Claude↔running-Slicer MCP bridge is now wired up (2026-07-28); its `setup.sh` corpus builder was deliberately **not** run. | [root ADR-0001](./docs/adr/0001-slicer-live-bridge-and-corpus-scope.md) |
 | `.claude/skills/slicer/` | The **live Slicer bridge + reference skill**: an adapted `SKILL.md` (upstream's pointers repointed at what actually exists here) and a hardened `slicer-mcp-server.py`. Invoke as `/slicer`. | [`SKILL.md`](./.claude/skills/slicer/SKILL.md) |
@@ -115,6 +117,16 @@ with their own remotes.
   - Sales docs call the product **"Advanced DICOM Image Viewer"**; clip captions instead
     say **"the post-processing software"** (never the Inobitec brand name in either).
   - Target customer is **vascular**; cardiac/coronary/calcium-scoring/PET-SUV/DTI excluded.
+    ⚠️ **Lead-scoped since 2026-08-15, not context-wide.** This rule was written for the *cold
+    vascular prospect*. The `Synapse_3D_Fujifilm/` OEM-substitution lead is **MRI-led** and has
+    **DTI in scope** — the exclusion encoded *irrelevant to that buyer*, never *never offer*.
+    State which lead any new doc serves ([ADR-0008](./Inobitec/docs/adr/0008-oem-substitution-lead-rescopes-customer-facing-material.md)).
+  - **Never reuse "the problem is not capability, it is access" against a server-based
+    competitor.** It is the existing Brochure's whole argument and it is **false** against
+    Fujifilm Synapse 3D, whose own architecture page claims thin-client reach to every
+    workstation. Check the competitor's architecture first. And when arguing from a structural
+    difference, **verify the structure on both sides** — Inobitec Pro is modular too, so
+    "everything included, no modules" is not ours to claim.
   - **DH PACS and the DHV Workstation are out of scope** for this product's sales material.
   - No pricing, no stopwatch numbers (qualitative speed claims only in sales docs; clip
     captions may state a conservative concrete time).
