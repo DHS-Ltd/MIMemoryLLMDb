@@ -22,6 +22,18 @@ into one or more Film Sheets, and batch-prints to a DICOM printer or local/PDF.
 - ADRs 0001–0005: `docs/adr/`
 - Curated as-built index: the `grill-film-composer` skill's `architecture-map.md` — see [[grill-film-composer-skill]]
 
+## SHIPPING STATUS — withheld from customers (decided 2026-08-23)
+
+The Film Composer is a **Withheld feature**: finished, but deliberately absent from
+every **Commercial Build**. It is gated by the *existing* `-Pmcp` profile (not a new
+`-Pfilm`), because `weasis-mcp` compile-depends on `weasis-dicom-filmcomposer` — so
+"Dev Build" now means MCP *and* Film Composer together, and `-Pmcp` is a misnomer.
+Ships later; not cancelled. See ADR-0018 and [[commercial-build-and-branding]].
+
+**Practical effect on all future Composer work: you must build with `-Pmcp` to see the
+Composer at all.** A plain `mvn package` has no Composer bundle, no felix entry, and no
+launch button.
+
 ## What's built (status)
 **Current frontier (2026-07-08): Phase 7A — WYSIWYG Film Surface — DONE + live-verified**
 (338/338 filmcomposer tests). The center pane is now a real letterboxed film:
