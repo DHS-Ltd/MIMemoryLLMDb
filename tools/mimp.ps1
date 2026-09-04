@@ -13,7 +13,14 @@ param(
     [Parameter(Position=0)][string]$Command,
     [Parameter(Position=1)][string]$Arg1,
     [Parameter(Position=2)][string]$Arg2,
-    [Parameter(Position=3)][string]$Arg3
+    [Parameter(Position=3)][string]$Arg3,
+    # Declared explicitly because PowerShell's parameter binder rejects any bare "-x"/"--x" token
+    # that isn't a known parameter name - it was never matched against $Arg1/$Arg2 as a string,
+    # it threw before binding got that far. (Bit both `lint --json/--quiet` and the new
+    # `scheduled-run --dry-run` the same way; fixed once, here, for all of them.)
+    [switch]$json,
+    [switch]$quiet,
+    [Alias('dry-run')][switch]$dryrun
 )
 
 # ── Config Loading ──────────────────────────────────────────────────
@@ -702,6 +709,125 @@ function Cmd-Status {
     Write-Host ''
 }
 
+# Best-effort desktop notification for scheduled-run. Never allowed to fail the sync itself -
+# a broken toast is not a reason to hide a real push failure.
+function Show-Toast {
+    param([string]$Title, [string]$Message)
+    try {
+        Add-Type -AssemblyName System.Windows.Forms
+        Add-Type -AssemblyName System.Drawing
+        $icon = New-Object System.Windows.Forms.NotifyIcon
+        $icon.Icon = [System.Drawing.SystemIcons]::Warning
+        $icon.Visible = $true
+        $icon.ShowBalloonTip(10000, $Title, $Message, [System.Windows.Forms.ToolTipIcon]::Warning)
+        # Balloon is queued by the OS on show; disposing immediately can drop it before it renders.
+        Start-Sleep -Seconds 3
+        $icon.Dispose()
+    } catch {
+        Write-Host "  (toast notification unavailable: $_)" -ForegroundColor DarkGray
+    }
+}
+
+function Get-IgnoreList {
+    $ignorePath = Join-Path $RepoPath 'tools\mimp-ignore.txt'
+    if (-not (Test-Path $ignorePath)) { return @() }
+    return @(Get-Content $ignorePath | ForEach-Object { $_.Trim() } | Where-Object { $_ -and -not $_.StartsWith('#') })
+}
+
+# Folder names under ~/.claude/projects/ already accounted for by a registered project on this
+# machine - via an explicit claude_memory_paths entry, or the path mimp init would derive from
+# local_paths even if claude_memory_paths was never explicitly saved.
+function Get-ClaimedClaudeFolders {
+    $reg = Load-Registry
+    $claimed = @{}
+    foreach ($prop in $reg.projects.PSObject.Properties) {
+        $p = $prop.Value
+        if ($p.claude_memory_paths -and $p.claude_memory_paths.$MachineId) {
+            $folder = Split-Path (Split-Path $p.claude_memory_paths.$MachineId -Parent) -Leaf
+            $claimed[$folder] = $true
+        }
+        if ($p.local_paths -and $p.local_paths.$MachineId) {
+            $encoded = Get-EncodedClaudePath $p.local_paths.$MachineId
+            if ($encoded) { $claimed[$encoded] = $true }
+        }
+    }
+    return $claimed
+}
+
+# Read-only scan (ADR-0009): surfaces candidates for `mimp init`, never registers anything itself -
+# entity/pillar/product classification is a judgment call, not something to guess.
+function Find-UnregisteredProjects {
+    $claudeBase = Join-Path $env:USERPROFILE '.claude\projects'
+    if (-not (Test-Path $claudeBase)) { return @() }
+
+    $claimed = Get-ClaimedClaudeFolders
+    $ignored = @(Get-IgnoreList)
+
+    $candidates = @()
+    Get-ChildItem -Path $claudeBase -Directory | ForEach-Object {
+        $name = $_.Name
+        if ($claimed.ContainsKey($name)) { return }
+        if ($ignored -contains $name) { return }
+        if (Test-Path (Join-Path $_.FullName 'memory\MEMORY.md')) {
+            $candidates += $name
+        }
+    }
+    return $candidates
+}
+
+function Cmd-ScheduledRun {
+    param([switch]$DryRun)
+
+    $logPath = Join-Path $env:USERPROFILE '.mimp-scheduled-run.log'
+    $stamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
+    Add-Content $logPath "`n=== $stamp scheduled-run on $MachineId$(if ($DryRun) { ' [dry-run]' }) ==="
+
+    $pushed = @()
+    $failures = @()
+
+    $reg = Load-Registry
+    foreach ($prop in $reg.projects.PSObject.Properties) {
+        $p = $prop.Value
+        if ($p.status -ne 'active') { continue }
+        if (-not ($p.local_paths -and $p.local_paths.$MachineId)) { continue }
+
+        $shortName = $p.short_name
+        if ($DryRun) {
+            Add-Content $logPath "  [dry-run] would push $($prop.Name) ($shortName)"
+            continue
+        }
+
+        Add-Content $logPath "  pushing $($prop.Name) ($shortName)..."
+        # Shell out rather than calling Cmd-Push in-process: a failed push exits 1 (ADR-0007,
+        # deliberately fail-loud) and must not abort the rest of the batch.
+        $output = & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $PSCommandPath push $shortName 2>&1
+        $output | ForEach-Object { Add-Content $logPath "    $_" }
+        if ($LASTEXITCODE -eq 0) {
+            $pushed += $shortName
+        } else {
+            $failures += $shortName
+            Add-Content $logPath "  FAILED: $shortName (exit $LASTEXITCODE)"
+        }
+    }
+
+    $candidates = Find-UnregisteredProjects
+
+    Add-Content $logPath "  Summary: $($pushed.Count) pushed, $($failures.Count) failed, $($candidates.Count) unregistered candidate(s)."
+    if ($candidates.Count -gt 0) {
+        $candidates | ForEach-Object { Add-Content $logPath "    unregistered: $_" }
+    }
+
+    Write-Host "Scheduled run complete: $($pushed.Count) pushed, $($failures.Count) failed, $($candidates.Count) unregistered candidate(s)." -ForegroundColor Cyan
+    Write-Host "Log: $logPath" -ForegroundColor DarkGray
+
+    if (-not $DryRun -and ($failures.Count -gt 0 -or $candidates.Count -gt 0)) {
+        $lines = @()
+        if ($failures.Count -gt 0) { $lines += "$($failures.Count) push(es) failed: $($failures -join ', ')" }
+        if ($candidates.Count -gt 0) { $lines += "$($candidates.Count) unregistered project(s) - run mimp init: $($candidates -join ', ')" }
+        Show-Toast -Title 'MIMemoryLLMDb scheduled sync' -Message ($lines -join "`n")
+    }
+}
+
 # ── Command Router ──────────────────────────────────────────────────
 
 switch ($Command) {
@@ -711,6 +837,7 @@ switch ($Command) {
     'list'          { Cmd-List }
     'status'        { Cmd-Status -ProjectRef $Arg1 }
     'sync'          { Cmd-Pull -ProjectRef $Arg1; Cmd-Push -ProjectRef $Arg1 }
+    'scheduled-run' { Cmd-ScheduledRun -DryRun:$dryrun }
     'lint'          {
         # Mechanical lint (Phase 2.1) - deterministic, no model, no tokens. Implemented in Node
         # because it hashes files and parses markdown; PowerShell 5.1 is the wrong tool for that.
@@ -724,7 +851,9 @@ switch ($Command) {
             Write-Host 'ERROR: node is not on PATH. mimp lint needs Node (same requirement as the MCP server).' -ForegroundColor Red
             exit 1
         }
-        $lintArgs = @($lintScript) + @($Arg1, $Arg2 | Where-Object { $_ })
+        $lintArgs = @($lintScript)
+        if ($json) { $lintArgs += '--json' }
+        if ($quiet) { $lintArgs += '--quiet' }
         & node @lintArgs
         exit $LASTEXITCODE
     }
@@ -755,10 +884,14 @@ switch ($Command) {
         Write-Host '    sync          [project_id_or_short_name]             Pull then push'
         Write-Host '    sparse-status                                        Show this machine''s sparse checkout paths'
         Write-Host '    lint          [--json] [--quiet]                      Mechanical brain lint (exit 1 on error)'
+        Write-Host '    scheduled-run [--dry-run]                            Push all active projects on this machine + scan for unregistered ones'
         Write-Host ''
         Write-Host '  lint checks: broken links and wikilinks, Source hash drift, uncited pages,'
         Write-Host '  orphan wiki pages, passed deadlines, dead registry paths, unpushed memory,'
         Write-Host '  overdue reviews. Reports only - it never fixes.' -ForegroundColor DarkGray
+        Write-Host ''
+        Write-Host '  scheduled-run is meant to be invoked by tools/install-schedule.ps1''s Scheduled'
+        Write-Host '  Task (ADR-0009), not run by hand day to day - use --dry-run to preview it.' -ForegroundColor DarkGray
         Write-Host ''
     }
 }

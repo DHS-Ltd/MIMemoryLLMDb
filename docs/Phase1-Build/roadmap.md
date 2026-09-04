@@ -48,16 +48,12 @@ mimp edit image-converter
 
 ---
 
-### 4. `mimp push --all` Command
+### 4. `mimp push --all` Command — superseded, see below
 
 **Problem:** Pushing all projects requires running `mimp push` for each one individually.
 
-**Solution:** A batch push command:
-
-```powershell
-mimp push --all           # push all active projects on this machine
-mimp push --all --dry-run # show what would be pushed without doing it
-```
+**Built differently:** `mimp scheduled-run [--dry-run]` (2026-09-04, ADR-0009) does this and
+runs unattended on a schedule rather than as a manual `--all` flag — see Completed Features below.
 
 ---
 
@@ -193,9 +189,17 @@ mimp lint image-converter
 
 ---
 
-### 15. GitHub Actions Auto-Backup
+### 15. GitHub Actions Auto-Backup — partially superseded, see below
 
-A GitHub Actions workflow that runs on a schedule (e.g., daily) to verify all registered projects have been pushed recently, and sends a notification (email, Slack, or Teams) if any project has not been updated in more than 7 days.
+A GitHub Actions workflow that runs on a schedule (e.g., daily) to verify all registered projects
+have been pushed recently, and sends a notification (email, Slack, or Teams) if any project has
+not been updated in more than 7 days.
+
+**Note (2026-09-04):** the actual push now happens client-side on a schedule (`mimp scheduled-run`,
+ADR-0009) rather than server-side verification via GitHub Actions — it pushes proactively instead
+of just detecting staleness after the fact. A GitHub Actions staleness check is still a reasonable
+independent backstop (catches the case where the scheduled task itself silently stops running on
+every machine) but hasn't been built.
 
 ---
 
@@ -210,3 +214,4 @@ A GitHub Actions workflow that runs on a schedule (e.g., daily) to verify all re
 | Git-based backup | Done | 2026-05-28 |
 | `mimp init` auto-detects claude_memory_paths (Roadmap #9) | Done | 2026-05-29 |
 | Git sparse checkout — machines only download their own projects | Done | 2026-05-29 |
+| `mimp scheduled-run` — unattended daily push for all active projects + unregistered-project discovery scan (ADR-0009) | Done | 2026-09-04 |

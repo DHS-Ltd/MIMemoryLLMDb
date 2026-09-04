@@ -1,0 +1,5 @@
+# Folder names under ~/.claude/projects/ that `mimp scheduled-run`'s discovery scan
+# should never flag as an unregistered project. One encoded folder name per line.
+# Lines starting with # are comments. See ADR-0009.
+C--WINDOWS-system32
+c--Users-maidu
