@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 0af12712-f8f3-49c9-b187-b0d176d3b68c
-  modified: 2026-08-08T17:02:05.754Z
+  modified: 2026-08-13T16:44:48.380Z
 aliases: [project_dhs_crm]
 ---
 
@@ -41,6 +41,6 @@ Seeded: Ibn Sina (Enterprise, chain-level per the design — user confirmed "IBN
 
 **Open question raised, not yet resolved:** Tier (deployment shape) and Revenue Line 2 (Advanced Post-Processing licence) are orthogonal, but neither Stage Set models Line 2 — so "Licence Signed" is ambiguous between the DHV workstation licence and the post-processing licence. Pranto is the first account where this bites.
 
-**Open item:** `Marketing/Popular_Diagnostic/` violates ADR-0004 — patient name in two PDF filenames, bill no. in the proposal body. Not urgent (nothing in git), but clean before sharing or reusing as a template. Also flagged: the proposal names Prof. Altaf Hossain Sarker as the surgeon who waited — a relationship risk, not a compliance one.
+**~~Open item~~ — RESOLVED 2026-08-13.** `Marketing/Popular_Diagnostic/` (ADR-0004 violation) was moved intact out of the repo to `E:\DHS-Archive\Popular_Diagnostic\` and replaced by a de-identified `Marketing/STANDARD_TIER_PROPOSAL_TEMPLATE.md`. A fifth identifier had been missed in the original count — the proposal also named the **reporting radiologist**. The named referring surgeon remains a relationship risk rather than a compliance one, and the archived original is never to be edited or committed. See [[project-dh-pacs-product-design]].
 
 See also [[project-dhs-brand-strategy]], [[commercial-content-hub-rule]], [[project-linkedin-surgeon-first]].

@@ -63,7 +63,10 @@ Personal-brand content (Maidul's LinkedIn educator identity, CV) is the opposite
 - **The surgeon pays nothing.** The Doctor Dashboard is free by design — his role is to drive volume, not to be billed.
 - Exact numbers live in the user's physical notebook — **never guess, never quote**.
 - "Free installation" means free install *labour*. Because Line 2 is a licence, free installation can no longer carry the headline alone — **lead with the surgeon volume the licence unlocks**, and state free installation before any fee.
-- **Patient data agreement:** Standard tier only. Hospital grants DHS data access, enabling future patient data restoration and a B2C channel. (Enterprise deals may forgo this — see ADR-0005.)
+- **Data rights are two separate grants — never collapse them** (settled 2026-08-13, glossary in `docs/product_design/CONTEXT.md`):
+  - **Data Use Right** — DHS may use data flowing through a connected site for service delivery and **internal model development**. A **precondition of connection**, holding across **both tiers**. This is what makes an internal training corpus possible.
+  - **Data Control** — ownership, physical location, and the right to commercialise. Negotiated **per deal**. Standard tier grants it to DHS (patient data restoration, future B2C channel); the Ibn Sina Enterprise deal under Option 2 deliberately leaves it with the hospital — see ADR-0005, which stands unamended.
+  - Never claim resale, third-party sharing, or a B2C channel on the strength of connection alone. That is Control, not Use.
 
 ---
 
@@ -76,7 +79,14 @@ E:\DHS-PACS\
     ├── Architecture/
     │   ├── DH_PACS_WEBSITE_CONTENT_SPEC.md   ← definitive design + copy reference
     │   └── DH_PACS_WEBSITE_ARCHITECTURE.md   ← technical infrastructure reference
-    └── CRM/                ← CRM doctrine (schema, stages, build plan) — code lives outside this repo, see below
+    ├── CRM/                ← CRM doctrine (schema, stages, build plan) — code lives outside this repo, see below
+    └── product_design/     ← DH PACS product boundary, vision, principles, ADRs — read CONTEXT.md + VISION.md
+        │                     before any product/UX work. The code it describes lives on MachineB.
+        ├── CONTEXT.md      ← vocabulary: The Connected Layer, Surface, Standing Set, Finding Request
+        ├── VISION.md       ← the in/out test: is this DH PACS's job, DHV's, or Advanced Post-Processing's?
+        ├── PRINCIPLES.md   ← tie-breakers for when two goods conflict
+        ├── ROADMAP.md      ← phased sequence, split MachineA (forward) / MachineB (as-built)
+        └── adr/            ← 0001 fourth verb · 0002 Patient Link built not borrowed · 0003 per-surgeon automatic
 ```
 
 ---
@@ -128,7 +138,7 @@ Tracks Accounts (centres — the only object with a deal stage) and Contacts (pe
 
 **Phase gate: no capture bot until the nag has survived 3 weeks of real use (~27 Aug 2026).** Don't build Phase 2 before then — see the build plan for why.
 
-**Known cleanup item:** `Marketing/Popular_Diagnostic/` (this repo) currently violates ADR-0004 — two PDFs carry a patient name in their filename and the proposal body carries a bill number. Not in git, not urgent, but fix before that folder is shared or reused as a template.
+**~~Known cleanup item~~ — resolved 2026-08-13.** `Marketing/Popular_Diagnostic/` violated ADR-0004 (patient name in two filenames; bill number, amount, exact date, referring surgeon, and the reporting radiologist in the proposal body). The folder was moved intact to `E:\DHS-Archive\Popular_Diagnostic\` — outside the repo, never to be edited or committed, since it is the record of a real sent proposal. `Marketing/STANDARD_TIER_PROPOSAL_TEMPLATE.md` replaces it as the reusable version, carrying case shape only. The path stays in `.gitignore` as defence in depth.
 
 ---
 
