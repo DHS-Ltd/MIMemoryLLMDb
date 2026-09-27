@@ -1,0 +1,21 @@
+{
+    "machine":  "machineB",
+    "last_run":  "2026-09-28T02:03:40+07:00",
+    "pushed":  [
+                   "DHV-OHIF",
+                   "pacsvm",
+                   "mt-portal-pacs-server",
+                   "dh-pacs-doctor",
+                   "dh-pacs-worklist",
+                   "medi-thailand-website"
+               ],
+    "failed":  [
+
+               ],
+    "unregistered":  [
+
+                     ],
+    "source_drift":  [
+
+                     ]
+}
