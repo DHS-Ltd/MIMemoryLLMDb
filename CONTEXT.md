@@ -64,6 +64,11 @@ _Avoid_: import, upload, add, process
 A health pass over the brain that reports defects rather than fixing them silently.
 _Avoid_: audit, review, check, validate
 
+**Heartbeat**:
+A machine's own record of its last scheduled sync — when it ran, what it pushed, what failed. A
+missing or old Heartbeat means that machine's memory has stopped reaching the brain.
+_Avoid_: status, ping, health check, last sync
+
 ## Products
 
 DHS's product vocabulary is owned by `E:\DHS-PACS\CONTEXT-MAP.md`. Repeated here only where the

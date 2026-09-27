@@ -6,6 +6,23 @@ import {
 
 const RECENT_ADR_COUNT = 5;
 const PROJECT_HEAD_LINES = 50;
+const MAX_HEARTBEAT_HOURS = 48;   // same threshold as tools/lint.mjs check 11
+
+// A stopped scheduled sync is silent — only a missing or stale heartbeat reveals it.
+function describeHeartbeats(repoPath) {
+  let machines = {};
+  try { machines = JSON.parse(gitReadFile(repoPath, 'machines.json') || '{}').machines || {}; } catch { /* no machines.json */ }
+  return Object.keys(machines).map((id) => {
+    const text = gitReadFile(repoPath, `status/${id}.json`);
+    if (!text) return `${id}: NO HEARTBEAT — scheduled sync not installed or never pushed; its memory is not reaching the brain.`;
+    let b;
+    try { b = JSON.parse(text.replace(/^﻿/, '')); } catch { return `${id}: heartbeat unreadable (invalid JSON).`; }
+    const hours = Math.round((Date.now() - Date.parse(b.last_run)) / 36e5);
+    const stale = !(hours <= MAX_HEARTBEAT_HOURS) ? 'STALE — scheduled sync has stopped. ' : '';
+    const failed = b.failed?.length ? ` FAILED: ${b.failed.join(', ')}.` : '';
+    return `${id}: ${stale}last run ${b.last_run} (${hours}h ago), pushed ${b.pushed?.length ?? 0}.${failed}`;
+  });
+}
 
 // "2026-07" or "2026-07-15" vs today -> 'OVERDUE' | 'DUE NOW' | 'upcoming'
 function classifyDeadline(deadline, todayIso) {
@@ -68,6 +85,11 @@ export function registerWhatsNext(server, repoPath) {
         `(marked ★ above) and Line 2 revenue (the Advanced Post-Processing licence). ` +
         `NOTE: the old "trust -> equipment deals" flywheel is SUPERSEDED (2026-08-03) — do not ` +
         `reason with it. Authority for commercial claims is E:\\DHS-PACS, not this repo (ADR-0006).`
+      );
+
+      sections.push(
+        '═══ Machine sync health (flag any NO HEARTBEAT / STALE / FAILED line first) ═══\n' +
+        (describeHeartbeats(repoPath).join('\n') || '(no machines.json)')
       );
 
       const deadlineLines = collectDeadlines(registry, todayIso);

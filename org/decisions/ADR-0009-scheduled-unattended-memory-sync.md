@@ -94,4 +94,28 @@ since `mimp.ps1` already resolves `$MachineId`/`$RepoPath` from that machine's o
 - **Reversible.** Deleting the Scheduled Task returns exactly to today's manual-only behavior;
   `mimp push`/`pull`/`sync` are unchanged.
 
+## Amendment — 2026-09-27: detect a job that has stopped, not just a failed push
+
+**What happened.** On 2026-09-06 a Hermes dispatch left this checkout on a `hermes/*` branch with no
+upstream. Every nightly run from 09-07 to 09-26 (20 nights) failed at `git pull --rebase`, and
+none of it surfaced: `scheduled-run` exited 0 so Task Scheduler recorded success, and the balloon
+fired every night regardless because of 16–18 standing discovery candidates, so a real failure
+was indistinguishable from routine noise. Separately, machineB had pushed nothing since 2026-08-13
+and nothing in the brain could say whether its task was broken, missing, or never installed.
+
+**Changes to the decision above:**
+
+- `mimp` refuses to sync unless this checkout is on `master` (any command, not just scheduled-run).
+  Work on `mimp` itself happens in a git worktree.
+- `scheduled-run` exits 1 on any failure, so the task's Last Run Result shows it.
+- The balloon fires on **failures only**. Discovery candidates no longer raise it.
+- Each run pushes a **Heartbeat** — `status/<machine>.json` — as its own commit. `mimp lint` and the
+  MCP `whats_next` tool flag any machine in `machines.json` whose Heartbeat is missing, older than
+  48 hours, or records a failure; discovery candidates appear there as a warning.
+
+**Why a Heartbeat and not a louder alert** (Telegram from `mimp` was considered): every alert
+raised from inside the job is silent when the job isn't running at all. Only the other machine
+noticing an absence catches that — and machineB is an unattended server where no balloon is ever
+seen. Cost: one small commit per machine per day.
+
 <!-- Related: ADR-0007 (fail loudly on git errors — preserved per-project inside scheduled-run), ADR-0006 (classification is a judgment call, not to be guessed). -->

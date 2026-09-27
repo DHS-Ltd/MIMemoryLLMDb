@@ -35,6 +35,7 @@ $Config = Get-Content $ConfigPath -Raw | ConvertFrom-Json
 $RepoPath = $Config.repo_path
 $MachineId = $Config.machine_id
 $RegistryPath = Join-Path $RepoPath 'registry.json'
+$HeartbeatPath = Join-Path $env:USERPROFILE '.mimp-heartbeat.json'
 
 # ── Helper Functions ────────────────────────────────────────────────
 
@@ -824,7 +825,28 @@ function Cmd-ScheduledRun {
         }
     }
 
-    $candidates = Find-UnregisteredProjects
+    $candidates = @(Find-UnregisteredProjects)
+
+    # Heartbeat: pushed as its own commit so the OTHER machine's lint can see this one is alive.
+    # A job that stops running raises no alert of its own - only a stale heartbeat reveals it.
+    if (-not $DryRun) {
+        $beat = [ordered]@{
+            machine      = $MachineId
+            last_run     = (Get-Date -Format 'yyyy-MM-ddTHH:mm:ssK')
+            pushed       = @($pushed)
+            failed       = @($failures)
+            unregistered = @($candidates)
+        }
+        # WriteAllText, not Set-Content: PS 5.1's UTF8 adds a BOM, which JSON.parse rejects.
+        [IO.File]::WriteAllText($HeartbeatPath, ($beat | ConvertTo-Json))
+        Add-Content $logPath '  pushing heartbeat...'
+        $output = & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $PSCommandPath heartbeat 2>&1
+        $output | ForEach-Object { Add-Content $logPath "    $_" }
+        if ($LASTEXITCODE -ne 0) {
+            $failures += 'heartbeat'
+            Add-Content $logPath "  FAILED: heartbeat (exit $LASTEXITCODE)"
+        }
+    }
 
     Add-Content $logPath "  Summary: $($pushed.Count) pushed, $($failures.Count) failed, $($candidates.Count) unregistered candidate(s)."
     if ($candidates.Count -gt 0) {
@@ -834,12 +856,28 @@ function Cmd-ScheduledRun {
     Write-Host "Scheduled run complete: $($pushed.Count) pushed, $($failures.Count) failed, $($candidates.Count) unregistered candidate(s)." -ForegroundColor Cyan
     Write-Host "Log: $logPath" -ForegroundColor DarkGray
 
-    if (-not $DryRun -and ($failures.Count -gt 0 -or $candidates.Count -gt 0)) {
-        $lines = @()
-        if ($failures.Count -gt 0) { $lines += "$($failures.Count) push(es) failed: $($failures -join ', ')" }
-        if ($candidates.Count -gt 0) { $lines += "$($candidates.Count) unregistered project(s) - run mimp init: $($candidates -join ', ')" }
-        Show-Toast -Title 'MIMemoryLLMDb scheduled sync' -Message ($lines -join "`n")
+    # Failures only. Unregistered folders go to the heartbeat and lint as a warning - when they also
+    # raised the toast it fired every night, and 20 nights of real push failures looked like that noise.
+    if ($failures.Count -gt 0) {
+        if (-not $DryRun) {
+            Show-Toast -Title 'MIMemoryLLMDb sync FAILED' -Message "$($failures.Count) push(es) failed: $($failures -join ', ')"
+        }
+        exit 1   # so Task Scheduler's Last Run Result shows the failure instead of 0
     }
+}
+
+# Internal: called by scheduled-run as a child process (same isolation as each project push).
+# Sync first, then write - pull --rebase refuses to run over a modified tracked file.
+function Cmd-Heartbeat {
+    if (-not (Test-Path $HeartbeatPath)) {
+        Write-Host "ERROR: no heartbeat at $HeartbeatPath - this command is run by scheduled-run" -ForegroundColor Red
+        exit 1
+    }
+    Git-Sync
+    $statusDir = Join-Path $RepoPath 'status'
+    New-Item -ItemType Directory -Path $statusDir -Force | Out-Null
+    Copy-Item $HeartbeatPath (Join-Path $statusDir "$MachineId.json") -Force
+    Git-CommitPush "heartbeat: $MachineId ($(Get-Date -Format 'yyyy-MM-dd HH:mm'))" @("status/$MachineId.json")
 }
 
 # ── Command Router ──────────────────────────────────────────────────
@@ -852,6 +890,7 @@ switch ($Command) {
     'status'        { Cmd-Status -ProjectRef $Arg1 }
     'sync'          { Cmd-Pull -ProjectRef $Arg1; Cmd-Push -ProjectRef $Arg1 }
     'scheduled-run' { Cmd-ScheduledRun -DryRun:$dryrun }
+    'heartbeat'     { Cmd-Heartbeat }
     'lint'          {
         # Mechanical lint (Phase 2.1) - deterministic, no model, no tokens. Implemented in Node
         # because it hashes files and parses markdown; PowerShell 5.1 is the wrong tool for that.

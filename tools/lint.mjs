@@ -299,6 +299,39 @@ for (const file of allMd) {
   }
 }
 
+// ── 11. machine heartbeats ─────────────────────────────────────────────────
+// A scheduled sync that stops running raises no alert of its own — only a stale heartbeat shows it
+// (machineA: 20 silent nights, 2026-09). origin/master first: it is what the other machine sees,
+// and the MCP server keeps it fetched.
+const MAX_HEARTBEAT_HOURS = 48;   // daily job + up to a day before this checkout sees the other push
+const machines = JSON.parse(read(join(REPO, 'machines.json')) || '{}').machines || {};
+for (const id of Object.keys(machines)) {
+  const gitPath = `status/${id}.json`;
+  let text;
+  try {
+    text = execSync(`git show origin/master:${gitPath}`, { cwd: REPO, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+  } catch { text = read(join(REPO, gitPath)); }
+  if (!text) {
+    add('ERROR', 'heartbeat', gitPath, `no heartbeat from ${id} — its scheduled sync is not installed or has never pushed (run tools/install-schedule.ps1 on ${id})`);
+    continue;
+  }
+  let beat;
+  try { beat = JSON.parse(text.replace(/^﻿/, '')); } catch {
+    add('ERROR', 'heartbeat', gitPath, 'heartbeat is not valid JSON');
+    continue;
+  }
+  const hours = (Date.now() - Date.parse(beat.last_run)) / 36e5;
+  if (!(hours <= MAX_HEARTBEAT_HOURS)) {   // negated so a missing/garbled last_run (NaN) also fails
+    add('ERROR', 'heartbeat', gitPath, `${id} last synced ${beat.last_run} (${Math.round(hours)}h ago) — its scheduled sync has stopped`);
+  }
+  if (beat.failed?.length) {
+    add('ERROR', 'heartbeat', gitPath, `${id}'s last run failed: ${beat.failed.join(', ')} — see ~/.mimp-scheduled-run.log on ${id}`);
+  }
+  if (beat.unregistered?.length) {
+    add('WARN', 'heartbeat', gitPath, `${id} has ${beat.unregistered.length} unregistered project folder(s) — mimp init, or add to tools/mimp-ignore.txt: ${beat.unregistered.join(', ')}`);
+  }
+}
+
 // ── report ─────────────────────────────────────────────────────────────────
 const ORDER = { ERROR: 0, WARN: 1, INFO: 2 };
 findings.sort((a, b) => ORDER[a.severity] - ORDER[b.severity] || a.check.localeCompare(b.check));
