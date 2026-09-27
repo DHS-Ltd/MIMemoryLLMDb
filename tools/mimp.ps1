@@ -228,6 +228,9 @@ $SecretPatterns = [ordered]@{
     'Notion token'        = '\bsecret_[A-Za-z0-9]{43}\b|\bntn_[A-Za-z0-9]{40,}'
     'JWT'                 = 'eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}'
     'Private key'         = '-----BEGIN [A-Z ]*PRIVATE KEY-----'
+    # .env-style assignment with a real value: how a production JWT_SECRET reached the brain
+    # (MIMP-006, found 2026-09-28). Uppercase names only; placeholders like <bcrypt> don't match.
+    'Env-style secret'    = '\b[A-Z0-9_]*(SECRET|PASSWORD|PASSWD|TOKEN|API_?KEY)[A-Z0-9_]*\s*[=:]\s*["'']?[A-Za-z0-9+/_.~-]{16,}'
 }
 
 # Returns "file:line - kind" per hit. Never the matched value: it must not reach the console,

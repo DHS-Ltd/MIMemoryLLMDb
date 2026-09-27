@@ -20,6 +20,7 @@ $cases = [ordered]@{
     'Notion token'        = 'nt' + 'n_' + ('n' * 45)
     'JWT'                 = 'ey' + 'JhbGciOiJIUzI1NiJ9.' + 'ey' + 'JzdWIiOiIxMjM0In0.' + ('s' * 20)
     'Private key'         = '-----BEGIN ' + 'OPENSSH PRIVATE KEY-----'
+    'Env-style secret'    = 'JWT_' + 'SECRET=' + ('a1' * 32)
 }
 
 $failed = 0
@@ -39,7 +40,10 @@ Set-Content $prose @(
     'use an sk-proj-xxxxx style key',
     'the EAA token expires every 60 days',
     'AKIA keys rotate quarterly',
-    'ghp_ tokens are classic PATs'
+    'ghp_ tokens are classic PATs',
+    'ADMIN_PASSWORD_HASH=<bcrypt>   JWT_SECRET=<64-char hex>',
+    'Patient login: mobile = username, DHP-ID = password',
+    'TOKEN: see the renewal process'
 )
 $hits = @(Find-Secrets @($prose))
 if ($hits.Count) { $failed++; Write-Host "FAIL prose false positive -> $($hits -join ' | ')" -ForegroundColor Red }
