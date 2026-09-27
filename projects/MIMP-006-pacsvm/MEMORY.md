@@ -1,9 +1,12 @@
 ﻿# Memory Index
 
 ## Proposed / Design-Phase Systems
-- [Ibn Sina Cancer PACS System](ibn_sina_cancer_pacs_system.md) — **DESIGN + BUILD PLAN COMPLETE (2026-06-20), not yet built.** Federated multi-site PACS: NO central data server, replicated Patient Directory (index only), per-site distributed storage, proxy-stream Remote reads over Tailscale, two-plane exposure, one codebase behind `FEDERATED_MODE`. USP = modular per-site investment. Docs + ADRs 0001–0004 + phased BUILD_PLAN in `docs/IbnSinaCancerPacs/`. Parked: DMWL identity (Q5), DH access/telemetry terms (Q9).
+- [Ibn Sina Cancer PACS System](ibn_sina_cancer_pacs_system.md) — **DESIGN + BUILD PLAN COMPLETE (2026-06-20), not yet built.** Federated multi-site PACS: NO central data server, replicated Patient Directory (index only), per-site distributed storage, proxy-stream Remote reads over Tailscale, two-plane exposure, one codebase behind `FEDERATED_MODE`. USP = modular per-site investment. Docs + ADRs 0001–0004 + phased BUILD_PLAN in `docs/IbnSinaCancerPacs/`. Parked: DMWL identity (Q5), DH access/telemetry terms (Q9). **NOTE: stale vs ADRs 0005-0012 and the 2026-09-06 "no Enterprise Patient ID" pivot — see docs, not this memory, for current state.**
+- [Ibn Sina Video Reference Notes](ibn_sina_video_reference_notes.md) — 3 PACS/HL7/DICOM explainer videos in `docs/IbnSinaCancerPacs/Video_Reference/` as onboarding vocabulary for the Worklist build; 2 of 3 reviewed 2026-09-13. **y23rST4dOJA is the direct UX reference for the Ibn Sina management demo portal** (screen recording of a real "network diagram builder" tool, 36 screenshots kept in-repo). Includes `/watch` skill gotchas for this Windows box (ffmpeg install, `-vsync`→`-fps_mode` patch, `PYTHONUTF8` fix).
 
 ## Project Status
+- [Study Export Runbook — LIVE](project_study_export_runbook.md) — **LIVE + verified 2026-09-06.** Reusable one-command way to download a patient's Study as ZIP+DICOMDIR: `deploy/scripts/download_study_export.ps1 -Search 'DHP-ID'` lands the file in this repo's gitignored `exports/`. Use this, don't rebuild it. ADR 0023 + CONTEXT.md "Study Export".
+- [Business Admin Role — LIVE](business_admin_role_live.md) — **DEPLOYED + login-tested 2026-08-30** (ADR 0013, commit d6fcec2 had sat undeployed since 2026-07-09). Admin Users management page, `business_admin` role, DB-driven admin login all live via PR #6 + Deploy workflow.
 - [JPEG-LS Ingest Compression — LIVE](project_jpegls_ingest_compression_live.md) — **LIVE on prod 2026-07-14 (ADR 0016).** Orthanc IngestTranscoding fixes 80-min large-CT load bug without touching MPR/viewer mode. Backfill of old studies explicitly deferred as separate project.
 - [Site Creation MT-Gated Default](site_creation_mt_gated_default.md) — **LIVE on VM 2026-06-28 (ADR 0012), COMMITTED 2026-07-12.** New sites default mt_gated (aligns with box installer); instructions.js rewritten to slim DH-staff onboarding; zero-MT warning banner. Cross-repo follow-up: update workstation NEW_SITE_ONBOARDING.md.
 - [Patient PDF Redesign + Settings + Logo Fix](patient_pdf_redesign_plan.md) — **ALL LIVE on prod 2026-06-28.** Redesigned Patient Access Sheet (honors ADR 0003) + admin-editable Support Phone (`app.app_settings` KV table p9, folded into Dashboard, precedence DB→env→default) + logo-upload bug fixed (root cause was the global `express.json()` 100KB limit, NOT missing UI; route cap now 5MB). Uncommitted on `main`. Bangla + DICOM study-description still deferred. Remaining: user browser QA (upload Ibn Sina logo, set phone) + commit strategy.
@@ -17,12 +20,16 @@
 - [Phase 1 Execution Notes](phase1_execution_notes.md) — Phase 1 successfully completed 2026-05-10. Backend port 3000 exposed via UFW.
 
 ## Feedback & Gotchas
+- [Ops scripting gotchas](feedback_ops_scripting_gotchas.md) — `docker exec -i` eats a wrapping script's later `read` prompts; psql `:'var'` substitution doesn't work in `-c` on this project's postgres:15-alpine (escape SQL literals manually instead); Windows PowerShell 5.1 mis-parses em-dash/non-ASCII in `.ps1` files without a BOM — use plain ASCII punctuation.
+- [DB migration ahead of code deploy](feedback_db_migration_ahead_of_code_deploy.md) — a prod DB can have a migration/rows applied while the code using them was never deployed; verify container code and DB state independently, don't infer one from the other.
 - [Site onboarding lessons](feedback_site_onboarding_lessons.md) — **NSSM required (not New-Service); port 3000 not needed from workstation; DICOMweb not needed on local bridge; run manually to diagnose service failures.**
 - [Docker build gotchas](feedback_docker_build_gotchas.md) — npm ci needs lockfile (use npm install); --no-cache when editing files in-place; Python over sed for special-char replacements.
 - [VM file transfer gotchas](feedback_vm_file_transfer.md) — SSH key auth unreliable from Bash; use Git Bash scp with password or edit directly on VM; always cat -n .env after editing.
 - [nginx + OHIF + Orthanc + Cloudflare gotchas](feedback_ohif_orthanc_cloudflare_gotchas.md) — 7 traps: OHIF config, transcoding, multipart, Cloudflare cache, bind-mount inode, **nginx variable proxy_pass needs explicit rewrite**, **`compose up -d nginx` does NOT reload conf — use `nginx -s reload`**.
 - [Compose YAML editing](feedback_compose_yaml_editing.md) — Don't regex-patch docker-compose.yml; blank lines between service blocks break lookaheads.
 - [New customer scoping protocol](feedback_new_customer_scoping.md) — Before scoping ANY new customer deployment, read docs/researchDocs/MULTI_CUSTOMER_SCALING_ARCHITECTURE.md first and walk the checklist in Part 8.
+- [Deploy pipeline & PR base gotchas](feedback_deploy_pipeline_and_pr_base_gotchas.md) — `main` is stale vs prod (check the VM's running image tag, not git log); `deploy.yml` ref needs full SHA or branch name, not a short SHA; a PR based on `main` can silently bundle an unrelated branch's whole unmerged history.
+- [nginx real-client-IP blindspot](feedback_nginx_real_client_ip_blindspot.md) — `$remote_addr` in nginx logs is always the Docker bridge gateway behind Cloudflare Tunnel; every request looks locally-sourced, so these logs can't confirm/deny external exploitation.
 
 ## Infrastructure & Access
 - [Server Hardware & Network Info](project_server_info.md) — On-premise Windows Server 2022, LAN 192.168.1.6, Hyper-V active with PacsVM (Ubuntu 22.04 at 192.168.1.10)
@@ -46,6 +53,9 @@
 - [Demo Portal — LIVE](project_demo_portal_live.md) — `/demo` gateway + `/demo-viewer/` OHIF on CloudFront CDN. LIVE 2026-05-30. Includes files, sub_filter fix, scp deploy workflow, SSH alias (pacsvm), path mapping.
 - [Demo Links — Patient Experience](project_demo_link.md) — **2 live links.** ADR 0009: `34e5f845...` → AYESHA AKTER anonymized (DH PACS DEMO). ADR 0010: `50046f87...` → Abdur Gofur SITE03 real identity (consent obtained). Do NOT revoke either.
 
+## Security
+- [API Exposure Remediation](project_security_api_exposure_remediation.md) — Critical unauthenticated routes found 2026-09-27. **Phase 1 LIVE 2026-09-28** (PR #7). **Phase 2 PR open** (#8, flag off, needs 24h wait before flip-on). Phase 3 (DICOMweb auth gate) not started.
+
 ## Retention
 - [Study Purge](project_study_purge.md) — Reclaim Orthanc disk by deleting pixels, keep metadata stub. Implemented 2026-06-07 on feat/safety-mt-gated; NOT yet deployed (migration p4 pending). ADR 0002.
 
@@ -59,7 +69,8 @@
 ## Doctor Portal
 - [Doctor Portal Plan](project_doctor_portal_plan.md) — Multi-site view-only portal for consultant doctors. Email+password auth, many-to-many site access, admin-assigned. **Radiology report = critical future phase.**
 - [Doctor Portal P8 — LIVE](saas_p8_doctor_portal.md) — **FULLY LIVE 2026-06-13**. DB migration, 5 backend routes, 3 admin-UI pages, nginx `/doctor/` + `pacs-doctor-ui` container all deployed. SPA repo at `D:\dh-pacs-doctor`.
-- [Doctor Reports P10 — LIVE](saas_p10_doctor_reports.md) — **FULLY LIVE 2026-07-12**. Real prescribing (chief complaint/diagnosis/medications), Test Catalog, PDF letterhead. Deployed via scoped manual deploy, NOT CI/CD (see file for why). `feat/patient-pdf-redesign-settings` commit-strategy debt RESOLVED 2026-07-12 — 6 logical commits, still not merged to main.
+- [Doctor Reports P10 — LIVE](saas_p10_doctor_reports.md) — **FULLY LIVE 2026-07-12**, but its admin-UI Letterhead edit section actually only shipped 2026-08-22 (see file's correction note) — schema/route checks alone had missed the gap. Real prescribing (chief complaint/diagnosis/medications), Test Catalog, PDF letterhead. `feat/patient-pdf-redesign-settings` commit-strategy debt RESOLVED 2026-07-12 — 6 logical commits, still not merged to main.
+- [Doctor Contact Fields Editing — LIVE](doctor_contact_fields_editing.md) — regressed out of prod after the 2026-08-22 manual deploy (never committed); found + properly redeployed 2026-09-05 via clean branch + `deploy.yml`. Now also requires `mobile` at registration.
 
 ## Repository & Tooling
 - [GitHub Repo & Issue Tracker](reference_github_repo.md) — Repo URL, gitignore details, Google Form URL (forms.gle/v4rfsYmka8Lhs4oS8), Apps Script integration notes

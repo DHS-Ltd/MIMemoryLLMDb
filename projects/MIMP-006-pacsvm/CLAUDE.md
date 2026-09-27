@@ -57,6 +57,16 @@ See [docs/adr/0007-doctor-portal-as-separate-repository.md](docs/adr/0007-doctor
 
 ---
 
+## Companion project — DH Worklist (Ibn Sina)
+
+The Ibn Sina worklist product (Order Adapter, identity matcher, DMWL SCP, Worklist Console, Procedure Catalogue) is a **separate repo**, working name **`dh-pacs-worklist`**, at **`d:\IBNSinaPacs`** (not yet a git repo as of 2026-09-07; design phase, nothing built). See [docs/adr/0009-worklist-ships-as-its-own-repository-for-clean-handover.md](docs/IbnSinaCancerPacs/adr/0009-worklist-ships-as-its-own-repository-for-clean-handover.md) for why it's a separate repo rather than a `FEDERATED_MODE`-style flag here.
+
+**Design authority stays here** — `docs/IbnSinaCancerPacs/` (glossary + ADRs 0001–0012) is the canonical source; `dh-pacs-worklist` holds only a dated, non-authoritative mirror of it plus its own implementation-level decisions. Don't let domain terms (DH Patient Identity, Prefer-split rule, Performing Center, HIS View Contract, Pending queue, etc.) drift between the two — this repo's copy under `docs/IbnSinaCancerPacs/` is the one to edit when a term changes.
+
+`dh-pacs-worklist` consumes this repo's Orthanc/DHV-viewer/backend as **prebuilt versioned images**, not vendored source, and reuses the claim-safety machinery (`app.claim_safety_log`, `app.safety_alerts`, `mt-claim.js`, `admin-safety.js`) as the Prefer-split review surface for its identity matcher (ADR 0008 in the Ibn Sina docs). If you change the shape of that machinery here, check impact on `dh-pacs-worklist`.
+
+---
+
 ## Stack
 
 | Container | Port | Role |

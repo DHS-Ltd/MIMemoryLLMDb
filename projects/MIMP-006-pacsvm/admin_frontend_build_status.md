@@ -5,7 +5,10 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 0d830bd0-02d2-424f-b27f-c10dc899e13e
+  modified: 2026-08-30T12:17:27.434Z
 ---
+
+> ⚠ **Auth model described below is SUPERSEDED (2026-08-30).** Single-operator env-var login (`ADMIN_EMAIL`/`ADMIN_PASSWORD_HASH` checked directly, no `admin_users` table) was replaced by ADR 0013's Role+Capability model, finally deployed 2026-08-30 — see [[business_admin_role_live]]. The env vars now only seed the first row in an empty environment; they are never a live credential check.
 
 ## Current Status (2026-05-25) — ALL PHASES COMPLETE ✅
 
@@ -45,7 +48,7 @@ metadata:
 ## Key Config Values (on VM at /srv/pacs/compose/.env)
 - ADMIN_EMAIL=directhospitalsolutionsltd@gmail.com
 - ADMIN_PASSWORD=dhsadmin (plaintext — hash stored as ADMIN_PASSWORD_HASH in .env)
-- JWT_SECRET=a163268673dee56e82ceb67961e5c09a71e4276884b38512c67eaba3d7f75cff
+- JWT_SECRET=<redacted 2026-09-28 - rotate it; never store secrets in memory>
 - POSTGRES_PASSWORD=dhmiPost (manually set via ALTER USER; .env was stale with old value)
 - DATABASE_URL=postgresql://pacs:dhmiPost@postgres:5432/pacs (added to .env explicitly)
 

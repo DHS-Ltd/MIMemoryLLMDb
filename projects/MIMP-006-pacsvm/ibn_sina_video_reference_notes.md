@@ -1,0 +1,20 @@
+---
+name: ibn-sina-video-reference-notes
+description: "Three generic PACS/DICOM/HL7 workflow explainer videos sit in docs/IbnSinaCancerPacs/Video_Reference/ as onboarding/vocabulary reference for the DH Worklist build — reviewed via /watch, not design input."
+metadata: 
+  node_type: memory
+  type: project
+  originSessionId: 390b8975-9190-4305-b97f-3c37752d3256
+  modified: 2026-09-13T14:52:10.508Z
+---
+
+`docs/IbnSinaCancerPacs/Video_Reference/` holds 3 downloaded YouTube explainer videos (+ `.srt` captions each) the user collected as background material before the DH Worklist (`dh-pacs-worklist` / IbnSinaCancerPacs, see [[ibn_sina_cancer_pacs_system]]) build starts:
+- `🩻 How Diagnostic Imaging Works…` [wBmBr6SACgM] — reviewed in full 2026-09-13, notes at `docs/IbnSinaCancerPacs/Video_Reference/wBmBr6SACgM_notes.md`. Traces one patient ("Margaret") through EMR order → HL7 → RIS → DICOM/Modality Worklist → PACS hierarchy → radiologist workspace (window/level, GSDF display calibration, hanging protocols) → HL7 result back to EMR.
+- `How PACS, RIS, HL7 and DICOM Actually Work Together…` [y23rST4dOJA] — reviewed in full 2026-09-13, notes at `docs/IbnSinaCancerPacs/Video_Reference/y23rST4dOJA_notes.md`, 36 UI screenshots kept at 1024px in `docs/IbnSinaCancerPacs/Video_Reference/y23rST4dOJA_screenshots/frames/` (kept in-repo on purpose, not scratch — user is building a demo portal off this one). It's a screen recording of a real tool, "SimplePACS Training Lab — Network & Workflow Diagram Builder" (pacs.pacsguru.org): drag-and-wire network diagram builder with a "which protocol connects these systems?" modal (HL7 v2 / DICOM / DICOMweb / FHIR / CDA / Proprietary-Local, each with a one-line description) gating every connection. **This is the direct UX reference for the Ibn Sina management demo portal** the user is about to build — see the notes file's "Suggested reuse" section before starting that build.
+- `You Click the Study. What Happens Next?` [qSGfJR1gbro] — not yet reviewed.
+
+**Why:** generic hospital-IT explainers/demos, useful as shared vocabulary, a plain-language way to explain DMWL/worklist rationale to non-technical Ibn Sina stakeholders, and (for y23rST4dOJA specifically) a concrete UI pattern to reuse — **not a source of new architecture decisions**. The first reviewed video's clean single-identifier narrative is exactly the assumption this project's real HIS breaks (no Enterprise Patient ID — see CONTEXT.md correction 2026-09-06, ADR 0008); the second video's "Enterprise scope = one shared PACS across hospitals" is also NOT this project's model (Ibn Sina keeps pixels local per Site Server, only the Patient Directory is shared) — flag that difference if reusing its Enterprise diagram in front of Ibn Sina management.
+
+**How to apply:** if a future session touches DMWL/worklist onboarding docs, builds the Ibn Sina management demo portal, or needs a plain-language explainer to hand to Ibn Sina staff, check the `_notes.md` file(s) here first instead of re-watching. If the third video gets reviewed later, add its notes file the same way and update this memory.
+
+**Gotcha for re-running `/watch` in this environment:** this Windows Server 2022 box has no `winget`/`choco`; ffmpeg had to be hand-downloaded (gyan.dev essentials build) and put on PATH manually. That specific build (9.0.1) had also dropped the deprecated `-vsync` flag, which broke the bundled `/watch` skill's `frames.py` (`ffmpeg scene extraction failed: Unrecognized option 'vsync'`) until patched to `-fps_mode` in `~/.claude/plugins/cache/claude-video/watch/0.2.0/skills/watch/scripts/frames.py` (2 occurrences) — that patch is a global skill-cache fix, already applied, don't re-diagnose it. Also: this Windows Python install's subprocess text-mode decoding defaults to `cp874` (not UTF-8), which crashes `ffprobe` output parsing (`UnicodeDecodeError`) unless `PYTHONUTF8=1` and `PYTHONIOENCODING=utf-8` are set in the environment before invoking `watch.py`. Local video files (already downloaded) don't need `yt-dlp` at all — only `ffmpeg`/`ffprobe` are required for frame extraction.

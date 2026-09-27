@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 4ce62a68-ae42-457c-aebb-e82ab74f4ef9
+  modified: 2026-08-22T16:05:11.060Z
 ---
 
 # Doctor Reports — Phase 10 — LIVE 2026-07-12
@@ -57,3 +58,7 @@ Deployed via **scoped manual `scp` + targeted `docker compose build --no-cache <
 - `GET /api/doctor/test-catalog`, `/api/doctor/doctor-reports/1`, `/api/doctor/auth/me` via nginx (port 80) → `401` (auth-gated, routes registered) ✓
 - `GET /doctor/` → `200` ✓, `GET /admin/` → `200` ✓
 - All 10 containers healthy post-deploy, no disruption to concurrent live MT workstation traffic observed in `pacs-backend` logs
+
+## Correction (2026-08-22) — the admin-UI Letterhead edit section was NOT actually live
+
+Line 31 above ("`DoctorUserDetailPage.tsx` — new 'Doctor Report Letterhead' section... deployed") was wrong in practice, discovered while shipping [[doctor_contact_fields_editing]]. Pulling the VM's actual running `admin-doctor-users.js` on 2026-08-22 showed a 175-line file whose PATCH only handled `status` — no `specialty`/`bmdc_reg_no` — and the deployed `DoctorUserDetailPage.tsx` (153 lines) had zero occurrences of `specialty`/`bmdc_reg_no`/`editingCredentials`. The DB columns existed (migration did apply), but the admin-editable UI for them never made it to the VM, despite this memory recording it as done. Root cause not investigated (branch had many uncommitted changes in flight around that time — plausible a later manual sync of an older file silently reverted it). Fixed as a side effect of the 2026-08-22 deploy, which shipped both features together. **Lesson: this memory's "live verification" section checked route registration (401) and schema, not that the specific admin-editable fields were present in the served bundle — for admin-UI form fields specifically, grep the deployed file for the field name, don't just confirm the container/route is up.**
