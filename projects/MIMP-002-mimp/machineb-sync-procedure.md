@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: aad12960-dbbd-4409-8859-302cdd399e45
-  modified: 2026-08-13T13:49:44.401Z
+  modified: 2026-09-27T19:12:33.310Z
 ---
 
 # Catching a lagging machine up on MIMemoryLLMDb
@@ -30,6 +30,12 @@ which nobody can actually violate-proof from a different machine.
 ## The procedure
 
 ### Phase 1 — Read-only diagnostics (safe regardless of what you find)
+
+**Start from any machine (added 2026-09-28):** read the lagging machine's Heartbeat,
+`git show origin/master:status/<machine>.json`. Check `last_run` and `failed`. Then, on the machine itself, run
+`Get-ScheduledTask MIMemoryLLMDb-ScheduledSync | Get-ScheduledTaskInfo`. On 2026-09-28 machineB's
+six-week gap turned out to be a **task that had never been installed**. The steps below had
+missed it, because they check git state, not the schedule.
 
 Run on the lagging machine, in order:
 
