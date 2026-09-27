@@ -136,3 +136,29 @@ heartbeat line, anything that deviated. Commit it (`docs: machineB unattended sy
 `git push` — which also proves the interactive push path over SSH.
 
 Then report the same to Maidul.
+
+## Outcome (2026-09-28)
+
+Done by Maidul by hand over remote desktop, guided step by step from a machineA session (not by a
+machineB Claude session). Result: task `MIMemoryLLMDb-ScheduledSync` registered **S4U, daily 23:30
+machineB time (UTC+7 = 22:30 on machineA)**; first manual run `result: 0`, **6 pushed, 0 failed**,
+first Heartbeat `88f7dc4`. Verified from machineA: lint shows no heartbeat, two-writers or
+superseded-claim errors (the 2026-08-13 regression did not recur).
+
+Deviations from the steps above:
+
+- **The nightly task had never been installed** on machineB — the cause of no pushes since 2026-08-13.
+- **Windows `ssh-keyscan` returned nothing** (port 22 was open). The GitHub host key line was copied
+  from machineA's copy, already verified against `gh api meta`, and re-verified on machineB with
+  `ssh-keygen -lf` (`SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU`).
+- Deploy key "mimp machineB" registered from machineA with `gh` (public key relayed by Maidul).
+- **A production `JWT_SECRET` value was found in the brain** — MIMP-006 memory
+  (`admin_frontend_build_status.md`), pushed from machineB in August. Redacted at the source on
+  machineB; the secret guard gained an `.env`-style pattern (`6c8779e`). **The value is still in git
+  history and must be treated as known: rotate `JWT_SECRET` on the production central server.**
+- New business projects registered (`3dc0244`): MIMP-018 dh-pacs-doctor, MIMP-019 dh-pacs-worklist
+  (Ibn Sina), MIMP-020 medi-thailand-website (DHS service work for MED I Thailand, a big client in
+  the group; linked to MIMP-012). `d--MaidulMemoryLLM` ignored as superseded.
+- Before MIMP-019 was registered, its note on **unpatched Central security exposures** was moved out
+  of Claude memory to `D:\DHS-Security\` (outside every git repo) and replaced by a pointer — by the
+  rule that only what is fine for every reader of the repo enters the brain.
