@@ -277,12 +277,10 @@
         "infrastructure"
       ],
       "local_paths": {
-        "machineA": "E:\\MIMemoryLLMDb",
-        "machineB": "D:\\MIMemoryLLMDb"
+        "machineA": "E:\\MIMemoryLLMDb"
       },
       "claude_memory_paths": {
-        "machineA": "C:\\Users\\maidu\\.claude\\projects\\e--MIMemoryLLMDb\\memory",
-        "machineB": "C:\\Users\\Administrator\\.claude\\projects\\d--MIMemoryLLMDb\\memory"
+        "machineA": "C:\\Users\\maidu\\.claude\\projects\\e--MIMemoryLLMDb\\memory"
       },
       "pillar": null,
       "product": null,

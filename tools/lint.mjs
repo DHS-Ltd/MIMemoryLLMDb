@@ -332,6 +332,17 @@ for (const id of Object.keys(machines)) {
   }
 }
 
+// ── 12. one pushing machine per project ───────────────────────────────────
+// push is a one-way copy-with-overwrite, never a merge: two machines pushing one project folder
+// means each night's last writer silently erases the other's memory.
+for (const [id, p] of Object.entries(registry?.projects ?? {})) {
+  const writers = Object.entries(p.local_paths || {}).filter(([, path]) => path).map(([m]) => m);
+  if (writers.length > 1) {
+    add('ERROR', 'two-writers', 'registry.json',
+      `${id} (${p.short_name}) is pushed from ${writers.join(' and ')} — pushes overwrite, so one erases the other; keep one machine`);
+  }
+}
+
 // ── report ─────────────────────────────────────────────────────────────────
 const ORDER = { ERROR: 0, WARN: 1, INFO: 2 };
 findings.sort((a, b) => ORDER[a.severity] - ORDER[b.severity] || a.check.localeCompare(b.check));

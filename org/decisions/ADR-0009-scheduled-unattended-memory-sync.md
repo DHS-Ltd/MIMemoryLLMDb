@@ -113,6 +113,22 @@ and nothing in the brain could say whether its task was broken, missing, or neve
   MCP `whats_next` tool flag any machine in `machines.json` whose Heartbeat is missing, older than
   48 hours, or records a failure; discovery candidates appear there as a warning.
 
+- **Each machine authenticates to this repo with its own deploy key** (write access to this repo
+  only), wired per-repo via `core.sshCommand` with absolute paths. The Context above was wrong:
+  git consults Git Credential Manager (system-wide `credential.helper manager`) before `wincred`,
+  and with several GitHub accounts stored it opens a "Select an account" window and waits —
+  observed blocking the 2026-09-27 23:00 run until answered by hand, and the cause of the earlier
+  "`git push` hangs from Claude shells" note. A key cannot open a window.
+- **machineB's task runs unattended** (`install-schedule.ps1 -Unattended`: S4U, "run whether
+  user is logged on or not", no password stored). This mode was rejected above because it needed
+  the Windows password stored and `wincred` outside a session; a deploy key needs neither. The
+  script refuses `-Unattended` while `origin` is HTTPS. machineA, a desktop in daily use, stays
+  "only when logged on".
+- **One pushing machine per project.** `push` overwrites and never merges, so two machines
+  pushing one project folder silently erase each other. MIMP-002 was registered on both; it now
+  pushes from machineA only, and brain work done on machineB is recorded in `docs/`. Lint check
+  `two-writers` blocks the pattern.
+
 **Why a Heartbeat and not a louder alert** (Telegram from `mimp` was considered): every alert
 raised from inside the job is silent when the job isn't running at all. Only the other machine
 noticing an absence catches that — and machineB is an unattended server where no balloon is ever

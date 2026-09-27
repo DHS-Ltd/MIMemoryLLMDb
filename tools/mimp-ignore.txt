@@ -3,3 +3,6 @@
 # Lines starting with # are comments. See ADR-0009.
 C--WINDOWS-system32
 c--Users-maidu
+# machineB's own Claude memory for the brain repo. MIMP-002 is pushed from machineA only - one
+# pushing machine per project (ADR-0009 amendment, 2026-09-27); brain work on machineB goes in docs/.
+d--MIMemoryLLMDb

@@ -2,10 +2,15 @@
 # `mimp scheduled-run` daily. Run this once on each machine (machineA, machineB, ...).
 # Re-run any time to update the trigger time - it replaces the existing task.
 #
-# Usage: powershell -File install-schedule.ps1 [-Time '23:00']
+# Usage: powershell -File install-schedule.ps1 [-Time '23:00'] [-Unattended]
+#
+# -Unattended: "run whether user is logged on or not" (S4U - no password stored). For a server
+# nobody stays signed in to (machineB). Requires origin over SSH with a deploy key, because no
+# credential manager is reachable outside an interactive session (ADR-0009 amendment).
 
 param(
-    [string]$Time = '23:00'
+    [string]$Time = '23:00',
+    [switch]$Unattended
 )
 
 $ErrorActionPreference = 'Stop'
@@ -36,9 +41,21 @@ $Action = New-ScheduledTaskAction -Execute 'powershell.exe' `
 $Trigger = New-ScheduledTaskTrigger -Daily -At $Time
 $Settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -ExecutionTimeLimit (New-TimeSpan -Minutes 30)
 
-# LogonType Interactive = "run only when user is logged on" (ADR-0009) - required because git's
-# wincred credential helper is bound to the interactive session, not the machine.
-$Principal = New-ScheduledTaskPrincipal -UserId $env:USERNAME -LogonType Interactive -RunLevel Limited
+# LogonType Interactive = "run only when user is logged on" (ADR-0009) - required while git
+# authenticates through a credential manager, which is bound to the interactive session.
+$LogonType = 'Interactive'
+if ($Unattended) {
+    # Refuse rather than register a task that would fail silently every night: over HTTPS an
+    # S4U session has no credential manager to ask.
+    $origin = (& git -C $RepoPath remote get-url origin | Out-String).Trim()
+    if ($origin -like 'http*') {
+        Write-Host "ERROR: -Unattended needs origin over SSH with a deploy key; origin is $origin" -ForegroundColor Red
+        Write-Host '       See docs/machineb-unattended-sync-brief-2026-09.md' -ForegroundColor Yellow
+        exit 1
+    }
+    $LogonType = 'S4U'
+}
+$Principal = New-ScheduledTaskPrincipal -UserId $env:USERNAME -LogonType $LogonType -RunLevel Limited
 
 if (Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue) {
     Write-Host "Task '$TaskName' already exists - replacing it." -ForegroundColor Yellow
