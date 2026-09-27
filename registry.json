@@ -1,6 +1,6 @@
 ﻿{
   "schema_version": "2.1",
-  "next_id": 10,
+  "next_id": 18,
   "next_program_id": 4,
   "entities": {
     "DHS": {
@@ -534,6 +534,234 @@
         "desktop",
         "dicom"
       ]
+    },
+    "MIMP-010": {
+      "short_name": "bdc-hms-react",
+      "full_name": "BDC HMS React",
+      "created": "2026-09-27",
+      "created_by": "machineA",
+      "status": "active",
+      "entity": "DHS",
+      "role": "React frontend of the BDC hospital management system; its GAS backend is MIMP-003 (E:\\v1-BdcHmsApp)",
+      "serves": [
+        "BDC"
+      ],
+      "relationships": [],
+      "depends_on": [
+        "MIMP-003"
+      ],
+      "tags": [
+        "hms",
+        "react",
+        "bdc"
+      ],
+      "local_paths": {
+        "machineA": "E:\\BDCHMSV2\\bdc-hms-react"
+      },
+      "claude_memory_paths": {
+        "machineA": "C:\\Users\\maidu\\.claude\\projects\\E--BDCHMSV2-bdc-hms-react\\memory"
+      },
+      "pillar": "Facility",
+      "product": "PRD-005",
+      "classification": "business"
+    },
+    "MIMP-011": {
+      "short_name": "bdc-marketing",
+      "full_name": "BDC Marketing",
+      "created": "2026-09-27",
+      "created_by": "machineA",
+      "status": "active",
+      "entity": "BDC",
+      "role": "BDC brand, marketing strategy and automation (Sheets-to-Docs, AI image generation)",
+      "serves": [
+        "BDC",
+        "PROG-001-bdc-patient-gen"
+      ],
+      "relationships": [],
+      "depends_on": [],
+      "tags": [
+        "marketing",
+        "bdc"
+      ],
+      "local_paths": {
+        "machineA": "E:\\BDC_Marketing"
+      },
+      "claude_memory_paths": {
+        "machineA": "C:\\Users\\maidu\\.claude\\projects\\e--BDC-Marketing\\memory"
+      },
+      "pillar": null,
+      "product": null,
+      "classification": "business"
+    },
+    "MIMP-012": {
+      "short_name": "cyclotron-sale",
+      "full_name": "Isotope Research Cyclotron",
+      "created": "2026-09-27",
+      "created_by": "machineA",
+      "status": "active",
+      "entity": "DHS",
+      "role": "Research reports as sales vehicles for a Sumitomo CYPRIS cyclotron",
+      "serves": [
+        "DHS",
+        "PROG-002-equipment-pipeline"
+      ],
+      "relationships": [],
+      "depends_on": [],
+      "tags": [
+        "cyclotron",
+        "equipment-sale",
+        "supply"
+      ],
+      "local_paths": {
+        "machineA": "E:\\Isotope_Research_Cyclotron"
+      },
+      "claude_memory_paths": {
+        "machineA": "C:\\Users\\maidu\\.claude\\projects\\e--Isotope-Research-Cyclotron\\memory"
+      },
+      "pillar": "Supply",
+      "product": null,
+      "classification": "business"
+    },
+    "MIMP-013": {
+      "short_name": "minfound-ct-resale",
+      "full_name": "MinFound CT Report Shaheen",
+      "created": "2026-09-27",
+      "created_by": "machineA",
+      "status": "active",
+      "entity": "DHS",
+      "role": "Sale report for a used MinFound ScintCare CT - agreed facts, tube history, disclosure positions",
+      "serves": [
+        "DHS",
+        "PROG-002-equipment-pipeline"
+      ],
+      "relationships": [],
+      "depends_on": [],
+      "tags": [
+        "ct",
+        "equipment-resale",
+        "supply"
+      ],
+      "local_paths": {
+        "machineA": "E:\\Self_project\\Minfound_CT_Report_Shaheen"
+      },
+      "claude_memory_paths": {
+        "machineA": "C:\\Users\\maidu\\.claude\\projects\\e--Self-project-Minfound-CT-Report-Shaheen\\memory"
+      },
+      "pillar": "Supply",
+      "product": null,
+      "classification": "business"
+    },
+    "MIMP-014": {
+      "short_name": "email-official",
+      "full_name": "Email Official",
+      "created": "2026-09-27",
+      "created_by": "machineA",
+      "status": "active",
+      "entity": "DHS",
+      "role": "Official business correspondence drafting (currently the SMCH cyclotron deal)",
+      "serves": [
+        "DHS"
+      ],
+      "relationships": [],
+      "depends_on": [],
+      "tags": [
+        "email",
+        "correspondence"
+      ],
+      "local_paths": {
+        "machineA": "D:\\Email_Official"
+      },
+      "claude_memory_paths": {
+        "machineA": "C:\\Users\\maidu\\.claude\\projects\\d--Email-Official\\memory"
+      },
+      "pillar": null,
+      "product": null,
+      "classification": "business"
+    },
+    "MIMP-015": {
+      "short_name": "sqa-learning",
+      "full_name": "SQA Learning - DH PACS QA",
+      "created": "2026-09-27",
+      "created_by": "machineA",
+      "status": "active",
+      "entity": "DHS",
+      "role": "SQA course applied to DH PACS; output is the DH PACS test plan",
+      "serves": [
+        "DHS"
+      ],
+      "relationships": [],
+      "depends_on": [],
+      "tags": [
+        "qa",
+        "testing",
+        "dh-pacs"
+      ],
+      "local_paths": {
+        "machineA": "E:\\Self_project\\SQA_Learning"
+      },
+      "claude_memory_paths": {
+        "machineA": "C:\\Users\\maidu\\.claude\\projects\\e--Self-project-SQA-Learning\\memory"
+      },
+      "pillar": "Build",
+      "product": "PRD-001",
+      "classification": "business"
+    },
+    "MIMP-016": {
+      "short_name": "personal-branding",
+      "full_name": "Personal Branding - Maidul Islam",
+      "created": "2026-09-27",
+      "created_by": "machineA",
+      "status": "active",
+      "entity": "DHS",
+      "role": "Surgeon-first educator voice and LinkedIn content calendar; commercial claims owned by E:\\DHS-PACS",
+      "serves": [
+        "DHS"
+      ],
+      "relationships": [],
+      "depends_on": [],
+      "tags": [
+        "marketing",
+        "linkedin",
+        "personal-brand"
+      ],
+      "local_paths": {
+        "machineA": "E:\\Self_project\\Personal_Branding"
+      },
+      "claude_memory_paths": {
+        "machineA": "C:\\Users\\maidu\\.claude\\projects\\e--Self-project-Personal-Branding\\memory"
+      },
+      "pillar": null,
+      "product": null,
+      "classification": "business"
+    },
+    "MIMP-017": {
+      "short_name": "content-creation",
+      "full_name": "Content Creation",
+      "created": "2026-09-27",
+      "created_by": "machineA",
+      "status": "active",
+      "entity": "DHS",
+      "role": "Capture-to-Notion-to-draft content pipeline for DHS and BDC",
+      "serves": [
+        "DHS",
+        "BDC"
+      ],
+      "relationships": [],
+      "depends_on": [],
+      "tags": [
+        "content",
+        "notion",
+        "marketing"
+      ],
+      "local_paths": {
+        "machineA": "E:\\Self_project\\ContentCreation"
+      },
+      "claude_memory_paths": {
+        "machineA": "C:\\Users\\maidu\\.claude\\projects\\e--Self-project-ContentCreation\\memory"
+      },
+      "pillar": null,
+      "product": null,
+      "classification": "business"
     }
   },
   "next_product_id": 6

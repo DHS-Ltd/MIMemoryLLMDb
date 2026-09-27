@@ -13,8 +13,13 @@ e--Self-project-M4a-MP3-Audio-Converter
 # replicated to two machines and read by an agent: live legal matters, payroll and personnel.
 e--DH-Projects
 E--DHS-ERP
+E--DHS-ERP-DHS-ERP-Automation
 # Left out for now (2026-09-27): its memory records API token details.
 e--BDC-Marketing-BDCDataScrapper-Facebook
+# Superseded: BDCHMSV2's root memory by its bdc-hms-react app (MIMP-010); BDC-HMS-AppScript's
+# project folder no longer exists.
+e--BDCHMSV2
+e--BDC-HMS-AppScript
 # machineB's own Claude memory for the brain repo. MIMP-002 is pushed from machineA only - one
 # pushing machine per project (ADR-0009 amendment, 2026-09-27); brain work on machineB goes in docs/.
 d--MIMemoryLLMDb
