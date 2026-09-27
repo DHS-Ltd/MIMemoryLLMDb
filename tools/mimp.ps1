@@ -211,6 +211,36 @@ function Git-CommitPush($Message, $Paths) {
     }
 }
 
+# Secret guard (2026-09-27): the nightly job pushes whatever sessions wrote, unattended, and a
+# secret in git history needs rotating plus a history rewrite - so refuse before copying.
+# ponytail: curated patterns for credentials this business actually holds, not a full scanner;
+# swap in gitleaks if one ever slips through.
+$SecretPatterns = [ordered]@{
+    'GitHub token'        = 'gh[pousr]_[A-Za-z0-9]{36,}|github_pat_[A-Za-z0-9_]{50,}'
+    'Meta Graph token'    = 'EAA[A-Za-z0-9]{50,}'
+    'Telegram bot token'  = '\b\d{8,10}:AA[A-Za-z0-9_-]{33}\b'
+    'Google API key'      = 'AIza[0-9A-Za-z_-]{35}'
+    'Google OAuth secret' = 'GOCSPX-[A-Za-z0-9_-]{28}'
+    'AI provider key'     = '\bsk-[A-Za-z0-9_-]{32,}'
+    'Stripe live key'     = '\b[rs]k_live_[0-9a-zA-Z]{24,}'
+    'AWS access key'      = '\bAKIA[0-9A-Z]{16}\b'
+    'Slack token'         = 'xox[baprs]-[A-Za-z0-9-]{10,}'
+    'Notion token'        = '\bsecret_[A-Za-z0-9]{43}\b|\bntn_[A-Za-z0-9]{40,}'
+    'JWT'                 = 'eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}'
+    'Private key'         = '-----BEGIN [A-Z ]*PRIVATE KEY-----'
+}
+
+# Returns "file:line - kind" per hit. Never the matched value: it must not reach the console,
+# the scheduled-run log, or a toast.
+function Find-Secrets($files) {
+    foreach ($file in $files) {
+        foreach ($kind in $SecretPatterns.Keys) {
+            Select-String -LiteralPath $file -Pattern $SecretPatterns[$kind] -CaseSensitive |
+                ForEach-Object { "$($file):$($_.LineNumber) - $kind" }
+        }
+    }
+}
+
 # ── Commands ────────────────────────────────────────────────────────
 
 function Cmd-Init {
@@ -539,6 +569,14 @@ function Cmd-Push {
         } else {
             Write-Host "  Tip: Add claude_memory_paths.$MachineId to registry.json for this project"
         }
+        exit 1
+    }
+
+    $leaks = @(Find-Secrets $memoryFiles)
+    if ($leaks.Count -gt 0) {
+        Write-Host "ERROR: possible secret(s) in $projectId memory - nothing copied or pushed:" -ForegroundColor Red
+        $leaks | ForEach-Object { Write-Host "  $_" -ForegroundColor Red }
+        Write-Host '  Remove the value at the source, then re-run. If this project was pushed before, rotate it too.' -ForegroundColor Yellow
         exit 1
     }
 
