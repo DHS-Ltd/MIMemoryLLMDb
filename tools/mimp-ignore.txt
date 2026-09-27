@@ -9,6 +9,12 @@ e--Immich-App
 e--MI-Finance
 e--Self-project-File-Converter
 e--Self-project-M4a-MP3-Audio-Converter
+# Confidential business memory - fine in a Claude session inside its own repo, not in something
+# replicated to two machines and read by an agent: live legal matters, payroll and personnel.
+e--DH-Projects
+E--DHS-ERP
+# Left out for now (2026-09-27): its memory records API token details.
+e--BDC-Marketing-BDCDataScrapper-Facebook
 # machineB's own Claude memory for the brain repo. MIMP-002 is pushed from machineA only - one
 # pushing machine per project (ADR-0009 amendment, 2026-09-27); brain work on machineB goes in docs/.
 d--MIMemoryLLMDb
