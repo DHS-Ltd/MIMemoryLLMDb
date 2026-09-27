@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: reference
   originSessionId: 2357d0a8-f0ff-4914-be71-8f40e86b4086
+  modified: 2026-08-30T13:09:29.671Z
 ---
 
 How to deploy changes to **DH PACS Central** (companion repo `D:\Pacs_Viewer_Storage_Project`,
@@ -82,5 +83,17 @@ Compared VM `/srv/pacs/*` vs git HEAD via git blob hashes (`git hash-object` on 
 - **Migrations are NOT kept on the VM** — `/srv/pacs/config/postgres/migrations/` does not exist; the
   p0_5 migration was applied ad-hoc. So apply `2026-06_p1_mt_push.sql` by scp'ing to a temp/home path
   and `docker compose exec -T postgres psql -U pacs -d pacs -f <path>` — NOT via a bind mount.
+
+### Drift found 2026-08-30 — doctor-patients.js
+Before scp'ing a fix to `deploy/backend/src/routes/doctor-patients.js`, diffed the VM's live copy
+against local `git HEAD` (`ssh pacsvm "cat ..." > tmp; git show HEAD:... > tmp2; diff`) and found the
+VM already differs: production is running an uncommitted "sort by last activity" feature (Doctor
+Portal) that isn't in git anywhere, tracked or not. Applied the unrelated fix onto the VM's *actual*
+file (fetched it, edited it, scp'd the merged result back) rather than overwriting with the local
+git-based copy, which would have silently deleted that live feature. **Lesson reinforced: always diff
+the VM's actual file against git HEAD before scp'ing an overwrite — a hash/content mismatch can mean
+the VM is ahead, not just that git is ahead.** This file is still unreconciled — someone should commit
+the VM's current state back to git next time they're in `doctor-patients.js`. See
+[[dh-pacs-duplicate-link-display-bug]] for the fix that was deployed alongside this.
 
 Related: [[dh-pacs-program-status]], [[dh-pacs-mt-push-architecture]].

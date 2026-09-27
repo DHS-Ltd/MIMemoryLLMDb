@@ -10,6 +10,7 @@ built from this repo (outputs → `dist\`, gitignored). Companion repo: `dh-pacs
 |---|---|---|
 | `orthanc/` | **A — Orthanc Receiver** | Branded [Orthanc](https://orthanc-server.com/) DICOM server. Modalities C-STORE to `localhost:4242`; forwards stable studies to central (`PACS_CENTRAL` @ `100.118.47.99:4242`) over Tailscale. NSSM service `DH-PACS-Orthanc`; web console `:8042`. Installer `orthanc/installer/dh-pacs-orthanc.iss`. |
 | `portal/` | **B — MT Portal** | Vite+React+TS SPA + Express server bound to `127.0.0.1:3001`. Safety-gated claim flow (7 layers): MT matches each study to a patient via the central API. NSSM service `DH-PACS-Portal`. Installer `portal/installer/dh-pacs-portal.iss`. **Needs central P1.5 deployed + Node 20 on the box.** |
+| `Remote_Connection_Server/` | **C — DH Remote** | Remote support over the existing tailnet (ADR-0018). Self-hosted RustDesk `hbbs`/`hbbr` Relay on the Central VM at `/srv/pacs-remote/`, plus the unmodified upstream client configured by DHS tooling on each Site box. Versioned **independently** of A and B (no Central contract). **Phases 1-3 live, pilot SITE03 verified including unattended-nobody-logged-in access; Phase 1 backup/restore + 6/8 Phase 2 ACL tests verified 2026-09-09; Phase 4 standalone installer `dh-remote.iss` (v0.1.0) written, combined-installer fold deferred** — see `Remote_Connection_Server/DH_REMOTE_BUILD_GUIDE.md`. |
 
 ## Build (needs Inno Setup 6 `iscc`, Node 20; Component A also needs network for fetch)
 
@@ -46,7 +47,14 @@ claim body `{ patientId, typed_mobile, acknowledged_mismatches[] }` · safety-ch
 `docs/DH_PACS_WORKSTATION_BUILD_MANUAL.md` (blueprint) · `docs/WRONG_PATIENT_MATCH_SAFETY_DESIGN.md`
 (gating) · `docs/SITE_SAFETY_ACCEPTANCE_TEST_GUIDE.md` (§10 acceptance suite — operator-runnable
 from an installed site with a real `.dcm`) · `docs/P3_DH_PACS_Workstation.md` (Component B spec) ·
-`docs/COMPONENT_A_BUILD_AND_TEST_GUIDE.md` (do-it-yourself build + VM test) · `orthanc/BUILD-NOTES.md`.
+`docs/COMPONENT_A_BUILD_AND_TEST_GUIDE.md` (do-it-yourself build + VM test) · `orthanc/BUILD-NOTES.md` ·
+`docs/LEG1_JPEGLS_FLEET_RETROFIT_RUNBOOK.md` (diagnose/fix/verify a site missing the ADR-0017 upload
+compression — run against any pre-2026-07-15 site, not just the ones already found missing it) ·
+`docs/PORTAL_COPY_LINK_FLEET_ROLLOUT_RUNBOOK.md` (roll Portal v0.3.0's Copy Link button out to
+existing sites via the standalone Component B installer — fleet tracker table included) ·
+`Remote_Connection_Server/DH_REMOTE_BUILD_GUIDE.md` (Component C — locked decisions, pinned
+versions, phased build with acceptance tests; supersedes the `DH-Remote-Implementation-Spec` in the
+same folder wherever they disagree).
 
 ## Status (2026-06-04)
 
