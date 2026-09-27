@@ -1,6 +1,6 @@
 ﻿{
   "schema_version": "2.1",
-  "next_id": 18,
+  "next_id": 21,
   "next_program_id": 4,
   "entities": {
     "DHS": {
@@ -605,7 +605,12 @@
         "DHS",
         "PROG-002-equipment-pipeline"
       ],
-      "relationships": [],
+      "relationships": [
+        {
+          "rel": "serves-client",
+          "target": "MED I Thailand"
+        }
+      ],
       "depends_on": [],
       "tags": [
         "cyclotron",
@@ -760,6 +765,108 @@
         "machineA": "C:\\Users\\maidu\\.claude\\projects\\e--Self-project-ContentCreation\\memory"
       },
       "pillar": null,
+      "product": null,
+      "classification": "business"
+    },
+    "MIMP-018": {
+      "short_name": "dh-pacs-doctor",
+      "full_name": "DH PACS Doctor Portal",
+      "created": "2026-09-28",
+      "created_by": "machineA",
+      "status": "active",
+      "entity": "DHS",
+      "role": "Consulting-physician frontend of DH PACS (React SPA at /doctor/ on the central), plus Doctor Desk (Electron) and Doctor Mobile",
+      "serves": [
+        "DHS"
+      ],
+      "relationships": [],
+      "depends_on": [
+        "MIMP-006"
+      ],
+      "tags": [
+        "dh-pacs",
+        "doctor-portal",
+        "react"
+      ],
+      "local_paths": {
+        "machineB": "D:\\dh-pacs-doctor"
+      },
+      "claude_memory_paths": {
+        "machineB": "C:\\Users\\Administrator\\.claude\\projects\\d--dh-pacs-doctor\\memory"
+      },
+      "pillar": "Build",
+      "product": "PRD-001",
+      "classification": "business"
+    },
+    "MIMP-019": {
+      "short_name": "dh-pacs-worklist",
+      "full_name": "DH Worklist - Ibn Sina",
+      "created": "2026-09-28",
+      "created_by": "machineA",
+      "status": "active",
+      "entity": "DHS",
+      "role": "DH Worklist product (dcm4chee-arc MWL) live at Ibn Sina SITE007, and the Ibn Sina dental CBCT design",
+      "serves": [
+        "DHS"
+      ],
+      "relationships": [
+        {
+          "rel": "deployed-at",
+          "target": "Ibn Sina (SITE007)"
+        }
+      ],
+      "depends_on": [],
+      "tags": [
+        "worklist",
+        "mwl",
+        "ibn-sina",
+        "dcm4chee"
+      ],
+      "local_paths": {
+        "machineB": "D:\\IBNSinaPacs"
+      },
+      "claude_memory_paths": {
+        "machineB": "C:\\Users\\Administrator\\.claude\\projects\\d--IBNSinaPacs\\memory"
+      },
+      "pillar": "Build",
+      "product": null,
+      "classification": "business"
+    },
+    "MIMP-020": {
+      "short_name": "medi-thailand-website",
+      "full_name": "MED I Thailand Website",
+      "created": "2026-09-28",
+      "created_by": "machineA",
+      "status": "active",
+      "entity": "DHS",
+      "role": "Rebuild of medi-thailand.com (Astro/Cloudflare/Sveltia) - DHS service work for MED I Thailand, a big client in the group",
+      "serves": [
+        "DHS"
+      ],
+      "relationships": [
+        {
+          "rel": "serves-client",
+          "target": "MED I Thailand"
+        },
+        {
+          "rel": "same-client-as",
+          "target": "MIMP-012"
+        }
+      ],
+      "depends_on": [],
+      "tags": [
+        "website",
+        "astro",
+        "cloudflare",
+        "medi-thailand"
+      ],
+      "local_paths": {
+        "machineB": "D:\\Med_I_Thailand_Website"
+      },
+      "claude_memory_paths": {
+        "machineB": "C:\\Users\\Administrator\\.claude\\projects\\d--Med-I-Thailand-Website\\memory"
+      },
+      "pillar": "Service",
       "product": null,
       "classification": "business"
     }

@@ -23,3 +23,5 @@ e--BDC-HMS-AppScript
 # machineB's own Claude memory for the brain repo. MIMP-002 is pushed from machineA only - one
 # pushing machine per project (ADR-0009 amendment, 2026-09-27); brain work on machineB goes in docs/.
 d--MIMemoryLLMDb
+# Superseded: June plan for this server to host the memory system - the brain itself replaced it.
+d--MaidulMemoryLLM
