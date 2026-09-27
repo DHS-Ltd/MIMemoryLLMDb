@@ -160,6 +160,20 @@ function Invoke-Git {
 }
 
 function Git-Sync {
+    # This checkout is the sync engine's working tree and stays on master. A branch left behind by
+    # another tool (a Hermes dispatch, 2026-09-06) failed every nightly push for 20 days - on a
+    # branch with no upstream `pull --rebase` fails, and on one with an upstream it would push there.
+    Push-Location $RepoPath
+    try {
+        $branch = (& git rev-parse --abbrev-ref HEAD | Out-String).Trim()
+        if ($branch -ne 'master') {
+            Write-Host ('ERROR: brain checkout is on ''' + $branch + ''', not master - mimp only syncs master.') -ForegroundColor Red
+            Write-Host ('  Fix: git -C "' + $RepoPath + '" checkout master   (do mimp dev work in a git worktree)') -ForegroundColor Yellow
+            exit 1
+        }
+    } finally {
+        Pop-Location
+    }
     Sync-SparseCheckout
     Push-Location $RepoPath
     try {
