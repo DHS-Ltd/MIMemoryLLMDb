@@ -865,6 +865,20 @@ function Cmd-ScheduledRun {
 
     $candidates = @(Find-UnregisteredProjects)
 
+    # Source drift: lint knows which Sources changed since ingest, but only when someone runs it.
+    # Carried in the Heartbeat so whats_next shows it on every machine (ADR-0006: the Source wins).
+    # Only the machine holding a Source can hash it, so each machine reports what it can see.
+    $drift = @()
+    if (-not $DryRun) {
+        try {
+            $lint = & node (Join-Path $PSScriptRoot 'lint.mjs') --json 2>$null | Out-String | ConvertFrom-Json
+            $drift = @($lint.findings | Where-Object { $_.check -eq 'source-drift' } | ForEach-Object { $_.file })
+            Add-Content $logPath "  source drift: $($drift.Count) Source(s) changed since ingest"
+        } catch {
+            Add-Content $logPath "  WARNING: lint unavailable, source drift not checked: $_"
+        }
+    }
+
     # Heartbeat: pushed as its own commit so the OTHER machine's lint can see this one is alive.
     # A job that stops running raises no alert of its own - only a stale heartbeat reveals it.
     if (-not $DryRun) {
@@ -874,6 +888,7 @@ function Cmd-ScheduledRun {
             pushed       = @($pushed)
             failed       = @($failures)
             unregistered = @($candidates)
+            source_drift = @($drift)
         }
         # WriteAllText, not Set-Content: PS 5.1's UTF8 adds a BOM, which JSON.parse rejects.
         [IO.File]::WriteAllText($HeartbeatPath, ($beat | ConvertTo-Json))

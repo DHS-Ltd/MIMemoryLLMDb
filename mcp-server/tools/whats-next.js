@@ -9,19 +9,34 @@ const PROJECT_HEAD_LINES = 50;
 const MAX_HEARTBEAT_HOURS = 48;   // same threshold as tools/lint.mjs check 11
 
 // A stopped scheduled sync is silent — only a missing or stale heartbeat reveals it.
-function describeHeartbeats(repoPath) {
+function readHeartbeats(repoPath) {
   let machines = {};
   try { machines = JSON.parse(gitReadFile(repoPath, 'machines.json') || '{}').machines || {}; } catch { /* no machines.json */ }
   return Object.keys(machines).map((id) => {
     const text = gitReadFile(repoPath, `status/${id}.json`);
-    if (!text) return `${id}: NO HEARTBEAT — scheduled sync not installed or never pushed; its memory is not reaching the brain.`;
-    let b;
-    try { b = JSON.parse(text.replace(/^﻿/, '')); } catch { return `${id}: heartbeat unreadable (invalid JSON).`; }
-    const hours = Math.round((Date.now() - Date.parse(b.last_run)) / 36e5);
-    const stale = !(hours <= MAX_HEARTBEAT_HOURS) ? 'STALE — scheduled sync has stopped. ' : '';
-    const failed = b.failed?.length ? ` FAILED: ${b.failed.join(', ')}.` : '';
-    return `${id}: ${stale}last run ${b.last_run} (${hours}h ago), pushed ${b.pushed?.length ?? 0}.${failed}`;
+    if (!text) return { id, beat: null };
+    try { return { id, beat: JSON.parse(text.replace(/^﻿/, '')) }; } catch { return { id, beat: null, invalid: true }; }
   });
+}
+
+export function describeHeartbeat({ id, beat, invalid }) {
+  if (invalid) return `${id}: heartbeat unreadable (invalid JSON).`;
+  if (!beat) return `${id}: NO HEARTBEAT — scheduled sync not installed or never pushed; its memory is not reaching the brain.`;
+  const hours = Math.round((Date.now() - Date.parse(beat.last_run)) / 36e5);
+  const stale = !(hours <= MAX_HEARTBEAT_HOURS) ? 'STALE — scheduled sync has stopped. ' : '';
+  const failed = beat.failed?.length ? ` FAILED: ${beat.failed.join(', ')}.` : '';
+  return `${id}: ${stale}last run ${beat.last_run} (${hours}h ago), pushed ${beat.pushed?.length ?? 0}.${failed}`;
+}
+
+// Sources changed since ingest, as each machine's nightly lint saw them (only the machine holding
+// a Source can hash it). Returns null when nothing has drifted.
+export function describeDrift(beats) {
+  const cards = [...new Set(beats.flatMap((b) => b?.source_drift ?? []))].sort();
+  if (!cards.length) return null;
+  return '═══ Sources CHANGED since ingest — claims citing them may be stale ═══\n' +
+    'Before relying on org/ or wiki/ content that cites one of these, check it against the Source ' +
+    '(the Source wins — ADR-0006) and tell the user a re-ingest is due:\n' +
+    cards.map((c) => `- ${c}`).join('\n');
 }
 
 // "2026-07" or "2026-07-15" vs today -> 'OVERDUE' | 'DUE NOW' | 'upcoming'
@@ -87,10 +102,13 @@ export function registerWhatsNext(server, repoPath) {
         `reason with it. Authority for commercial claims is E:\\DHS-PACS, not this repo (ADR-0006).`
       );
 
+      const heartbeats = readHeartbeats(repoPath);
       sections.push(
         '═══ Machine sync health (flag any NO HEARTBEAT / STALE / FAILED line first) ═══\n' +
-        (describeHeartbeats(repoPath).join('\n') || '(no machines.json)')
+        (heartbeats.map(describeHeartbeat).join('\n') || '(no machines.json)')
       );
+      const drift = describeDrift(heartbeats.map((h) => h.beat));
+      if (drift) sections.push(drift);
 
       const deadlineLines = collectDeadlines(registry, todayIso);
       sections.push(

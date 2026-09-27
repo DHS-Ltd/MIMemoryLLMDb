@@ -54,6 +54,12 @@ A claim a Source has explicitly replaced. Recorded with what replaced it and whe
 silently, because stale copies survive in other repos and in Memory files.
 _Avoid_: outdated, deprecated, wrong
 
+**Drift**:
+A Source that has changed since it was last Ingested. Every claim citing it is suspect — not known
+to be wrong, as a Superseded claim is — until the Source is re-Ingested. Detected automatically;
+resolved only by an attended Ingest.
+_Avoid_: stale source, outdated, changed
+
 ## Operations
 
 **Ingest**:
@@ -65,8 +71,9 @@ A health pass over the brain that reports defects rather than fixing them silent
 _Avoid_: audit, review, check, validate
 
 **Heartbeat**:
-A machine's own record of its last scheduled sync — when it ran, what it pushed, what failed. A
-missing or old Heartbeat means that machine's memory has stopped reaching the brain.
+A machine's own record of its last scheduled sync — when it ran, what it pushed, what failed, and
+which Sources it saw Drift. A missing or old Heartbeat means that machine's memory has stopped
+reaching the brain.
 _Avoid_: status, ping, health check, last sync
 
 ## Products

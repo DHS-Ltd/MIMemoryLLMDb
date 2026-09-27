@@ -129,6 +129,14 @@ and nothing in the brain could say whether its task was broken, missing, or neve
   pushes from machineA only, and brain work done on machineB is recorded in `docs/`. Lint check
   `two-writers` blocks the pattern.
 
+- **Drift rides on the Heartbeat.** Each run executes `mimp lint` and records the Sources it saw
+  change since ingest (`source_drift`); `whats_next` opens with them on every machine. Re-ingest
+  stays an attended Claude session — an unattended writer re-synthesising strategy at night is how
+  wrong claims get asserted with authority, the failure ADR-0006 exists to prevent.
+- **A secret guard in `mimp push`** refuses a project whose memory matches a known credential
+  format, reporting file and line, never the value — the nightly job pushes unattended, and a
+  secret in git history needs rotating plus a history rewrite.
+
 **Why a Heartbeat and not a louder alert** (Telegram from `mimp` was considered): every alert
 raised from inside the job is silent when the job isn't running at all. Only the other machine
 noticing an absence catches that — and machineB is an unattended server where no balloon is ever
