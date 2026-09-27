@@ -327,6 +327,10 @@ for (const id of Object.keys(machines)) {
   if (beat.failed?.length) {
     add('ERROR', 'heartbeat', gitPath, `${id}'s last run failed: ${beat.failed.join(', ')} — see ~/.mimp-scheduled-run.log on ${id}`);
   }
+  // Only the machine holding a Source can hash it, so a machine reports its Drift in its Heartbeat.
+  if (beat.source_drift?.length) {
+    add('WARN', 'heartbeat', gitPath, `${id} saw ${beat.source_drift.length} Source(s) Drift since ingest — re-ingest: ${beat.source_drift.join(', ')}`);
+  }
   if (beat.unregistered?.length) {
     add('WARN', 'heartbeat', gitPath, `${id} has ${beat.unregistered.length} unregistered project folder(s) — mimp init, or add to tools/mimp-ignore.txt: ${beat.unregistered.join(', ')}`);
   }

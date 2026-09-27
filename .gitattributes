@@ -1,0 +1,2 @@
+# Run directly from WSL by Hermes (hermes cron --no-agent --script): a CRLF shebang breaks it.
+tools/brain-health.mjs text eol=lf
