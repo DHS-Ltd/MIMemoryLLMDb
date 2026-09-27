@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: reference
   originSessionId: 6575f78d-07bf-40a4-87d9-bd442d5cdcb8
+  modified: 2026-08-20T13:26:01.936Z
 ---
 
 # Adding a Hanging Protocol + Toolbar Button in OHIF v3.12
@@ -204,3 +205,16 @@ For **both dropdown + toolbar**: all six files, but set `isPreset: true`.
 - Toolbar icon: `layout-advanced-mpr` (reused MPR icon, no new SVG needed)
 - Effect: 1×3 Axial/Sagittal/Coronal volume viewports, VOI-synced, segmentation-synced
 - Appears: only as standalone toolbar icon (not in Advanced dropdown)
+
+---
+
+## Variant: reusing an existing `isPreset: true` upstream protocol (no new protocol file)
+
+Shipped 2026-08-20 as `Volume3DDH` ("3D View" button → `fourUp` layout). When the protocol you want **already exists and is already registered** (check `extensions/cornerstone/src/getHangingProtocolModule.ts` and `extensions/cornerstone/src/hps/*.ts` first — several stock 3D layouts ship unused: `primary3D`, `only3D`, `main3D`, `fourUp`, `mprAnd3DVolumeViewport`), Steps 1–2 of the full recipe are already done. You only need Steps 3–4:
+
+- Toolbar button id: `'Volume3DDH'`, placed **after `'MPRDHLayout'`, before `'FilmViewDH'`** in `modes/basic/src/toolbarButtons.ts` + `toolbarSections.primary` in `modes/basic/src/index.tsx`
+- `commandOptions: { protocolId: 'fourUp' }` — the upstream protocol's own id, unchanged
+- Icon: `layout-advanced-3d-four-up` — already existed, purpose-built for this exact layout, no new SVG
+- `mobileHidden: true` — added given this repo's prior mobile-OOM history with volume rendering (see [[project_wadouri_retrieval_phase1]])
+- **Scope diverged from the MPRDH precedent:** only touched `modes/basic` (which `longitudinal` inherits automatically — it spreads `...basicMode` wholesale in `modes/longitudinal/src/index.ts`, so edits to `modes/basic` propagate to both Patient Viewer and Doctor Viewer with a single file pair). Deliberately did **not** touch `modes/segmentation/src/toolbarButtons.ts` + `index.tsx` (unlike MPRDH, which did) — that mode is unused in production, and `tmtv` was excluded as out of scope (separate oncology-specific toolbar).
+- Since `fourUp` already has `isPreset: true`, it was already reachable via the Layout → Advanced dropdown before this change — the toolbar button just makes it discoverable, not newly possible. If you want a toolbar-only shortcut with no dropdown duplication, you'd need a variant protocol with `isPreset: false` instead (the MPRDH pattern).

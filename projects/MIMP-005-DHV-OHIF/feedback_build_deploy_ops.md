@@ -1,10 +1,11 @@
 ---
 name: feedback-build-deploy-ops
-description: "Operational rules for Docker image builds and deploy on pacsvm — avoid duplicate builds, always reload nginx after ohif restart, verify static assets at /assets/ not /viewer/assets/, JS bundles are gzip-precompressed, /viewer is never Cloudflare-cached, PowerShell commit message quoting"
+description: "Operational rules for Docker image builds and deploy on pacsvm — avoid duplicate builds, always reload nginx after ohif restart, verify static assets at /assets/ not /viewer/assets/, JS bundles are gzip-precompressed, /viewer is never Cloudflare-cached, PowerShell commit message quoting, SSH nested-quoting workaround (pipe local script via stdin), Playwright as chromium-cli substitute for local UI verification, build overwrites the v1 tag and destroys rollback, /brand/ is a live mount for ad-hoc static pages"
 metadata: 
   node_type: memory
   type: feedback
   originSessionId: 07e89958-39fd-4cf6-ae6d-9536a93daa5f
+  modified: 2026-08-20T13:26:32.598Z
 ---
 
 Never trigger more than one `docker compose build ohif` at the same time on pacsvm.
@@ -68,3 +69,67 @@ When verifying deployed JS content (per COMMIT_AND_DEPLOY.md §5.3), `grep` agai
 **Why:** PowerShell's argument-passing to native executables (git.exe) mishandles embedded `"` characters in a string variable, splitting the message into multiple args that git then misreads as pathspecs. The here-string itself parses fine in PowerShell — the breakage happens at the PowerShell-to-native-exe boundary.
 
 **How to apply:** Avoid literal double quotes inside commit message bodies passed via `$msg`. Failure is clean (no partial commit, safe to just fix the message and retry) — confirm with `git status`/`git log` before re-attempting.
+
+---
+
+Multi-line or loop-containing remote commands sent as `ssh pacsvm "..."` from PowerShell reliably break — nested quoting across PowerShell → ssh → bash → (sometimes) `docker exec ... sh -c '...'` collapses in confusing ways: `for`/`do` loops throw "syntax error near unexpected token", `$var:` inside a double-quoted PowerShell string gets misparsed as a PowerShell drive reference, and multi-line here-strings sent as a single ssh argument arrive corrupted (lines like a stray `dev` appearing mid-script).
+
+**Why:** each layer (PowerShell, ssh argument parsing, remote bash, and optionally another `sh -c` inside `docker exec`) re-tokenizes quotes and `$` independently; there is no single escaping scheme that survives all of them for anything beyond a single simple command.
+
+**How to apply:** for anything more than one plain command, write the script to a **local file** first, then pipe it over stdin: `Get-Content -Raw local_script.sh | ssh pacsvm "bash -s"`. Stdin content isn't re-parsed by any of the intermediate shells the way inline arguments are — this worked cleanly on the first try after three failed inline-quoting attempts (2026-08-20, Volume3DDH deploy verification). Keep loops, `$(...)`, and any `docker exec` nesting inside that script file, not in the PowerShell command string.
+
+---
+
+`chromium-cli` is not installed in this environment (Windows Server 2022 dev box). For local UI verification (per the `run` skill's browser-driven pattern), use Playwright directly instead: it's already a devDependency in `d:\ohif-fork\node_modules\playwright`, but the browser binaries are not pre-downloaded — run `npx playwright install chromium` first (~150MB, one-time, cached at `%LOCALAPPDATA%\ms-playwright`). Write a one-off Node script (not a project file — put it in the repo root or scratchpad and delete after) using `chromium.launch({ args: ['--no-sandbox', '--use-gl=swiftshader', '--enable-webgl', '--ignore-gpu-blocklist'] })` to get software-rendered WebGL2 (real, not headless-stubbed — confirmed `EXT_color_buffer_float` support, sufficient for Cornerstone3D volume rendering to actually produce correct pixels, not just a non-crashing black canvas).
+
+**Why:** confirms the fix works, not just that nothing threw — a blank/black 3D pane after a layout-switch click can mean either "still rendering," "broken," or "degenerate source data" (e.g. this repo's `PID_SR` test study has 27 series but only 1 instance each — a synthetic multi-modality fixture, not real volumetric data; MPR/3D reformats of it are meaningless). Test against a real multi-slice series (e.g. `NEW_PATIENT_ID` / "CT NECK SOFT TISSUE W/ CONTR", 295 instances) before concluding a 3D feature is broken.
+
+**How to apply:** target toolbar buttons via `[data-cy="<ButtonId>"]` (OHIF's `ToolButton.tsx` sets `data-cy={id}` — far more reliable than text matching, which fails silently when buttons render icon-only). Use `force: true` on clicks to bypass the investigational-use banner and onboarding-tour overlays. Give volume construction + first-frame ray-cast real time (10-20s) before screenshotting on a large CT series — screenshots themselves may need `{ timeout: 60000 }` since the render can peg the main thread past Playwright's default 30s screenshot timeout.
+
+---
+
+`docker compose build ohif` **destroys your rollback**: it writes to the same
+`pacs-ohif-dhs:v1` tag that compose references, and buildkit prunes the previous
+image. Tag the *outgoing* image before building, not after.
+
+**Why:** COMMIT_AND_DEPLOY.md §4.5 says to tag a release version *after*
+verifying, but by then the image you'd want to roll back to no longer exists —
+only its unpacked layers, still held by the running container. Confirmed
+2026-08-26: after building the float-texture fix, `docker tag <old-id>` failed
+with "No such image", leaving only `pacs-ohif-dhs:v1.1` (3 months stale) or a
+10-15 min rebuild as recovery options.
+
+**How to apply:** before `docker compose build ohif`, run
+`docker tag pacs-ohif-dhs:v1 pacs-ohif-dhs:v<N>-prev`. After verifying the new
+build, tag it with its real version (`docker tag pacs-ohif-dhs:v1
+pacs-ohif-dhs:v2`) so a future rebuild of the `v1` tag cannot orphan it either.
+Also pre-flight a new image before recreating the live container: run it on a
+spare loopback port (`docker run -d -p 127.0.0.1:8099:80 pacs-ohif-dhs:v1`),
+check `/` returns 200 and every JS bundle referenced by `index.html` resolves,
+then remove it.
+
+---
+
+To publish an ad-hoc static page on `pacs.dhsolutions.com.bd` with **no nginx
+edit, no compose edit and no restart**, drop the file into
+`/srv/pacs/config/nginx/assets/` on the VM. It is a live directory bind-mount
+(`assets:/usr/share/nginx/html/brand:ro`) already served by
+`location /brand/`, so `https://pacs.dhsolutions.com.bd/brand/<file>.html` works
+the moment the file lands.
+
+**Why:** the obvious route — a new `location =` block plus a single-file mount,
+mirroring how `/open` and `/demo` are wired — needs a config change *and*
+`--force-recreate` (a reload won't pick up a new bind mount), and nginx's
+catch-all `location / { proxy_pass http://ohif:80/; }` silently returns the OHIF
+SPA with **200 OK** for any unmatched path, so a missing route looks like a
+successful deploy. Used 2026-08-26 to host the WebGL probe for external testers,
+which also matters for trust: patients will open a link on their own PACS domain,
+not a claude.ai or github.io one.
+
+**How to apply:** verify with `curl -s http://localhost/brand/<file> | head -c 60`
+and confirm the *content*, never just the status code. Files authored for the
+Claude Artifact publisher need `<!doctype html>`, `<meta charset>`,
+`<meta name="viewport">` and a CSS reset added by hand — the publisher injects
+those, nginx does not, and without the viewport tag a phone renders the page at
+980px zoomed out. Delete the file when done; nothing else needs undoing.
+
