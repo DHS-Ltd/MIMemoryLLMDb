@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 0af12712-f8f3-49c9-b187-b0d176d3b68c
-  modified: 2026-08-13T16:44:48.380Z
+  modified: 2026-09-09T20:00:08.518Z
 aliases: [project_dhs_crm]
 ---
 
@@ -42,5 +42,21 @@ Seeded: Ibn Sina (Enterprise, chain-level per the design — user confirmed "IBN
 **Open question raised, not yet resolved:** Tier (deployment shape) and Revenue Line 2 (Advanced Post-Processing licence) are orthogonal, but neither Stage Set models Line 2 — so "Licence Signed" is ambiguous between the DHV workstation licence and the post-processing licence. Pranto is the first account where this bites.
 
 **~~Open item~~ — RESOLVED 2026-08-13.** `Marketing/Popular_Diagnostic/` (ADR-0004 violation) was moved intact out of the repo to `E:\DHS-Archive\Popular_Diagnostic\` and replaced by a de-identified `Marketing/STANDARD_TIER_PROPOSAL_TEMPLATE.md`. A fifth identifier had been missed in the original count — the proposal also named the **reporting radiologist**. The named referring surgeon remains a relationship risk rather than a compliance one, and the archived original is never to be edited or committed. See [[project-dh-pacs-product-design]].
+
+**Amended 2026-09-08 — gate cleared, Phase 2 built through Hermes, not the planned standalone bot.** The 27 Aug gate held: nag confirmed in daily real use for over a month. But capture shipped differently than designed — Maidul already runs **Hermes** (`E:\Self_project\Hermes_Agent_Setup`, a separate Telegram-reachable operator agent) and asked for CRM capture there instead of a second standalone bot. See [ADR-0009 in the Hermes repo](e:/Self_project/Hermes_Agent_Setup/docs/adr/0009-crm-capture-is-a-dedicated-tool-not-a-dispatch.md) and the amendment in `docs/CRM/BUILD_PLAN.md`.
+
+- New Dispatch Server tool `crm_log` writes directly to Notion (no repo, no Claude Code, no branch — `E:\DHS-CRM` isn't git-tracked, so Hermes' usual branch-and-never-push safety net wouldn't have applied anyway).
+- **Structured command, not the originally-planned freeform LLM parse** — Maidul names each field explicitly. Rejected freeform parsing because the Log's `was:` line and Case Shape are exactly what an inferred field would violate silently.
+- **Scoped to the evening ritual's 4 fields only**: Log entry, Next Action, Next Action Date, Last Interaction. No Stage/Tier/Catchment moves, no Shell Account creation from Telegram — deliberate, in-Notion decisions only.
+- Record lookup: substring match on title, refuses (never guesses) on 0 or multiple matches.
+- Regex backstop (long number; "Mr/Dr &lt;Name&gt;" pattern) added as a second layer behind Case Shape discipline (ADR-0004) — this is new: `SOUL.md` Rule 5 ("Hermes never authors business truth") was amended with an explicit sanctioned-exception carve-out for exactly these 4 fields, since Rule 5 was written before the CRM existed as a second kind of business truth.
+- Tutorial written at `docs/tutorial-hermes/08-crm-capture.md` in the Hermes repo.
+- **Not live-tested end-to-end** (the write path) to avoid polluting real Notion records during the build — only the read/query path was verified live. First real `crm_log` call in production is still unverified.
+
+**Amended 2026-09-10 — same day, Hermes also gained Machine B routing (ADR-0008), unrelated to CRM but touching the same shared file.** `dispatch_server/server.py` — the same file `crm_log` lives in — was also patched (in coordination with a separate Claude session running on Machine B/MedIServer) to let Hermes open Claude Sessions on Machine B over Tailscale, sessions-only. Fully verified end to end (all 8 checks V1-V8: ACL live, real `claude_launch("b-doctor")` paired from Telegram, `claude_end` closed it cleanly). Not CRM-relevant on its own, but three operational gotchas surfaced that matter for **any** future Hermes work, including CRM capture:
+
+- **`SOUL.md` has two copies.** The repo copy (`E:\Self_project\Hermes_Agent_Setup\SOUL.md`, version-controlled) is not what Hermes actually reads live — that's a separate WSL-side file (`~/.hermes/SOUL.md`) with its own `.bak` history. Editing the repo copy does nothing until manually copied over (established convention: back up the live file first, then overwrite it).
+- **Rotating `DISPATCH_TOKEN` is a two-place, two-restart change.** It lives in `dispatch_server/.env` (Windows) AND `~/.hermes/.env`'s `MCP_DISPATCH_API_KEY` (WSL, referenced from `config.yaml`). Both the Windows Dispatch Server (Scheduled Task) and the WSL Hermes gateway must restart afterward — a gateway left running holds the old token in memory and will fail auth against a freshly-restarted server in a way that looks like "everything's down" rather than an auth mismatch.
+- **`crm_log`'s write path is still unverified in production** (see above) — this remains true; the Machine B work didn't touch or test it.
 
 See also [[project-dhs-brand-strategy]], [[commercial-content-hub-rule]], [[project-linkedin-surgeon-first]].
