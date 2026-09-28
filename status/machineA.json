@@ -1,35 +1,32 @@
 {
     "machine":  "machineA",
-    "last_run":  "2026-09-27T23:04:59+06:00",
+    "last_run":  "2026-09-28T23:01:49+06:00",
     "pushed":  [
                    "image-converter",
                    "mimp",
                    "v1HMS",
                    "dh-pacs-marketing",
                    "dh-advanced-viewer",
-                   "dhv-weasis"
+                   "dhv-weasis",
+                   "bdc-hms-react",
+                   "bdc-marketing",
+                   "cyclotron-sale",
+                   "minfound-ct-resale",
+                   "email-official",
+                   "sqa-learning",
+                   "personal-branding",
+                   "content-creation"
                ],
     "failed":  [
 
                ],
     "unregistered":  [
-                         "d--Email-Official",
-                         "e--BDC-HMS-AppScript",
-                         "e--BDC-Marketing",
-                         "e--BDC-Marketing-BDCDataScrapper-Facebook",
-                         "e--BDCHMSV2",
-                         "E--BDCHMSV2-bdc-hms-react",
-                         "e--DH-Projects",
-                         "E--DHS-ERP",
-                         "E--DHS-ERP-DHS-ERP-Automation",
-                         "e--Immich-App",
-                         "e--Isotope-Research-Cyclotron",
-                         "e--MI-Finance",
-                         "e--Self-project-ContentCreation",
-                         "e--Self-project-File-Converter",
-                         "e--Self-project-M4a-MP3-Audio-Converter",
-                         "e--Self-project-Minfound-CT-Report-Shaheen",
-                         "e--Self-project-Personal-Branding",
-                         "e--Self-project-SQA-Learning"
+
+                     ],
+    "source_drift":  [
+                         "raw/_cards/dh-advanced-viewer-context-map.md",
+                         "raw/_cards/dhs-brand-strategy.md",
+                         "raw/_cards/dhs-pacs-context-map.md",
+                         "raw/_cards/pacs-market-research-bd-2026.md"
                      ]
 }
