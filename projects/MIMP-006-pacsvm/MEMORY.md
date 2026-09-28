@@ -54,7 +54,8 @@
 - [Demo Links — Patient Experience](project_demo_link.md) — **2 live links.** ADR 0009: `34e5f845...` → AYESHA AKTER anonymized (DH PACS DEMO). ADR 0010: `50046f87...` → Abdur Gofur SITE03 real identity (consent obtained). Do NOT revoke either.
 
 ## Security
-- [API Exposure Remediation](project_security_api_exposure_remediation.md) — Critical unauthenticated routes found 2026-09-27. **Phase 1 LIVE 2026-09-28** (PR #7). **Phase 2 PR open** (#8, flag off, needs 24h wait before flip-on). Phase 3 (DICOMweb auth gate) not started.
+- [API Exposure Remediation](project_security_api_exposure_remediation.md) — Critical unauthenticated routes found 2026-09-27. **Phase 1 LIVE**. **Phase 2 PR #8 open but code-incomplete** — MT search fix needs ADR 0028's mobile-exact carve-out added before shipping. **Phase 3 design re-synced 2026-09-28** to the more-current dental spec (list-based viewer_pass); not started in code.
+- [DH PACS Dental — Companion Pointer](reference_dh_pacs_dental_companion.md) — separate repo but runs THIS repo's own code as a Dedicated Instance; security capability flags (CC-02+) are shared code with the API Exposure Remediation work above, not a second implementation.
 
 ## Retention
 - [Study Purge](project_study_purge.md) — Reclaim Orthanc disk by deleting pixels, keep metadata stub. Implemented 2026-06-07 on feat/safety-mt-gated; NOT yet deployed (migration p4 pending). ADR 0002.

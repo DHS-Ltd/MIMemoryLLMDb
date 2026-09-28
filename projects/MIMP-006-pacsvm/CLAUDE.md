@@ -57,6 +57,26 @@ See [docs/adr/0007-doctor-portal-as-separate-repository.md](docs/adr/0007-doctor
 
 ---
 
+## Companion project — DH PACS Dental (Ibn Sina)
+
+A **Dedicated Instance** deployment of this same central codebase — separate repo `dh-pacs-dental`
+at `D:\dh-pacs-dental`, its own compose stack, its own `docs/adr/` numbering (dental ADR N ≠ this
+repo's ADR N — don't cross-reference by number alone). Unlike the Doctor Portal or Worklist repos,
+it is **not** a different frontend/backend calling this central's API — it *is* this central's
+code, run as one hospital's own instance instead of the shared multi-tenant one.
+
+**The coupling that matters:** security/access hardening is built **once**, on branches in *this*
+repo, and serves both deployments as default-off capability flags — Shared Central enforces after a
+shadow-mode rollout (existing live traffic, printed QR codes to protect), the Dedicated Instance
+enforces from day one (greenfield, nothing to protect against). `D:\dh-pacs-dental\docs\build\CENTRAL_CHANGES_SPEC.md`
+(capabilities CC-01 onward) and this repo's `docs/Security/API_Exposed_Fixation.md` describe the
+**same code** — neither is simply "authoritative" over the other the way the Worklist docs are;
+both get amended as the branches change (the dental spec pins exact commit SHAs), so **re-read both
+before touching auth, the MT/Doctor/Patient session role checks, MT search scoping, or the
+DICOMweb/per-study gate** — one may have moved past the other since you last looked.
+
+---
+
 ## Companion project — DH Worklist (Ibn Sina)
 
 The Ibn Sina worklist product (Order Adapter, identity matcher, DMWL SCP, Worklist Console, Procedure Catalogue) is a **separate repo**, working name **`dh-pacs-worklist`**, at **`d:\IBNSinaPacs`** (not yet a git repo as of 2026-09-07; design phase, nothing built). See [docs/adr/0009-worklist-ships-as-its-own-repository-for-clean-handover.md](docs/IbnSinaCancerPacs/adr/0009-worklist-ships-as-its-own-repository-for-clean-handover.md) for why it's a separate repo rather than a `FEDERATED_MODE`-style flag here.
