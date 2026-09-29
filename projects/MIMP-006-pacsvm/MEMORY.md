@@ -54,8 +54,8 @@
 - [Demo Links — Patient Experience](project_demo_link.md) — **2 live links.** ADR 0009: `34e5f845...` → AYESHA AKTER anonymized (DH PACS DEMO). ADR 0010: `50046f87...` → Abdur Gofur SITE03 real identity (consent obtained). Do NOT revoke either.
 
 ## Security
-- [API Exposure Remediation](project_security_api_exposure_remediation.md) — Critical unauthenticated routes found 2026-09-27. **Phase 1 LIVE**. **Phase 2 PR #8 open but code-incomplete** — MT search fix needs ADR 0028's mobile-exact carve-out added before shipping. **Phase 3 design re-synced 2026-09-28** to the more-current dental spec (list-based viewer_pass); not started in code.
-- [DH PACS Dental — Companion Pointer](reference_dh_pacs_dental_companion.md) — separate repo but runs THIS repo's own code as a Dedicated Instance; security capability flags (CC-02+) are shared code with the API Exposure Remediation work above, not a second implementation.
+- [API Exposure Remediation](project_security_api_exposure_remediation.md) — Critical unauthenticated routes found 2026-09-27. **Phase 1 + Phase 2 LIVE.** **Phase 3 (DICOMweb per-study gate) DEPLOYED 2026-09-29, `DICOMWEB_GATE=shadow` LIVE same day — 7-day shadow window running, ends ~2026-10-06**, PR #9, 3 pre-push review bugs fixed (91/91 tests). Phase 0.4 hospital-notification decision still open. `ROLE_BOUND_TOKENS` flip to `on` still not done (eligible since 2026-09-29 18:19 UTC).
+- [DH PACS Dental — Companion Pointer](reference_dh_pacs_dental_companion.md) — separate repo but runs THIS repo's own code as a Dedicated Instance; security capability flags (CC-02+) are shared code with the API Exposure Remediation work above, not a second implementation. **2026-09-29: found + fixed real drift** — dental's CENTRAL_CHANGES_SPEC.md was 2 commits stale on CC-04 and didn't know CC-02/CC-03 were built yet; corrected on that side.
 
 ## Retention
 - [Study Purge](project_study_purge.md) — Reclaim Orthanc disk by deleting pixels, keep metadata stub. Implemented 2026-06-07 on feat/safety-mt-gated; NOT yet deployed (migration p4 pending). ADR 0002.
