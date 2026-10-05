@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 2649aff0-dafb-465a-b08f-375c1de5acc9
+  modified: 2026-10-05T11:25:35.494Z
 ---
 
 Live on Cloudflare Pages as of 2026-05-20.
@@ -28,5 +29,7 @@ Live on Cloudflare Pages as of 2026-05-20.
 **How to apply:** When the user asks to deploy or update the live site, remind them to `git push` to main. If `VITE_GAS_URL` changes, they must update it in Cloudflare dashboard AND trigger a new deploy.
 
 **Docs:** `E:\BDCHMSV2\docs\Cloudflare\DEPLOYMENT.md` — full manual and troubleshooting guide.
+
+**Pages Functions (since 2026-10-05):** `functions/api.js` serves `/api`, proxying to GAS; dashboard env vars like `VITE_GAS_URL` are readable there via `context.env` at runtime, not just at build. Production `gasClient.js` calls `/api`, never GAS directly — see [[incident-gas-echo-404-proxy]].
 
 **Known issue fixed:** `_redirects` file may be needed in `public/` if direct URL navigation returns 404 (React Router client-side routing).

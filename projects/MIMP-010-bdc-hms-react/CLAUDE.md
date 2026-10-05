@@ -22,6 +22,7 @@ clasp deploy --deploymentId AKfycbw4d9j5tksjXz_cjKIEjseraFUTNAQYKfEOtOSRNNOd4aa5
 | Always use `callApi()` in `gasClient.js` | All HTTP must go through one gateway |
 | Never handle `SESSION_EXPIRED` in pages | Handled globally in `gasClient.js` |
 | Never hardcode GAS URL | Use `VITE_GAS_URL` from `.env` |
+| Production calls go to `/api` (`functions/api.js`), never GAS directly | Proxy follows Google's 302→echo hop on Cloudflare; a bad Google edge on the clinic's ISP 404'd every save (2026-10-05). See ADR 0007 |
 | All pages via `React.lazy` + `Suspense` | Lazy-load only, single Suspense in App.jsx |
 | **Never use `useEffect` + `useState` to fetch list data** | Always use `useCachedApi` — see Data Page Cache Rule below |
 
