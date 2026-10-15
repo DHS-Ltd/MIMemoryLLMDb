@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 3354ab6c-6ad4-4d00-bf6c-36c6ad1a5712
-  modified: 2026-10-14T16:59:44.490Z
+  modified: 2026-10-14T18:54:48.483Z
 ---
 
 Site: **IBN Sina Hospital Dhanmondi 4**, site number **022** (licence AET `SITE022_DHPACS`), Machine Code
@@ -51,5 +51,38 @@ Plugins folder, no Warnings section) -> exe image locked. Exe untouched; orthanc
 `HKLM\...\Services\OrthancArchive\Parameters\Application` to `Orthanc-1.12.10.exe` (archive stays 1.12.10 - do NOT delete that file),
 lock-check before swap, rollback start in finally, final safety-net Start-Service. Lesson: any service-stopping site script must end
 with an unconditional "service running?" check in finally; and check every process's ExecutablePath before replacing a binary.
+
+**SWAP DONE 2026-10-14 23:08 (script 1124b, SUCCESS):** live primary now Orthanc **1.12.4** (`C:\Program Files\Orthanc Server\Orthanc.exe`),
+AET DHVIEWER2:4242 unchanged, 274 studies/252,928 instances intact, REST write self-test OK. Same DB: index 82.1 -> 6.8 ms, /file 84.1 -> 4.4 ms,
+process CPU ~9.5 s -> ~0 s per 120 calls, zip 10.0 -> 19.7 inst/s (zip now compression-bound; Viewer uses DIMSE, not zip).
+Archive (OrthancArchive, NSSM) now runs `Orthanc-1.12.10.exe` (registry Parameters\Application repointed) - DO NOT delete that file.
+Undo: stop Orthanc, copy Orthanc-1.12.10.exe over Orthanc.exe + `D:\DHPACS\backup\orthanc.json.before-1124` over orthanc.json, start.
+NOT yet proven: a real Siemens C-STORE on 1.12.4, doctor-side Viewer retrieval speed. Still pending: bisect 1.12.5-1.12.9
+(`Orthanc-bisect-test.zip` in user Downloads), Receiver engine-pin ADR (Receiver pins slow 1.12.11), DH Viewer v2.0.4 install here,
+archive retire/merge, recycle cap, onboarding docs.
+
+**Next step prepared 2026-10-14 (script `ibnsina_setup.ps1`, in user Downloads, NOT yet run):** Viewer-only path chosen over the
+Bogura-style bundle because the bundle reinstalls slow Orthanc 1.12.11. Script: cap = floor((primaryUsed + D:free - 50 GB)/10)*10
+(~460 GB expected; ~60 GB/month -> ~7 months) with MaximumStorageMode Recycle; registers `DHV: [DHV_SCU,127.0.0.1,11113]` via a
+comment-stripping ConvertFrom/ConvertTo-Json rewrite that asserts no other key changed (tested locally on stock Osimis config + 1.12.4);
+preflight on test ports; restart; then silent `DHDicomViewer_Setup_v2.0.4.exe /LICENSE=<SITE022 file> /AET=DHVIEWER2` (installer
+SHA256 8A6B8380...563C1E, licence SHA256 CF151837...F63404; licence machine_id V45M52GBK99MKH5Z, expiry 2037-10-14).
+
+**SETUP DONE 2026-10-15 (~00:00, ibnsina_setup.ps1 SUCCESS):** cap **450 GB** Recycle live (Orthanc logged "At most 450.00GB"),
+`DHV:[DHV_SCU,127.0.0.1,11113]` registered (DicomModalities was `{}` before), C-ECHO OK, DH DICOM Viewer **v2.0.4** installed silently
+in `C:\Program Files (x86)\DH Solutions Limited\DH DICOM Viewer`, node DHVIEWER2@localhost:4242, licence in ProgramData, machine code MATCH.
+Config backup: `D:\DHPACS\backup\orthanc.json.before-cap-viewer`. CORRECTION: primary only holds studies from ~2026-09-10 (archive holds
+May-mid-Sep); intake ~280 studies / ~150-190 GB per month -> 450 GB = ~2.5-3 months (not 7). Pre-Sep-10 priors are ONLY in the archive
+(DHVIEWER_ARC:4243, not visible to the new Viewer). Recommended next: merge archive into primary overnight, retire archive, raise cap
+to ~850 GB (~5 months). Also installed: "Orthanc 26.1.0" (Osimis - repair/upgrade would restore slow 1.12.10), "DHViewer 4.6.7"
+(unknown connection method - may have broken when plugins were disabled 2026-10-14), UltraViewer. Pending user tests: Viewer
+Q/R + open a large study, first real exam arrival.
+
+**FLAG - OPEN FOLLOW-UP (user, 2026-10-15): re-measure patient-data loading speed at this site after ~2 weeks of use
+(due ~2026-10-29 to 2026-11-05).** Fix is proven only server-side (index 82 -> 7 ms) plus one day; doctor-side Viewer load times and
+behaviour as the 450 GB cap fills are unmeasured. Protocol + result table: repo `01_Pacs_File/docs/Ibn_Sina_Dhanmondi4_System_Onboarding/FOLLOW_UP_speed-measurement.md`
+(site record folder created 2026-10-15: README, SITE_FACTS, 2026-10-14 event file). Record result as a new dated file there; do NOT claim
+"proven in the field" to other sites or in the engine-pin ADR until it is done. Also flagged in `orthanc/BUILD-NOTES.md`.
+When a session starts on/after 2026-10-29 and touches this site, remind the user this is due.
 
 **Why:** lesson - install alone will not make it fast; measure first. **How to apply:** gate the Receiver swap on the throwaway-instance result.

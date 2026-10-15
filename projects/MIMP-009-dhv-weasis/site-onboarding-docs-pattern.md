@@ -4,7 +4,7 @@ description: Per-site onboarding record pattern under 01_Pacs_File/docs/ — one
 metadata:
   type: reference
   originSessionId: 23052427-87f8-4f68-9fe2-05606ad2bc93
-  modified: 2026-08-25T19:13:08.421Z
+  modified: 2026-10-14T18:54:51.960Z
 ---
 
 The user wants a "memory lane" per site — durable, human-readable onboarding records that live in
@@ -17,6 +17,9 @@ requirements").
 
 **First instance:** `Ibn_Sina_System_Onboarding\`, built 2026-08-26 during the Bogura recovery —
 see [[bogra-site-recovery-and-storage-overflow]] for the incident that produced it.
+
+**Instances so far:** Ibn Sina Bogura, Popular Shantinagar, and `Ibn_Sina_Dhanmondi4_System_Onboarding\` (2026-10-15; adds a
+`FOLLOW_UP_*.md` file for a dated, flagged future measurement - a useful extension of the shape) - see [[ibn-sina-hospital-site022]].
 
 **Shape established (reuse the shape, not the content):**
 - `README.md` — index, entry point, and an explicit "Open for the next session" section naming
