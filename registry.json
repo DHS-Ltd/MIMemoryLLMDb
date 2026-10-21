@@ -861,10 +861,10 @@
         "medi-thailand"
       ],
       "local_paths": {
-        "machineB": "D:\\Med_I_Thailand_Website"
+        "machineA": "E:\\Med_I_Thailand_Website"
       },
       "claude_memory_paths": {
-        "machineB": "C:\\Users\\Administrator\\.claude\\projects\\d--Med-I-Thailand-Website\\memory"
+        "machineA": "C:\\Users\\maidu\\.claude\\projects\\E--Med-I-Thailand-Website\\memory"
       },
       "pillar": "Service",
       "product": null,
