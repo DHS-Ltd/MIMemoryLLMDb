@@ -25,3 +25,6 @@ e--BDC-HMS-AppScript
 d--MIMemoryLLMDb
 # Superseded: June plan for this server to host the memory system - the brain itself replaced it.
 d--MaidulMemoryLLM
+
+# Superseded on machineB: the website moved to machineA (infra D15, 2026-10-22); MIMP-020 is pushed from machineA only.
+d--Med-I-Thailand-Website
