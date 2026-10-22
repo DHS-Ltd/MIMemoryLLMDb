@@ -1,6 +1,6 @@
 {
     "machine":  "machineA",
-    "last_run":  "2026-10-21T23:01:21+06:00",
+    "last_run":  "2026-10-22T23:01:28+06:00",
     "pushed":  [
                    "image-converter",
                    "mimp",
@@ -15,7 +15,8 @@
                    "email-official",
                    "sqa-learning",
                    "personal-branding",
-                   "content-creation"
+                   "content-creation",
+                   "medi-thailand-website"
                ],
     "failed":  [
 
