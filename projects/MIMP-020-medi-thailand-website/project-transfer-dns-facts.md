@@ -18,7 +18,7 @@ Transfer-critical facts about the live medi-thailand.com WordPress site (discove
   `default._domainkey` guess that was WRONG; using `default` would have silently broken DKIM).
   Email is EXTERNAL and must be preserved across the move. No DMARC yet — add one.
 - **Host is UNCONTROLLED/could-vanish** (owner's assessment; cPanel admin = `shakib.mir@gmail.com`). Therefore: (1) "keep WP live as rollback" is NOT reliable — real rollback = a static snapshot we capture ourselves; (2) capture the full live site NOW (media + HTML + URL map) before it disappears; (3) moving DNS to Cloudflare early also PROTECTS EMAIL, since if the host vanishes its nameservers stop answering and Zoho MX resolution would break too.
-- **Registrar:** hosting.com (domain expiry 2026-10-30, transfer-locked). **Registrant on record:**
+- **Registrar:** hosting.com (domain expiry was 2026-10-30 but RENEWED for another year (confirmed by owner 2026-10-22), transfer-locked). **Registrant on record:**
   "Medinvest bd" / Anwarul Alam Akhand — confirmed 2026-07-19 this is just the domain
   registrant-of-record (agency/freelancer), NOT an operating entity — has no bearing on the site's
   legal footer, which stays **MED I (Thailand) Co. Ltd only**. Do not confuse with "Direct

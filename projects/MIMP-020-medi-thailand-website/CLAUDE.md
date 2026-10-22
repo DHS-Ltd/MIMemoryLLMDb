@@ -20,9 +20,13 @@ non-technical; give recommendations, not open-ended menus.
 - `docs/adr/0004-content-collections-and-routing.md` — content model + URL routing rules.
 - `docs/adr/0005-red-is-scientific-notation-not-interface.md` — palette relock; amends 0003.
 - `docs/adr/0006-reusing-media-from-the-compromised-site.md` — which old-site assets may be reused.
+- `docs/adr/0008-keep-list-replaces-url-parity.md` — old URLs kept by evidence (Keep List); amends 0004 and the 1:1 rule.
+- `PROGRESS.md` — current state, harness order, Stuck Note. Read first.
 - `docs/content-systems-plan.md` — concrete content/build plan derived from the ADRs.
 - `docs/content-build-plan.md` — page-by-page content spec (what goes on each page).
 - `docs/design/visual-design-system.md` — full design spec (colors, type, layout, motion).
+- `docs/design/product-page-information-design.md` — how product pages serve visitors from social media.
+- `docs/product-build-guide.md` — how to add or update a product (read before building one).
 - `docs/Cyclotron_Isotope_Research/CONTEXT.md` — theranostics research corpus (BD lead-magnet source).
 - `docs/Med_I_Historic_data/` — all historic source material (see map below).
 
@@ -32,7 +36,10 @@ non-technical; give recommendations, not open-ended menus.
 - **Architecture:** one domain, two sections — B2B now, consumer shop later. Build shop-ready, don't build it.
 - **New angle:** B2B **Bangladesh expansion** → dedicated `/bangladesh` section under the MED I brand; feasibility brief as gated lead-magnet.
 - **Language:** English-first, Thai-ready (Astro i18n scaffolding from day one).
-- **SEO:** preserve every existing URL 1:1. Step 0 = crawl/inventory the live site.
+- **SEO:** old URLs are kept by evidence, not all 1:1 (ADR 0008). Old URLs that earned clicks
+  in Search Console go on the **Keep List** and must resolve or 301 on purpose; every other old
+  URL goes on the **Drop List** with a reason. Until the Keep List exists, do not retire or
+  rename an existing route.
 - **Forms/leads:** Cloudflare Pages Functions → owner email + free newsletter tool (Brevo/MailerLite).
 - **Video:** keep Google Drive embeds behind click-to-play covers (facade-first). Revisit → YouTube if Drive quota errors appear.
 - **Products:** structured CMS catalog, no cart (name, category, brand, specs, images, brochure, request-info CTA), grouped by Solution. Seeds the future shop model.
@@ -40,11 +47,11 @@ non-technical; give recommendations, not open-ended menus.
 - **Cutover:** staged, preserve email/MX. Rollback = the self-captured static snapshot
   (`docs/site-snapshot/`), not live WordPress — the WP host is uncontrolled and could vanish
   at any time (see ADR 0003).
-- **v1 scope:** full parity + modernized; drop injected casino-spam ("Events/Sponsor") and thin pages.
+- **v1 scope:** modernized; drop injected casino-spam ("Events/Sponsor") and thin pages.
 
 ## Build phases
 
-0. **Inventory & access** — crawl live URLs (lock the 1:1 map); confirm registrar/host/where email(MX) lives; gather brand assets + Drive video links; confirm Cloudflare + GitHub access.
+0. **Inventory & access** — crawl live URLs (the full old-URL inventory; the Keep List is cut from it, ADR 0008); confirm registrar/host/where email(MX) lives; gather brand assets + Drive video links; confirm Cloudflare + GitHub access.
 1. **Foundation** — Astro repo → Cloudflare Pages preview; i18n scaffold; content collections (`solutions`, `products`, `team`, `events`, `blog`, `bangladesh`); Sveltia CMS wired.
 2. **Content build** — rebuild all real pages at identical URLs; populate product catalog; build Bangladesh section + lead-magnet.
 3. **Dynamic + measurement** — forms + newsletter; GA4 + Search Console + sitemap + robots + PDPA consent notice.
@@ -72,7 +79,9 @@ non-technical; give recommendations, not open-ended menus.
 
 ## Working style
 
-- The site is LIVE and RANKING — never break URLs or ship a thin replacement. Old WP stays up until verified cutover.
+- The site is LIVE and RANKING — never break a Keep List URL or ship a thin replacement. Old WP stays up until verified cutover.
+- **Done means:** a task is done only when `npm test` passes and `PROGRESS.md` says so (update it in the same change). Use three words and no others: **built** (code committed), **tested** (`npm test` passed), **verified** (a real run on the preview or live URL, with a proof line in `PROGRESS.md` saying what was done and what showed up). Never write "verified" without the proof line; the user judges the proof. A screenshot, a file, or the user's own typed confirmation in chat all count as proof (record the date and what they said they saw); never record a confirmation the user did not type. Read `PROGRESS.md` first each session; it holds the state and any Stuck Note. Lead form: `docs/lead-form-setup.md`.
+- **Write it down once:** after an expensive lookup in `docs/Med_I_Historic_data/` (or any large source), save the answer as a short note in `docs/baseline/` (like `2025-04-baseline.md`) and add one line for it to the Historic data map above. Check that map and `docs/baseline/` before searching the raw files again. Do not pre-index files nobody has asked about.
 - Rebuild content clean; never copy wholesale from the compromised site.
 - Recommend a default and proceed; only ask when the answer changes what gets built.
 
