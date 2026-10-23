@@ -21,12 +21,14 @@ non-technical; give recommendations, not open-ended menus.
 - `docs/adr/0005-red-is-scientific-notation-not-interface.md` — palette relock; amends 0003.
 - `docs/adr/0006-reusing-media-from-the-compromised-site.md` — which old-site assets may be reused.
 - `docs/adr/0008-keep-list-replaces-url-parity.md` — old URLs kept by evidence (Keep List); amends 0004 and the 1:1 rule.
+- `docs/adr/0009-measurement-and-consent.md` — opt-in GA4, consent bar, `generate_lead`, noindex on pages.dev, retention.
 - `PROGRESS.md` — current state, harness order, Stuck Note. Read first.
 - `docs/content-systems-plan.md` — concrete content/build plan derived from the ADRs.
 - `docs/content-build-plan.md` — page-by-page content spec (what goes on each page).
 - `docs/design/visual-design-system.md` — full design spec (colors, type, layout, motion).
 - `docs/design/product-page-information-design.md` — how product pages serve visitors from social media.
 - `docs/product-build-guide.md` — how to add or update a product (read before building one).
+- `docs/page-reports.md` — Reviewer "Page reports" (GitHub Issues): how to work them, owner setup, limits.
 - `docs/Cyclotron_Isotope_Research/CONTEXT.md` — theranostics research corpus (BD lead-magnet source).
 - `docs/Med_I_Historic_data/` — all historic source material (see map below).
 
@@ -36,10 +38,11 @@ non-technical; give recommendations, not open-ended menus.
 - **Architecture:** one domain, two sections — B2B now, consumer shop later. Build shop-ready, don't build it.
 - **New angle:** B2B **Bangladesh expansion** → dedicated `/bangladesh` section under the MED I brand; feasibility brief as gated lead-magnet.
 - **Language:** English-first, Thai-ready (Astro i18n scaffolding from day one).
-- **SEO:** old URLs are kept by evidence, not all 1:1 (ADR 0008). Old URLs that earned clicks
-  in Search Console go on the **Keep List** and must resolve or 301 on purpose; every other old
-  URL goes on the **Drop List** with a reason. Until the Keep List exists, do not retire or
-  rename an existing route.
+- **SEO:** launch does not wait for the Keep List (ADR 0008 amendment 2026-10-23). The cutover
+  gate is `npm run check:urls`: every URL in the old crawl is built, 301s or 410s on purpose.
+  After launch, the Search Console export cuts the **Keep List** (old URLs that earned clicks)
+  and **Drop List**; any dropped URL that earned clicks gets a 301. Do not rename or retire a
+  route that is built and linked.
 - **Forms/leads:** Cloudflare Pages Functions → owner email + free newsletter tool (Brevo/MailerLite).
 - **Video:** keep Google Drive embeds behind click-to-play covers (facade-first). Revisit → YouTube if Drive quota errors appear.
 - **Products:** structured CMS catalog, no cart (name, category, brand, specs, images, brochure, request-info CTA), grouped by Solution. Seeds the future shop model.
@@ -84,6 +87,14 @@ non-technical; give recommendations, not open-ended menus.
 - **Write it down once:** after an expensive lookup in `docs/Med_I_Historic_data/` (or any large source), save the answer as a short note in `docs/baseline/` (like `2025-04-baseline.md`) and add one line for it to the Historic data map above. Check that map and `docs/baseline/` before searching the raw files again. Do not pre-index files nobody has asked about.
 - Rebuild content clean; never copy wholesale from the compromised site.
 - Recommend a default and proceed; only ask when the answer changes what gets built.
+- **Features: Opus plans, Sonnet builds, Opus verifies** (owner decision 2026-10-23, after the Page
+  reports build). For a new feature that visitors or Reviewers touch: plan and decide with Opus; a
+  Sonnet agent builds it on a branch and never pushes; a separate Opus pass reads every changed file,
+  re-runs `npm test`, the build and `npm run check:urls`, and runs it in a phone-sized touch browser,
+  looking at the screens and pictures it produces; then the owner checks the preview URL before
+  anything reaches `main`. Small content or text edits (e.g. working Page reports) stay with one
+  agent. Why: on the Page reports build the builder's own checks passed while 7 bugs remained, 4 of
+  them visible only on a phone or in a picture.
 
 ## Development
 

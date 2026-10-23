@@ -10,5 +10,6 @@
 - [Feedback — guided stepwise pacing](feedback-guided-stepwise-pacing.md) — for hands-on dashboard walkthroughs, one step at a time, solve blockers before advancing
 - [Feedback — owner judges design when deployed](feedback-owner-judges-design-when-deployed.md) — he reverses "locked" design decisions on first sight of the real site; deploy early
 - [Reference — image tooling](reference-image-tooling.md) — no ImageMagick/cwebp; use Astro's sharp by absolute path; contact-sheet and mock before shipping
+- [Feedback — Opus plans, Sonnet builds](feedback-opus-plans-sonnet-builds.md) — features: Opus plans + verifies on phone-size touch, Sonnet builds on a branch
 - [Project — cyclotron deals are confidential](project-cyclotron-deals-confidential.md) — Selima + TMSS deals; never leak customers/prices/financiers/model to public site
 
