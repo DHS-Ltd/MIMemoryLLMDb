@@ -1,6 +1,6 @@
 {
     "machine":  "machineA",
-    "last_run":  "2026-10-23T23:01:26+06:00",
+    "last_run":  "2026-10-24T23:01:32+06:00",
     "pushed":  [
                    "image-converter",
                    "mimp",
@@ -16,7 +16,8 @@
                    "sqa-learning",
                    "personal-branding",
                    "content-creation",
-                   "medi-thailand-website"
+                   "medi-thailand-website",
+                   "system-design"
                ],
     "failed":  [
 
@@ -29,6 +30,7 @@
                          "e--Self-project-Jacy-Research"
                      ],
     "source_drift":  [
+                         "raw/_cards/adr-serve-the-surgeon.md",
                          "raw/_cards/dh-advanced-viewer-context-map.md",
                          "raw/_cards/dhs-brand-strategy.md",
                          "raw/_cards/dhs-pacs-context-map.md",
