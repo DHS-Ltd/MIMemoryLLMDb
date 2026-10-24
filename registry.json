@@ -1,6 +1,6 @@
-﻿{
+{
   "schema_version": "2.1",
-  "next_id": 21,
+  "next_id": 22,
   "next_program_id": 4,
   "entities": {
     "DHS": {
@@ -869,6 +869,33 @@
       "pillar": "Service",
       "product": null,
       "classification": "business"
+    },
+    "MIMP-021": {
+      "short_name": "system-design",
+      "full_name": "System Design Learning Track",
+      "created": "2026-10-24",
+      "created_by": "machineA",
+      "status": "active",
+      "pillar": null,
+      "product": null,
+      "classification": "personal",
+      "entity": null,
+      "role": "System Design learning track: course lectures to deep-dive notes via video pipeline",
+      "serves": [],
+      "relationships": [],
+      "depends_on": [],
+      "tags": [
+        "system-design",
+        "learning",
+        "architecture",
+        "distributed-systems"
+      ],
+      "local_paths": {
+        "machineA": "D:\\\\System_Design"
+      },
+      "claude_memory_paths": {
+        "machineA": "C:\\Users\\maidu\\.claude\\projects\\D--System-Design\\memory"
+      }
     }
   },
   "next_product_id": 6
