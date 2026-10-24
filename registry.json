@@ -891,7 +891,7 @@
         "distributed-systems"
       ],
       "local_paths": {
-        "machineA": "D:\\\\System_Design"
+        "machineA": "D:\\System_Design"
       },
       "claude_memory_paths": {
         "machineA": "C:\\Users\\maidu\\.claude\\projects\\D--System-Design\\memory"
