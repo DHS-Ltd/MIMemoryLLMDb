@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 1410b357-ad6d-4467-ad2b-ad47b4bbb601
-  modified: 2026-10-23T16:39:37.493Z
+  modified: 2026-10-23T17:47:19.383Z
 ---
 
 Pitch, not a sale. Decision log: `docs/LocalPACS/IbnSina15A/PITCH_DECISIONS.md` (read it first —
@@ -19,6 +19,12 @@ a standard Siemens feature.
 
 **Why:** retention (~3 months at SITE022, 450 GB cap) and data safety (2026-10-13 outage, no backup)
 are the real pain; speed was an Orthanc ≥1.12.10 regression DH already fixed (1.12.4 swap).
+
+**Built 2026-10-23:** product named **DHV Archive** (ADR-0007: sold on the problem, radiologists
+may be addressed). Materials in `docs/LocalPACS/IbnSina15A/` (fact card for Dr. Eliza, the key
+person; 4-page proposal; .docx offer letter with 12 placeholders) + generic brochure at
+`docs/LocalPACS/DHV_Archive_Brochure.html`. Next step: the branch manager visit (Dr. Eliza already
+phoned them). Open before printing: design check 1 unconfirmed, SITE022 doctor-side speed check owed.
 
 **How to apply:** lead with history + safety; speed only as "already fixed, not permanent"; no speed
 figures; "the archive", never "NAS". See [[feedback-pitch-to-the-room-as-it-runs]].
