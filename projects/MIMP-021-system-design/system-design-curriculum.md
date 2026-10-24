@@ -4,7 +4,7 @@ description: "Roadmap, progress tracking, and module overview for the System Des
 metadata:
   node_type: memory
   type: project
-  modified: 2026-10-25T02:50:00.000Z
+  modified: 2026-10-25T03:28:00.000Z
 aliases: [system_design_curriculum]
 ---
 
@@ -20,7 +20,7 @@ The project repository (`D:\System_Design`) hosts a full system design learning 
 | **01. Fundamentals** | Lesson 02 | Functional vs Non-Functional Requirements | Available in `Course_Video/SD_2_...mp4` | Pending synthesis |
 | **01. Fundamentals** | Lesson 03 | Latency vs. Throughput — Numbers Every Engineer Must Know | ✅ **Completed** | `lesson-output/03_Latency_and_Throughput_Deep_Dive.md` |
 | **01. Fundamentals** | Lesson 04 | Availability, SLA, SLO & "The Nines" | ✅ **Completed** | `lesson-output/04_Availability_SLA_SLO_Deep_Dive.md` |
-| **01. Fundamentals** | Lesson 05 | Scalability: Vertical vs Horizontal Scaling | Upcoming | Queued |
+| **01. Fundamentals** | Lesson 05 | Scalability: Vertical vs Horizontal Scaling | ✅ **Completed** | `lesson-output/05_Scalability_Vertical_vs_Horizontal_Deep_Dive.md` |
 | **01. Fundamentals** | Lesson 06 | CAP Theorem & PACELC Theorem | Upcoming | Queued |
 | **02. Networking & APIs** | — | OSI Model, TCP vs UDP, HTTP/2 & HTTP/3, WebSockets, gRPC | Upcoming | Queued |
 | **03. Load Balancing** | — | L4 vs L7 Load Balancers, Consistent Hashing | Upcoming | Queued |
