@@ -1,4 +1,21 @@
-# MIMemoryLLMDb — Current State (2026-06-10)
+# MIMemoryLLMDb — Current State (2026-06-10; Learning Tracks section 2026-10-26)
+
+## Learning Tracks — Status (2026-10-26) ✅ live
+
+ADR-0010. Plan (historical, now BUILT): `docs/learning-tracks-build-plan-2026-10.md`.
+
+| Item | State |
+|------|-------|
+| Registry: MIMP-015, MIMP-021 → `learning` / DHS / no pillar / no product | ✅ `16520ef` |
+| MCP `listLessons` → end of every `get_project_memory` + `get_lessons` tool | ✅ verified on origin/master |
+| Lint check 13 (`tools/lesson-lint.mjs`, test `tools/test-lesson-lint.mjs`) | ✅ no new findings (7 errors / 25 warns, all pre-existing) |
+| Instruction rules in `~/.claude/CLAUDE.md` + `~/.gemini/config/AGENTS.md` | ✅ (global files, not in git) |
+| System Design Lessons 03, 04, 05 (written by Antigravity, checked by Claude) | ✅ pushed `01f3eb3`, **not studied yet** |
+| Scenario test: new session in another project, "should we cache X?" → cites Lesson 03 | ⏳ Maidul judges |
+| SQA Lesson for lecture #27 | ⏳ at SQA's next Return |
+| `mimp init` doesn't offer `learning`; its `[2] Personal` contradicts business-only | Parked |
+| `mobile-remote-operations.md` sits in MIMP-021 though it is operations | Parked |
+
 
 ## Brain Layer (Phase 2) — Status (2026-06-10)
 

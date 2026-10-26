@@ -115,6 +115,12 @@ MIMP-004 (software-saas/pacs/DHS, markets PACS), MIMP-005 (software-saas/pacs/DH
   current-state heads). Same git-objects/`origin/master` pattern; the server stays a
   **context-assembler; it never calls a model**. Test harness: `mcp-server/test-brain-tools.mjs`.
   Restart Claude Desktop after pulling to load. Full detail: `mcp-server.md`.
+- **Since 2026-10-26: 9 tools** (+ `get_wiki_page`, + `get_lessons`). **Learning Tracks (ADR-0010):**
+  a project with `classification: "learning"`, entity `DHS`, no pillar, no product (MIMP-015
+  sqa-learning, MIMP-021 system-design). Its `lesson-NN-<slug>.md` files (`use_when`, `studied`,
+  `write_up`) are listed at the end of every `get_project_memory` and by `get_lessons`. A Lesson
+  never names a Product (lint check 13 ERROR); only the user sets `studied`. `classification` now
+  has its first reader. Glossary: CONTEXT.md `## Learning`.
 - **Repo-reading agents** (Claude Code in this repo) read `org/` directly as before.
 - **Planned (step 1.5):** a machineB Task Scheduler job runs `claude -p "<strategist prompt>"`
   weekly → writes `org/DIGEST.md` → `mimp push`. This is the first *automated writer*; writes

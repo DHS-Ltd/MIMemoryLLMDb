@@ -11,7 +11,7 @@ A local Node.js MCP server that gives any MCP-compatible LLM client (Claude Code
 - **Built:** 2026-05-29
 - **Git objects mode:** 2026-05-30 (reads via `git show` — all projects visible regardless of sparse checkout)
 - **Verified cross-machine:** 2026-05-30 (machineB confirmed reading machineA-pushed memories)
-- **Brain tools (step 1e) built 2026-06-10:** 4 additional tools surface `org/` + registry v2.0 entities/programs/edges. The server now exposes **7 tools** total.
+- **Brain tools (step 1e) built 2026-06-10:** 4 additional tools surface `org/` + registry v2.0 entities/programs/edges. The server exposed **7 tools** then; **9 since 2026-10-26** (`get_wiki_page` Phase 3, `get_lessons` ADR-0010).
 
 ## Brain Tools (Phase 2, step 1e — built 2026-06-10)
 
@@ -53,7 +53,17 @@ The server reads `repo_path` from `~/.mimp-config.json` at startup — the same 
 { "machine_id": "machineA", "repo_path": "E:\\MIMemoryLLMDb", ... }
 ```
 
-## Tools Exposed (7 — 3 project + 4 brain, see Brain Tools section above)
+## Learning Tracks (ADR-0010 — built 2026-10-26, commit `16520ef`)
+
+- `listLessons(repoPath, projects)` in `lib/repo.js` lists every `lesson-*.md` in every
+  `classification: "learning"` project, one line each: `[Studied <date>|not studied yet] <track> · <title> — Use when: …`.
+- Served in two places: appended to the end of **`get_project_memory` for every project**
+  (Antigravity's path), and the **`get_lessons`** tool (Claude Code's path — it loads its own project
+  memory, so calling `get_project_memory` would load it twice).
+- Read from `origin/master` like everything else: a Lesson reaches other projects only after `mimp push`.
+- `test-brain-tools.mjs` calls `get_lessons` and prints the Lessons block of `get_project_memory('mimp')`.
+
+## Tools Exposed (9 as of 2026-10-26 — 3 project + 4 brain + `get_wiki_page` + `get_lessons`; was 7 at step 1e)
 
 ### `list_projects`
 
