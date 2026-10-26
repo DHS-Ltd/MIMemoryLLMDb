@@ -52,6 +52,8 @@ Both are keyed by `machine_id` (user-defined label set in `~/.mimp-config.json`)
   **Source wins**. See **ADR-0006**.
 - **Run `mimp lint` before pushing.** Deterministic, no tokens, exit 1 on error.
 - **The MCP server reads `origin/master`** — nothing is retrievable until it is pushed.
+- **Learning Tracks** (`classification: "learning"`, MIMP-015, MIMP-021): their `lesson-*.md` files are
+  served to every project. A Lesson never names a Product; only Maidul sets `studied`. See **ADR-0010**.
 
 ## Important Notes
 
