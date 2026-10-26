@@ -22,6 +22,8 @@ DH Solutions Ltd sells three products: **DH PACS** (this repo's home product), *
 
 Personal-brand content (Maidul's LinkedIn educator identity, CV) is the opposite direction — it belongs in `E:\Self_project\Personal_Branding`, not here. See `CONTEXT-MAP.md` and [ADR-0001](docs/adr/0001-dhs-pacs-as-commercial-content-hub.md) for the full reasoning.
 
+**Every marketing piece made or changed here gets a Review before it is handed back:** follow `E:\Self_project\Marketing_Learning\REVIEW.md`. Each Product's Stage is in the "Marketing Stage" section of `docs/MarketingStrategy/PRODUCT_LINE.md`.
+
 ---
 
 ## Critical Positioning — Read Before Writing Any Copy
