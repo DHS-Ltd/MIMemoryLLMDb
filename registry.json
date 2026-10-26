@@ -1,4 +1,4 @@
-{
+﻿{
   "schema_version": "2.1",
   "next_id": 22,
   "next_program_id": 4,
@@ -685,12 +685,12 @@
     },
     "MIMP-015": {
       "short_name": "sqa-learning",
-      "full_name": "SQA Learning - DH PACS QA",
+      "full_name": "SQA Learning Track",
       "created": "2026-09-27",
       "created_by": "machineA",
       "status": "active",
       "entity": "DHS",
-      "role": "SQA course applied to DH PACS; output is the DH PACS test plan",
+      "role": "Learning Track: software QA course lectures to product-free Lessons; practice ground is DH PACS",
       "serves": [
         "DHS"
       ],
@@ -707,9 +707,9 @@
       "claude_memory_paths": {
         "machineA": "C:\\Users\\maidu\\.claude\\projects\\e--Self-project-SQA-Learning\\memory"
       },
-      "pillar": "Build",
-      "product": "PRD-001",
-      "classification": "business"
+      "pillar": null,
+      "product": null,
+      "classification": "learning"
     },
     "MIMP-016": {
       "short_name": "personal-branding",
@@ -878,10 +878,12 @@
       "status": "active",
       "pillar": null,
       "product": null,
-      "classification": "personal",
-      "entity": null,
-      "role": "System Design learning track: course lectures to deep-dive notes via video pipeline",
-      "serves": [],
+      "classification": "learning",
+      "entity": "DHS",
+      "role": "Learning Track: system design course lectures to product-free Lessons via the video pipeline",
+      "serves": [
+        "DHS"
+      ],
       "relationships": [],
       "depends_on": [],
       "tags": [

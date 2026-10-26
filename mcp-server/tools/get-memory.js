@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { resolveProject, getProjectGitPath, parseMemoryLinks, gitReadFile, gitFetchIfStale, readRegistryFromGit } from '../lib/repo.js';
+import { resolveProject, getProjectGitPath, parseMemoryLinks, gitReadFile, gitFetchIfStale, readRegistryFromGit, listLessons } from '../lib/repo.js';
 
 export function registerGetMemory(server, repoPath, projects) {
   server.tool(
@@ -53,6 +53,9 @@ export function registerGetMemory(server, repoPath, projects) {
           }
         }
       }
+
+      const lessons = listLessons(repoPath, liveProjects);
+      if (lessons) sections.push(lessons);
 
       return { content: [{ type: 'text', text: sections.join('\n\n') }] };
     }

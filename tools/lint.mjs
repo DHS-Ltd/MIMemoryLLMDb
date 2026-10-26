@@ -23,6 +23,7 @@ import { join, relative, basename, extname, dirname, resolve } from 'path';
 import { createHash } from 'crypto';
 import { homedir } from 'os';
 import { execSync } from 'child_process';
+import { lessonFindings } from './lesson-lint.mjs';
 
 const REPO = resolve(import.meta.dirname, '..');
 const TODAY = new Date().toISOString().slice(0, 10);
@@ -346,6 +347,25 @@ for (const [id, p] of Object.entries(registry?.projects ?? {})) {
       `${id} (${p.short_name}) is pushed from ${writers.join(' and ')} — pushes overwrite, so one erases the other; keep one machine`);
   }
 }
+
+// ── 13. Lessons (ADR-0010) ────────────────────────────────────────────────
+// Disk first (a just-copied Lesson is checked before it is pushed), then origin/master for
+// learning folders this machine's sparse checkout hides.
+const learningFolders = Object.entries(registry?.projects ?? {})
+  .filter(([, p]) => p.classification === 'learning')
+  .map(([id, p]) => `projects/${id}-${p.short_name}/`);
+const isLesson = (p) => learningFolders.some(f => p.startsWith(f)) && /\/lesson-[^/]+\.md$/.test(p);
+const lessonPaths = [...new Set([...allMd.map(rel), ...gitMdPaths].filter(isLesson))];
+const lessons = [];
+for (const gitPath of lessonPaths) {
+  let text = read(join(REPO, gitPath));
+  if (text === null) {
+    try { text = execSync(`git show origin/master:${gitPath}`, { cwd: REPO, encoding: 'utf8' }); } catch { continue; }
+  }
+  lessons.push({ path: gitPath, text, meta: frontmatter(text) });
+}
+const productNames = Object.values(registry?.products ?? {}).map(p => p.name);
+for (const f of lessonFindings(lessons, productNames)) add(...f);
 
 // ── report ─────────────────────────────────────────────────────────────────
 const ORDER = { ERROR: 0, WARN: 1, INFO: 2 };

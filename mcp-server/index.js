@@ -9,6 +9,7 @@ import { registerGetEntity } from './tools/get-entity.js';
 import { registerGetDecisions } from './tools/get-decisions.js';
 import { registerWhatsNext } from './tools/whats-next.js';
 import { registerGetWikiPage } from './tools/get-wiki-page.js';
+import { registerGetLessons } from './tools/get-lessons.js';
 
 async function main() {
   let config;
@@ -50,6 +51,9 @@ async function main() {
 
   // Wiki tool (Phase 3) — the Sourced synthesis layer added by ADR-0006.
   registerGetWikiPage(server, repoPath);
+
+  // Learning Tracks (ADR-0010) — product-free Lessons served to every project.
+  registerGetLessons(server, repoPath, projects);
 
   const transport = new StdioServerTransport();
   await server.connect(transport);

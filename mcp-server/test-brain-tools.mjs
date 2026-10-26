@@ -43,6 +43,15 @@ preview(await client.callTool({ name: 'search_memories', arguments: { query: 'no
 preview(await client.callTool({ name: 'search_memories', arguments: { query: 'Inobitec', scope: 'cards' } }), "search_memories('Inobitec', scope='cards')");
 preview(await client.callTool({ name: 'search_memories', arguments: { query: 'orthanc', scope: 'projects' } }), "search_memories('orthanc', scope='projects') [legacy behaviour]");
 
+// ── Learning Tracks (ADR-0010) ─────────────────────────────────────────────
+// Lessons appear only once pushed: expect "No Lessons yet." until the first lesson-*.md is on origin/master.
+preview(await client.callTool({ name: 'get_lessons', arguments: {} }), 'get_lessons');
+const memory = await client.callTool({ name: 'get_project_memory', arguments: { project: 'mimp', include_referenced_files: false } });
+const memoryText = memory.content?.[0]?.text ?? '';
+const tail = memoryText.indexOf('═══ Lessons that may apply ═══');
+console.log(`\n########## get_project_memory('mimp') Lessons block ##########`);
+console.log(tail === -1 ? '(no Lessons block — expected until a Lesson is pushed)' : memoryText.slice(tail, tail + PREVIEW_CHARS));
+
 await client.close();
 console.log('\nAll calls completed.');
 console.log(

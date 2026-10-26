@@ -101,6 +101,9 @@ Rules:
    | `metadata.type` | auto-memory | `user` / `feedback` / `project` / `reference` |
    | `id`, `date`, `status`, `scope`, `tags`, `supersedes`, `superseded_by` | ADRs | See `org/decisions/_TEMPLATE.md` |
    | `card`, `origin`, `sha256`, `source_modified`, `registered` | Source cards | See ADR-0007 |
+   | `use_when` | Lessons (`lesson-NN-<slug>.md`) | One line: the situations it applies to. Never names a Product |
+   | `studied` | Lessons | Date the user declared it Studied. Absent = not studied yet. Only the user sets it |
+   | `write_up` | Lessons | Path to the full Lesson write-up in the Learning Track's own repo |
 
    Keep it flat and simple — the parser in `mcp-server/lib/repo.js` handles scalars and inline
    arrays (`[a, b]`) only. No block sequences, no nested maps beyond `metadata`.

@@ -253,3 +253,31 @@ export function gitListMdPaths(repoPath, gitFolderPath) {
     return [];
   }
 }
+
+// Every Lesson (lesson-NN-<slug>.md) in every classification "learning" project, one line each.
+// Served to every project so an agent can say when one applies (ADR-0010). Matching is left to
+// the agent by meaning, not tags: project tags describe what a project is, Lessons are about problems.
+// ponytail: whole list every time, revisit at 60 Lessons (lint warns).
+export function listLessons(repoPath, projects) {
+  const lines = [];
+  for (const [id, p] of Object.entries(projects || {})) {
+    if (p.classification !== 'learning') continue;
+    const folder = getProjectGitPath(id, p.short_name);
+    for (const path of gitListMdPaths(repoPath, folder)) {
+      if (!/^lesson-[^/]+\.md$/.test(basename(path))) continue;
+      const content = gitReadFile(repoPath, path);
+      if (!content) continue;
+      const { meta, body } = parseFrontmatter(content);
+      const state = meta.studied ? `Studied ${meta.studied}` : 'not studied yet';
+      const title = extractTitle(body) || basename(path, '.md');
+      lines.push(`- [${state}] ${p.short_name} · ${title} — Use when: ${meta.use_when || '(missing)'}`);
+    }
+  }
+  if (!lines.length) return null;
+  return [
+    '═══ Lessons that may apply ═══',
+    'From Learning Tracks. If one applies to the work, say so in one line and say whether it is Studied',
+    'or not studied yet. Open one with get_project_memory <track>. Only the user marks a Lesson Studied.',
+    ...lines,
+  ].join('\n');
+}

@@ -101,6 +101,31 @@ One of DHS's four lines of business — Build (prime), Supply, Service, Facility
 retired `niche` field in `registry.json`.
 _Avoid_: niche, activity line, vertical, division
 
+## Learning
+
+**Learning Track**:
+A Project whose output is knowledge for the whole business, tied to no Product and no Pillar.
+Projects cite the Lessons they draw on; a Lesson never names a Product.
+_Avoid_: course, side track, personal project, self-learning
+
+**Practice ground**:
+The real Project where a Learning Track's exercises are run. Naming it does not tie the track to it.
+_Avoid_: target product, use case, medium
+
+**Lesson**:
+The brain's compact record of one finished unit of a Learning Track: the situations it applies to and
+the rules it teaches.
+_Avoid_: lesson card, card (that is a Source card), note, summary
+
+**Lesson write-up**:
+The full document a Lesson stands in for, kept in the Learning Track's own repository.
+_Avoid_: lesson (bare), lesson output, deep dive
+
+**Studied**:
+A Lesson the user has declared they have learned. Only the user declares it; an agent never infers it
+from a finished Lesson write-up.
+_Avoid_: done, completed, learned, finished
+
 ## Reserved words
 
 **Schema**:
