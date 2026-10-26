@@ -4,7 +4,7 @@ description: "Standard operating procedure for transforming lecture videos into 
 metadata:
   node_type: memory
   type: reference
-  modified: 2026-10-24T16:10:00.000Z
+  modified: 2026-10-26T16:12:00.000Z
 aliases: [video_to_lesson_pipeline]
 ---
 
@@ -33,9 +33,17 @@ This document defines the repeatable procedure for turning any video lecture in 
          ├──► 2. Slide Boundary Mapping & Keyframe Extraction
          │       └──► Extract high-res PNGs to lesson-output/images/<Lesson_ID>/
          │
-         └──► 3. Markdown Synthesis
-                 └──► Compile lesson-output/<XX_Topic_Name>.md
+         ├──► 3. Markdown Synthesis
+         │       └──► Compile lesson-output/<XX_Topic_Name>.md
+         │
+         └──► 4. Write the Lesson (lesson-NN-<slug>.md)
+                 └──► Compact memory record; no studied key: it starts as not studied yet
 ```
+
+1. **Audio Track Extraction**: Extract audio from video via `ffmpeg` and transcribe spoken lecture content.
+2. **Slide Boundary Mapping & Keyframe Extraction**: Extract clear keyframes and diagrams into `lesson-output/images/<Lesson_ID>/`.
+3. **Markdown Synthesis**: Compile full reference write-up into `lesson-output/<XX_Topic_Name>.md`.
+4. **Write the Lesson (lesson-NN-<slug>.md), no studied key: it starts as not studied yet.**
 
 ## Structure Requirements for Generated Guides
 
