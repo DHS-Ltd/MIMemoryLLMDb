@@ -12,6 +12,8 @@ Settled in a /grill-with-docs session 2026-09-25. Glossary: `E:\Self_project\SQA
 
 **Purpose:** learning is the goal; the real DH PACS is the medium. Output is real QA, true of the real system. Not a sales asset; Ibn Sina's "no free implementation before work order" still applies.
 
+**Learning Track (since 2026-10-26, ADR-0010 in E:\MIMemoryLLMDb):** this project (MIMP-015) is a Learning Track: registry `learning` / DHS / no product. DH PACS is its **Practice ground**, not its product. Two outputs, kept separate: (1) the DH PACS Test Plan stays DH PACS work in Notion, as below; (2) per lecture, a product-free **Lesson** `lesson-NN-<slug>.md` in this memory folder (frontmatter `use_when`, `write_up`; no `studied` key: only Maidul sets it), served to every project by mmp-memory. **A Lesson never names a Product** (no DH PACS, DHV, HMS…; lint ERROR). Format example: `C:\Users\maidu\.claude\projects\D--System-Design\memory\lesson-03-latency-and-throughput.md`. **Owed: the Lesson for #27, written at the start of SQA's next Return**, before #28.
+
 **Notion (automation's token in `Course_Content_Automation/.env` reaches it):**
 - `SQA Learning` page `3e483bab-0289-801f-8e57-eb45ffc40e02` holds:
   - the `SQA Learning Hub` lecture DB `3e483bab-0289-80f8-adc1-ee0d799f8584` (title prop is `Name`, not `Title`)
@@ -27,6 +29,7 @@ Settled in a /grill-with-docs session 2026-09-25. Glossary: `E:\Self_project\SQA
 3. Artifacts created in their DBs, where the lecture calls for them.
 4. Guardrail check passed.
 5. A "Tested on DH PACS" block appended to the lecture's own Hub page, recording held and corrected answers.
+6. The lecture's product-free Lesson written in this memory folder (see Learning Track above), then `mimp push sqa-learning`.
 
 **Guardrails:** no PHI in Notion (scrub memory-sourced names, IDs and tokens; use synthetic data like TEST^PATIENT). Production is read-only for learning; write tests are marked "Blocked: no test environment". What the test environment *should* be is Maidul's answer at lecture #29; don't pre-decide it.
 
@@ -40,6 +43,6 @@ Settled in a /grill-with-docs session 2026-09-25. Glossary: `E:\Self_project\SQA
 
 **State 2026-09-25:**
 - **#27 done.** §1 Objectives is written: primary = Risk Mitigation, the Integrity Floor, AR-1 (mis-association) and AR-2 (guessable DHP-ID credential), both accepted until the Production Deal. Hardest = Requirements Verification; a Requirements Baseline is to be written. V1–V6 are on the Verification List. The Tested block is on lecture #27's page.
-- **Next: #28 Scope.**
+- **Next: write the #27 Lesson (owed since 2026-10-26), then #28 Scope.**
 - **Flagged, undecided:** a live JWT_SECRET and the Postgres password sit in plain text in MIMP-006 memory. He hasn't said whether to track it. Keep it out of Notion.
 - Plan page created 2026-09-25. Lectures #27–29 are in the Hub; #30–51 are downloaded, not synced. The code lives on MachineB (`D:\Pacs_Viewer_Storage_Project`), not this machine; PACS facts come from mmp-memory MIMP-006. Build a `/apply-lecture` skill only after 2–3 hand-run loops.
