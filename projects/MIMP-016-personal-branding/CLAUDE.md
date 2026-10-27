@@ -15,3 +15,5 @@ This repo stays scoped to: personal LinkedIn posts, the content calendar, the vo
 Every post or carousel made or changed here gets a Review before it is handed back: follow `E:\Self_project\Marketing_Learning\REVIEW.md`. The personal brand is the Free Content Channel run for DH Solutions, not a Product; its Stage is **More**, below the Rule of 100 (set 2026-10-26). Brand Separation is read as "give in public, ask in private" (Rules L06.2, L06.5): check that the profile carries a Lead Magnet and that commenters get a private follow-up; any remaining clash is a Deviation for Maidul to decide.
 
 **Deviation, decided by Maidul 2026-10-26:** Facebook and a WhatsApp Channel are opened for the personal brand at Stage More, against L10.4 (a new Platform is a New-stage move). Reason, an Outside Note: Bangladeshi surgeons are thin on LinkedIn (strategy risk PB1), while doctors live on Facebook and WhatsApp. Condition: both carry only re-cuts of LinkedIn pieces (L06.8), never new content made for them. A Review marks this Deviation, not Breaks.
+
+Public accounts and their setup state: `ACCOUNTS.md`, checked against `E:\Self_project\Marketing_Learning\SETUP.md`.
