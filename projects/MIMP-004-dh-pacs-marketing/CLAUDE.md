@@ -22,7 +22,7 @@ DH Solutions Ltd sells three products: **DH PACS** (this repo's home product), *
 
 Personal-brand content (Maidul's LinkedIn educator identity, CV) is the opposite direction — it belongs in `E:\Self_project\Personal_Branding`, not here. See `CONTEXT-MAP.md` and [ADR-0001](docs/adr/0001-dhs-pacs-as-commercial-content-hub.md) for the full reasoning.
 
-**Every marketing piece made or changed here gets a Review before it is handed back:** follow `E:\Self_project\Marketing_Learning\REVIEW.md`. Each Product's Stage is in the "Marketing Stage" section of `docs/MarketingStrategy/PRODUCT_LINE.md`. Public accounts and their setup state: `docs/MarketingStrategy/ACCOUNTS.md`, checked against `E:\Self_project\Marketing_Learning\SETUP.md`.
+**Every marketing piece made or changed here gets a Review before it is handed back:** follow `E:\Self_project\Marketing_Learning\REVIEW.md`. Each Product's Stage is in the "Marketing Stage" section of `docs/MarketingStrategy/PRODUCT_LINE.md`. Public accounts and their setup state: `docs/MarketingStrategy/ACCOUNTS.md`, checked against `E:\Self_project\Marketing_Learning\SETUP.md`. What the company accounts post, for whom, and who makes it: `docs/MarketingStrategy/DH_CONTENT_STRATEGY.md` — read it before drafting any company post. Dental outreach to Popular, Omnicare and Epic through the Champion, Dr. Saiquat Shah: `docs/DentalOutreach/CHAMPION_PLAN.md` — every session on it starts with the two steps in its header.
 
 ---
 
@@ -41,7 +41,7 @@ Personal-brand content (Maidul's LinkedIn educator identity, CV) is the opposite
 - HIPAA: phrase as **"built to HIPAA standards"** — accurate for the open-source stack. Do NOT say "HIPAA certified" (company certification is a roadmap item).
 - Do NOT mention BDC diagnostic center or the fitness tracker project anywhere.
 - The ৳14.6 billion film market figure comes from NBR import data (HS code 3701.10) — source it if used.
-- **Credential discipline:** founder/engineering claims must trace to `E:\Self_project\Personal_Branding\Maidul_CV\CV_FACT_SHEET.md` — approx. **70 CT / 50 MRI / 20+ CathLab**. The LinkedIn figures (170 CT / 119 MRI) and the title "Regional Head Service Manager" are **NOT confirmed and must not be used**.
+- **Credential discipline:** founder/engineering claims must trace to `E:\Self_project\Personal_Branding\Maidul_CV\CV_FACT_SHEET.md` Two counts, each used only with its scope stated and never mixed in one document: the **Bangladesh Count** (approx. **70 CT / 50 MRI / 20+ CathLab**) and the **Regional Count** (**170+ CT / 119 MRI / 20+ CathLab** across Bangladesh, India, Sri Lanka and Thailand), as `DHS_BRAND_STRATEGY.md` §2 records (corrected 2026-10-28). The title "Regional Head Service Manager" is retired and must not be used.
 
 ---
 
