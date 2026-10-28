@@ -79,6 +79,7 @@ non-technical; give recommendations, not open-ended menus.
 - `Features/Blog_writting/` — drafted blog content + article images.
 - `Features/e-commercePlanned/` — the FUTURE consumer-shop marketing plan (not v1).
 - `Seo/` — SEO plans/reports. `Product List MED_I_Thailand.xlsx` — product data.
+- Every product and where its brochure/photo lives: `docs/baseline/2026-10-product-inventory.md`.
 
 ## Working style
 
