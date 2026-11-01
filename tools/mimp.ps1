@@ -893,8 +893,21 @@ function Cmd-ScheduledRun {
             unregistered = @($candidates)
             source_drift = @($drift)
         }
+        # Image and Mirrors (ADR-0012): each backup job leaves its last result as <job>.json - the
+        # Mirrors in ~/.mimp-backup, the Image (SYSTEM) in C:\ProgramData\mimp-backup. Lint check 11
+        # holds them to machines.json's limits. No results = no backups on this machine.
+        $backup = [ordered]@{}
+        foreach ($dir in (Join-Path $env:USERPROFILE '.mimp-backup'), (Join-Path $env:ProgramData 'mimp-backup')) {
+            if (-not (Test-Path $dir)) { continue }
+            foreach ($f in Get-ChildItem $dir -Filter '*.json') {
+                try { $backup[$f.BaseName] = Get-Content $f.FullName -Raw | ConvertFrom-Json }
+                catch { $backup[$f.BaseName] = @{ ok = $false; last_ok = $null; detail = "unreadable result file $($f.FullName): $_" } }
+            }
+        }
+        if ($backup.Count) { $beat.backup = $backup }
         # WriteAllText, not Set-Content: PS 5.1's UTF8 adds a BOM, which JSON.parse rejects.
-        [IO.File]::WriteAllText($HeartbeatPath, ($beat | ConvertTo-Json))
+        # -Depth: the default (2) would flatten each backup result into a string.
+        [IO.File]::WriteAllText($HeartbeatPath, ($beat | ConvertTo-Json -Depth 5))
         Add-Content $logPath '  pushing heartbeat...'
         $output = & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $PSCommandPath heartbeat 2>&1
         $output | ForEach-Object { Add-Content $logPath "    $_" }

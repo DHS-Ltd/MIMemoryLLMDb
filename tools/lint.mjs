@@ -24,6 +24,7 @@ import { createHash } from 'crypto';
 import { homedir } from 'os';
 import { execSync } from 'child_process';
 import { lessonFindings } from './lesson-lint.mjs';
+import { backupFindings } from './backup-lint.mjs';
 
 const REPO = resolve(import.meta.dirname, '..');
 const TODAY = new Date().toISOString().slice(0, 10);
@@ -335,6 +336,8 @@ for (const id of Object.keys(machines)) {
   if (beat.unregistered?.length) {
     add('WARN', 'heartbeat', gitPath, `${id} has ${beat.unregistered.length} unregistered project folder(s) — mimp init, or add to tools/mimp-ignore.txt: ${beat.unregistered.join(', ')}`);
   }
+  // Image and Mirrors (ADR-0012), for machines whose machines.json entry lists `backups`.
+  for (const f of backupFindings(id, beat, machines[id].backups, gitPath)) add(...f);
 }
 
 // ── 12. one pushing machine per project ───────────────────────────────────

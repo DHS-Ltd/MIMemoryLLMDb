@@ -5,7 +5,8 @@
       "os": "windows",
       "description": "Main development desktop",
       "repo_path": "E:\\MIMemoryLLMDb",
-      "registered": "2026-05-28"
+      "registered": "2026-05-28",
+      "backups": { "mirror-D": 3, "mirror-G": 26, "image": 192 }
     },
     "machineB": {
       "name": "MedIServer",

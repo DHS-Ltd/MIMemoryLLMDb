@@ -31,7 +31,7 @@ handover), ADR-0012 (Image + staggered Mirrors) and Agent_Harness `docs/adr/0001
 | Q3 | WSL disk | Weekly Image only (Hermes comes back as of the last Image) |
 | Q4 | Mirror scope | All of E: + `C:\Users\maidu`, minus: Recycle Bin, the WSL vhdx, node_modules/.venv/.next/.gradle, AppData, .ollama, .cache, .vscode/.cursor extensions, Gradle/Maven caches |
 | Q5 | History | Keep the last 4 weekly Images (~1 month); no separate file history |
-| Q6 | Alerts | Results ride on machineA's **Heartbeat** → lint ERROR → Hermes brain-health → Telegram, silent when healthy. ERROR if D: Mirror >2 h old, G: Mirror >26 h, Image >8 days, or any run failed |
+| Q6 | Alerts | Results ride on machineA's **Heartbeat** → lint ERROR → Hermes brain-health → Telegram, silent when healthy. ERROR if D: Mirror >3 h old (2 h at design; widened in review so one overrunning run is not an alert), G: Mirror >26 h, Image >8 days, or any run failed |
 | Q7 | Proof | **Restore Drill** at build and every 3 months, ending in a Completion Card (below) |
 | Q8 | Where the Global Harness lives | Agent_Harness becomes a private GitHub repo on `DHS-Ltd`, with a setup folder |
 | Q9 | Master copy | Edit anywhere: live config points into the Agent_Harness clone (folders = junctions, CLAUDE.md = one-line pointer, settings.json/AGENTS.md = file links → Developer Mode on once per machine). Each machine commits+pushes nightly, pulls the others |
@@ -53,8 +53,23 @@ happen afterwards inside the repo as reviewable diffs.
 **Phase 1 — backups (now).** Image job (elevated), two Mirror jobs, Heartbeat fields + lint checks.
 Done when: (1) the Heartbeat shows an Image and both Mirrors succeeded; (2) lint raises the ERROR
 when a timestamp is faked old, and brain-health prints it; (3) Restore Drill #1: 3 random files
-from each Mirror hash-match E:; the Image opened read-only and files inside it opened; a Windows
-boot USB boots to System Image Recovery and finds the Image on D:; (4) Completion Card.
+from each Mirror hash-match E:; the Image opened read-only and files inside it opened; (4)
+Completion Card. **Postponed (2026-11-01, no USB to hand):** a blank USB ≥ 8 GB made into a
+Windows boot USB, booted once, finds the Image on D: — open on every Completion Card until done;
+resume when Maidul says "USB ready". Until then the Image is written but unproven for a
+blank-SSD restore.
+
+Built as: `tools/backup.ps1` (both modes), `tools/install-backup.ps1` (one elevated run),
+results in `~/.mimp-backup/<job>.json` → Heartbeat `backup` → `tools/backup-lint.mjs` with
+limits in `machines.json`. Mirrors also skip `OneDrive` (already a cloud copy; holds Documents
+and the PowerShell profile) and the locked `ntuser.*` hive.
+
+**Rollback guard — read before any restore.** An Image brings the backup tasks back with it, and
+mirroring a restored, older E: would delete from the Mirror the newer files the restore needs.
+Each Mirror run leaves `E:\.mimp-mirror-<D|G>.stamp`; a run whose E: stamp is older than the
+Mirror's copy (or missing) refuses, and the Heartbeat reports it. Restore order: restore the
+Image → copy newer files back from `D:\Backup\Mirror` (or G:) → only then delete the Mirror's
+stamp (path in the refusal message) to let Mirrors resume.
 
 **Phase 2 — Global Harness (now).** Agent_Harness → git + private repo; setup folder holding what
 was written by hand (global CLAUDE.md, AGENTS.md, settings.json made machine-neutral, own skills,
@@ -72,9 +87,10 @@ edit made on the laptop survives a night and reaches machineA after `take`.
 
 ## Verify before building (Unverified today)
 
-- wbadmin on Windows 11 keeps older Images on a local target volume, and how to cap them at 4
-  (`wbadmin get versions`). Verified: client wbadmin takes whole volumes only, no `-exclude`; it
-  uses VSS; needs Administrator (`wbadmin start backup` help text on machineA; learn.microsoft.com).
+- wbadmin on Windows 11 keeps older Images on a local target volume (`wbadmin get versions`
+  after the second Image). Verified: client wbadmin takes whole volumes only, no `-exclude`; it
+  uses VSS; needs Administrator; `wbadmin delete backup -keepVersions:N` exists for the cap
+  (help text on machineA; learn.microsoft.com).
 - Restoring an Image onto a new SSD: does the target disk have to be ≥ the old 1 TB disk?
 - Image files can be mounted read-only for the Restore Drill.
 - Claude Code: plugins listed in settings.json install themselves on a fresh profile; settings.json
@@ -85,8 +101,8 @@ edit made on the laptop survives a night and reaches machineA after `take`.
 
 ## Parked (not in this design)
 
-- **A GitHub token sits in plain text in `E:\v1-BdcHmsApp`'s git remote URL** — revoke it on
-  GitHub, then reset the remote without it. Do this before Phase 1 copies it to two more disks.
+- ~~A GitHub token in plain text in `E:\v1-BdcHmsApp`'s remote URL~~ — done 2026-11-01: classic
+  PAT "HomeDesktopVScodeEditor" deleted (API → 401), remote reset to a plain URL.
 - D:, G:, H:, I: hold the only copy of what lives there (patient data folders, phone backups).
 - One power cut on 2026-10-11; a UPS would protect an Image in progress.
 - E:'s 12 GB Recycle Bin goes into every Image — empty it before the first.
