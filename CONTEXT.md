@@ -71,10 +71,35 @@ A health pass over the brain that reports defects rather than fixing them silent
 _Avoid_: audit, review, check, validate
 
 **Heartbeat**:
-A machine's own record of its last scheduled sync — when it ran, what it pushed, what failed, and
-which Sources it saw Drift. A missing or old Heartbeat means that machine's memory has stopped
-reaching the brain.
+A machine's own record of its last scheduled runs — when its sync ran, what it pushed, what failed,
+which Sources it saw Drift, and when its Image and each Mirror last succeeded. A missing or old
+Heartbeat means that machine has stopped reporting, so neither its memory nor its backups can be
+trusted.
 _Avoid_: status, ping, health check, last sync
+
+**Writer**:
+The one machine allowed to push a project's memory to the brain at a given time; every other machine
+only reads it. The role moves only when the user takes the project on another machine, and a read
+never overwrites memory edits that have not been pushed.
+_Avoid_: owner (Authority is something else), pushing machine, master, primary
+
+## Machine continuity
+
+**Image**:
+A whole-drive copy of a machine's SSD that can be restored onto a blank disk, bringing back the
+operating system, every installed app and all data as they were when it was taken.
+_Avoid_: backup (bare), snapshot, clone, system backup
+
+**Mirror**:
+A file-level copy of a machine's working folders, kept on one HDD and overwritten in place by each
+run. It holds no history: anything deleted or broken before its last run is gone from it too.
+_Avoid_: sync (that is the memory sync to GitHub), backup (bare), copy, replica
+
+**Restore Drill**:
+A rehearsal that actually recovers real files from each Mirror and opens the Image, proving they can
+be restored. A run that succeeded proves only that a copy was written; only a Restore Drill proves it
+can be read back.
+_Avoid_: backup test, check, verification (bare)
 
 ## Products
 
