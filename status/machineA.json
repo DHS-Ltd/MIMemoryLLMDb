@@ -1,6 +1,6 @@
 {
     "machine":  "machineA",
-    "last_run":  "2026-10-31T23:01:25+06:00",
+    "last_run":  "2026-11-01T23:01:21+06:00",
     "pushed":  [
                    "image-converter",
                    "mimp",
@@ -36,5 +36,23 @@
                          "raw/_cards/dhs-brand-strategy.md",
                          "raw/_cards/dhs-pacs-context-map.md",
                          "raw/_cards/pacs-market-research-bd-2026.md"
-                     ]
+                     ],
+    "backup":  {
+                   "mirror-D":  {
+                                    "job":  "mirror-D",
+                                    "last_run":  "2026-11-01T22:17:00+06:00",
+                                    "ok":  true,
+                                    "last_ok":  "2026-11-01T22:17:00+06:00",
+                                    "detail":  "robocopy exit E:=1, user folder=3",
+                                    "log":  "C:\\Users\\maidu\\.mimp-backup\\mirror-D.log"
+                                },
+                   "mirror-G":  {
+                                    "job":  "mirror-G",
+                                    "last_run":  "2026-11-01T22:27:32+06:00",
+                                    "ok":  true,
+                                    "last_ok":  "2026-11-01T22:27:32+06:00",
+                                    "detail":  "robocopy exit E:=1, user folder=1",
+                                    "log":  "C:\\Users\\maidu\\.mimp-backup\\mirror-G.log"
+                                }
+               }
 }
