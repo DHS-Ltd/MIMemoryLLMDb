@@ -8,4 +8,6 @@
 - [TMSS cyclotron sale](tmss-cyclotron-sale.md) — third line: bind the customer before arranging finance; the cost model, Schedules 1–4, DEG, **Mandate Rev 2** against the Managing Committee's eight terms, and the **resolved HM-20 + TR-ALPHA** machine.
 - [DEG financier reference](deg-financier-reference.md) — the German DFI approached for TMSS: products, ticket sizes, Bangladesh footprint, and the Bangladesh cancer facts.
 - [At-211 technical context](at211-technical-context.md) — fourth context, treatment/technical only, no commercial angle; no such thing as At-211 liver cancer.
+- [Simple sentences](simple-sentences.md) — study documents and chat in short, simple English; keep every number, shorten the sentences.
+- [Radiopharma handbook](radiopharma-handbook.md) — fifth context: no-price teaching handbook under Maidul's personal name; reading-list only, published without approval by user's decision; full draft with 18 figures and a linked PDF built, waiting for the user's review.
 
