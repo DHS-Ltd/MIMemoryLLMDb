@@ -6,6 +6,7 @@
 - [LinkedIn Content Calendar — Surgeon-First 12 Weeks](project-content-calendar.md) — ENDED 31 Oct, superseded; 5 of 30 posts shipped; unshipped rows = asset backlog
 - [LinkedIn Profile Rebuild](project-linkedin-profile.md) — STALE detail; current copy rewritten 2026-10-28 in LinkedIn_Profile_Rebuild_Final.md (headline, About, Medinvest, Featured)
 - [UIH CV & Profile Pics](project-cv-uih.md) — CV for United Imaging Healthcare direct-rep role, migrated 2026-08-03 from DHS-PACS to Maidul_CV/; corrected career facts (Philips title, install totals, CMC%) that differ from the LinkedIn rebuild doc
+- [Dr. Jacy's CV](project-jacy-cv.md) — Third-party CV in Jacy_CV/, work-history conflict open, personal data stays in that folder
 - [Relationship to E:\DHS-PACS](project-dhs-pacs-relationship.md) — What belongs in each repo; stale paths in DHS-PACS memory; when to switch between projects
 - [Commercial Hub Rule](project-commercial-hub-rule.md) — Commercial content for DH PACS/DHV/DHDicomAnalyzerPro never stays here, routes to DHS-PACS; distinct from but complementary to Brand Separation
 - [Calendar Sync Bot Docs Pointer](project-calendar-sync-bot-docs.md) — Troubleshooting playbook + incident log at Calendar_Sync_Bot/docs/TROUBLESHOOTING.md
