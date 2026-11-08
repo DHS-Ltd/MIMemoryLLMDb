@@ -1,6 +1,6 @@
 {
     "machine":  "machineA",
-    "last_run":  "2026-11-07T23:01:26+06:00",
+    "last_run":  "2026-11-08T23:01:29+06:00",
     "pushed":  [
                    "image-converter",
                    "mimp",
@@ -41,26 +41,26 @@
     "backup":  {
                    "mirror-D":  {
                                     "job":  "mirror-D",
-                                    "last_run":  "2026-11-07T22:40:11+06:00",
+                                    "last_run":  "2026-11-08T22:40:32+06:00",
                                     "ok":  true,
-                                    "last_ok":  "2026-11-07T22:40:11+06:00",
+                                    "last_ok":  "2026-11-08T22:40:32+06:00",
                                     "detail":  "robocopy exit E:=1, user folder=3",
                                     "log":  "C:\\Users\\maidu\\.mimp-backup\\mirror-D.log"
                                 },
                    "mirror-G":  {
                                     "job":  "mirror-G",
-                                    "last_run":  "2026-11-07T00:30:44+06:00",
+                                    "last_run":  "2026-11-08T00:30:49+06:00",
                                     "ok":  true,
-                                    "last_ok":  "2026-11-07T00:30:44+06:00",
-                                    "detail":  "robocopy exit E:=1, user folder=3",
+                                    "last_ok":  "2026-11-08T00:30:49+06:00",
+                                    "detail":  "robocopy exit E:=3, user folder=3",
                                     "log":  "C:\\Users\\maidu\\.mimp-backup\\mirror-G.log"
                                 },
                    "image":  {
                                  "job":  "image",
-                                 "last_run":  "2026-11-02T14:47:33+06:00",
+                                 "last_run":  "2026-11-08T03:43:42+06:00",
                                  "ok":  false,
                                  "last_ok":  null,
-                                 "detail":  "wbadmin exit -4: C:\\WINDOWS\\Logs\\WindowsBackup\\Backup_Error-02-11-2026_07-56-04.log",
+                                 "detail":  "wbadmin exit -4: C:\\WINDOWS\\Logs\\WindowsBackup\\Backup_Error-07-11-2026_20-00-52.log",
                                  "log":  "C:\\ProgramData\\mimp-backup\\image.log"
                              }
                }
