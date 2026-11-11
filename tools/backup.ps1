@@ -80,16 +80,20 @@ function Invoke-Mirror {
     # /MIR mirrors (deletes what E: no longer has); /XJ skips junctions (~/.claude/skills is full of
     # them, and their targets are copied anyway); /R:1 /W:1 because the default retries a locked file
     # 1,000,000 times x 30 s. /XD takes folder names (matched anywhere) and full paths. Exclusions
-    # are Q4's, plus OneDrive (already a cloud copy), the locked registry hive (ntuser.*) and
-    # Windows Installer's rollback folder (Config.Msi: system-only, access denied on the first run).
+    # are Q4's, plus the Desktop (nothing important kept there; it stays in the weekly Image), the
+    # locked registry hive (ntuser.*) and Windows Installer's rollback folder (Config.Msi:
+    # system-only, access denied on the first run). OneDrive itself is mirrored: its app had
+    # silently stopped for 3 months, so its cloud copy is no backup. /XA:O skips its cloud-only
+    # files - they hold no data here, and reading one fails while the app is not running.
     $common = @('/MIR', '/XJ', '/R:1', '/W:1', '/MT:8', '/NP', '/NDL', '/NFL')
     $eArgs = @($e.Source, $e.Mirror,
         '/XD', '$RECYCLE.BIN', 'System Volume Information', 'Config.Msi', 'E:\DHS-ERP\WSL',
         'node_modules', '.venv', 'venv', '.next', '.gradle') + $common + "/LOG:$log"
     $uArgs = @($u.Source, $u.Mirror,
-        '/XD', 'AppData', 'OneDrive', '.ollama', '.cache', '.gradle', '.m2', 'node_modules',
+        '/XD', 'AppData', '.ollama', '.cache', '.gradle', '.m2', 'node_modules',
+        (Join-Path $UserFolder 'OneDrive\Desktop'), (Join-Path $UserFolder 'Desktop'),
         (Join-Path $UserFolder '.vscode\extensions'), (Join-Path $UserFolder '.cursor\extensions'),
-        '/XF', 'ntuser.*') + $common + "/LOG+:$log"
+        '/XF', 'ntuser.*', '/XA:O') + $common + "/LOG+:$log"
 
     & robocopy @eArgs | Out-Null
     $eCode = $LASTEXITCODE

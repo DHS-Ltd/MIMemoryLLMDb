@@ -4,7 +4,8 @@ Decided in a `/grill-with-docs` session on machineA, Q1–Q16. Goal in Maidul's 
 crashes, "I don't miss out a thing after plugging in a new SSD"; and on a new laptop "be up to date
 with the same Claude and Antigravity rules and skills set in this machineA". Terms in **bold** are in
 `CONTEXT.md` (Image, Mirror, Restore Drill, Writer, Heartbeat) and in Agent_Harness's
-`CONTEXT.md` (Global Harness). Nothing is built yet. Decisions recorded as ADR-0011 (Writer
+`CONTEXT.md` (Global Harness). Phase 1 was built 2026-11-01 and its tasks registered 2026-11-02;
+status lives in the MIMP-002 changelog. Decisions recorded as ADR-0011 (Writer
 handover), ADR-0012 (Image + staggered Mirrors) and Agent_Harness `docs/adr/0001` (Global Harness).
 
 ## machineA as measured (2026-11-01)
@@ -61,8 +62,12 @@ blank-SSD restore.
 
 Built as: `tools/backup.ps1` (both modes), `tools/install-backup.ps1` (one elevated run),
 results in `~/.mimp-backup/<job>.json` → Heartbeat `backup` → `tools/backup-lint.mjs` with
-limits in `machines.json`. Mirrors also skip `OneDrive` (already a cloud copy; holds Documents
-and the PowerShell profile) and the locked `ntuser.*` hive.
+limits in `machines.json`. Mirrors also skip the Desktop (`OneDrive\Desktop`; Maidul 2026-11-08:
+nothing important is kept there, so it rides on the weekly Image only; agents are told to hand
+files over in `E:\Handover\`), OneDrive's cloud-only files (`/XA:O`) and the locked `ntuser.*`
+hive. OneDrive itself was skipped until 2026-11-08 as "already a cloud copy", but its app had
+silently stopped since ~07-28, so Documents (with the PowerShell profile) and Pictures are now
+mirrored.
 
 **Rollback guard — read before any restore.** An Image brings the backup tasks back with it, and
 mirroring a restored, older E: would delete from the Mirror the newer files the restore needs.
