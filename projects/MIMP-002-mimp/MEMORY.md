@@ -6,7 +6,7 @@
 |--------------|------------------------------------|
 | Project ID   | MIMP-002                           |
 | Short name   | mimp                               |
-| Last updated | 2026-11-11                         |
+| Last updated | 2026-11-13                         |
 | Updated by   | machineA                           |
 | Status       | active                             |
 | Machines     | machineA, machineB (synced 2026-09-28) |
