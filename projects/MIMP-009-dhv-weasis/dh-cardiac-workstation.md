@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: a3d66c9c-62e2-4e32-bca1-cd8d1eb5ef9a
-  modified: 2026-11-12T16:32:49.412Z
+  modified: 2026-11-25T17:10:51.077Z
 ---
 
 Decided 2026-11-12 in a grill-with-docs session: DH builds a **DH Cardiac Workstation** (a cath-lab-only site
@@ -33,6 +33,14 @@ QCA (stenosis %) and LV Analysis (EF) come in v2. Nexus's cardiologists choose w
 **Next session (user, 2026-11-12): grill the UI design, then plan the build.** Resume point and agenda:
 DHV `docs/CardiacWorkstation/README.md`. The speed baseline is measured: 4.3 s / 1,239 MB for the 57-run study
 with JPEG-LS end to end.
+
+**Update 2026-11-25 (grill-with-docs, committed DHV `cd9a635a3`):** Run strip fully decided (per object incl. Stills
+and Exam Protocol, recording order, left side, tile = middle frame + run no. + LAO/RAO CRAN/CAUD angle + frame count) and
+branding planned (name "DH Cardiac Workstation", short form DHC: `DHCardiac.exe`, `.dhclicense`; red-C DHV-family logo
+drawn via an Antigravity prompt in `E:\Handover\`; DHV Dark unchanged; DICOM AET stays `DHV_SCU` on purpose; DHC runs
+beside DHV at Nexus for two weeks). Non-obvious: Siemens "Exam Protocol" objects are multi-frame burned-in text pages
+(ImageType `EXAM PROTOCOL`, series #999), so frame count alone cannot tell a Run from a document. **Next: UI agenda
+item 2 (cine controls); logo owed by the user.** Repo now has `PROGRESS.md`.
 
 **How to apply:** for cath lab features, plan against the DH Cardiac Workstation, not DHV. Start the next session
 from that README, not from this memory. Still open: the build-time split mechanism, the licence format, and

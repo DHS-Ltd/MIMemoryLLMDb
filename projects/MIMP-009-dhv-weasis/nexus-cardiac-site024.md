@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 14ff631a-a87b-477f-891f-f7c15e88081d
-  modified: 2026-11-12T17:16:09.757Z
+  modified: 2026-11-25T17:10:53.342Z
 ---
 
 New site, started 2026-11-10. Record: `01_Pacs_File/01_Pacs_File/docs/Nexus_Cardiac_Mymensingh_System_Onboarding/` (README "Resume here").
@@ -25,5 +25,10 @@ First **cath lab** (XA cine) customer; user expects it to need "different optimi
 - **A Viewer reinstall reverts the XA order.** It still works, but slowly (about 41 s). Re-run `viewer-xa-order.ps1` after any Viewer install.
 - **Not yet seen:** a *new* case arriving stored as .4.80. Run receive-check after the first case. Also ask whether the console's send got slower.
 - Thumbnail count for the 57-run study: parked. The Viewer's thumbnail cache held 29 files, but that is a clue, not the answer.
+
+**Update 2026-11-25:** new-case compression PROVEN (`new-cases-check.ps1`: 70 studies since 2026-11-13, 2,087 series,
+all `.4.80`, none lossy); user reports fast loading. Reading screen 2560x1440 single monitor. Site folder now committed
+in 01_Pacs_File (`88b524a`), the first site record in git. Still open: technologist questions (send speed, series
+count), AXIOM room, licence date.
 
 **How to apply:** guide one step at a time, per [[feedback-one-step-at-a-time-on-site-pcs]]; reuse [[site-onboarding-docs-pattern]]. Rollback steps are in the site README.
