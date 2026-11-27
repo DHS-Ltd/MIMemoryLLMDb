@@ -1,6 +1,6 @@
 {
     "machine":  "machineA",
-    "last_run":  "2026-11-26T23:01:34+06:00",
+    "last_run":  "2026-11-27T23:01:23+06:00",
     "pushed":  [
                    "image-converter",
                    "mimp",
@@ -33,7 +33,6 @@
                      ],
     "source_drift":  [
                          "raw/_cards/adr-serve-the-surgeon.md",
-                         "raw/_cards/dh-advanced-viewer-context-map.md",
                          "raw/_cards/dhs-brand-strategy.md",
                          "raw/_cards/dhs-pacs-context-map.md",
                          "raw/_cards/pacs-market-research-bd-2026.md"
@@ -41,18 +40,18 @@
     "backup":  {
                    "mirror-D":  {
                                     "job":  "mirror-D",
-                                    "last_run":  "2026-11-26T22:40:32+06:00",
-                                    "ok":  false,
-                                    "last_ok":  "2026-11-26T21:40:23+06:00",
-                                    "detail":  "robocopy exit E:=1, user folder=11",
+                                    "last_run":  "2026-11-27T22:40:55+06:00",
+                                    "ok":  true,
+                                    "last_ok":  "2026-11-27T22:40:55+06:00",
+                                    "detail":  "robocopy exit E:=1, user folder=3",
                                     "log":  "C:\\Users\\maidu\\.mimp-backup\\mirror-D.log"
                                 },
                    "mirror-G":  {
                                     "job":  "mirror-G",
-                                    "last_run":  "2026-11-26T00:30:46+06:00",
+                                    "last_run":  "2026-11-27T00:30:45+06:00",
                                     "ok":  true,
-                                    "last_ok":  "2026-11-26T00:30:46+06:00",
-                                    "detail":  "robocopy exit E:=1, user folder=3",
+                                    "last_ok":  "2026-11-27T00:30:45+06:00",
+                                    "detail":  "robocopy exit E:=3, user folder=3",
                                     "log":  "C:\\Users\\maidu\\.mimp-backup\\mirror-G.log"
                                 },
                    "image":  {
